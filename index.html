@@ -89,9 +89,8 @@ body {
   margin-top: -50px;
 }
 
-.left, .right {
-  width:30%;
-}
+.left { width:25%; }
+.right { width:50%; }
 
 .card {
   padding:8px;
@@ -105,7 +104,7 @@ body {
 }
 
 /* ADJUST GRAPH HEIGHT HERE */
-canvas { width:100%; height:350px; }
+canvas { width:100%; height:500px; }
 
 
 .moon-img {
@@ -301,8 +300,17 @@ async function getWeather(){
   const night = buildNightHours(d.hours, d.sunset, dNext.sunrise);
 
   document.getElementById('conditions').innerHTML = `
-    <h2>${json.resolvedAddress}</h2>
-    <h3>Current Temp: ${json.currentConditions?.temp || d.temp}°F</h3>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div>
+        <h2>${json.resolvedAddress}</h2>
+        <h3>Viewing Score: ${score.toFixed(1)}%</h3>
+        <h3>Current Temp: ${json.currentConditions?.temp || d.temp}°F</h3>
+      </div>
+      <div style="text-align:right;">
+        <p><b>Moon Phase:</b> ${moonPhaseName(d.moonphase)}</p>
+        <img class="moon-img" src="${getMoonImage(d.moonphase)}" style="width:100px;">
+      </div>
+    </div>
 
     <p><b>Conditions:</b> ${d.conditions}</p>
     <p><b>Temp:</b> ${d.tempmin}–${d.tempmax}°F</p>
@@ -314,11 +322,6 @@ async function getWeather(){
     <p><b>Sunrise:</b> ${d.sunrise}</p>
 
     <p><b>Light Pollution:</b> ${(light*100).toFixed(0)}%</p>
-
-    <p><b>Moon Phase:</b> ${moonPhaseName(d.moonphase)}</p>
-    <img class="moon-img" src="${getMoonImage(d.moonphase)}" style="width:120px;">
-
-    <h3>Viewing Score: ${score.toFixed(1)}%</h3>
   `;
 
   if(chart) chart.destroy();
@@ -341,7 +344,7 @@ async function getWeather(){
       maintainAspectRatio:false,
       plugins:{ 
         legend:{display:false}, 
-        title:{display:true, text:'Viewing Score', font:{size:20}} 
+        title:{display:true, text:'Viewing Score', color:'#ffffff', font:{size:22}} 
       },
       scales:{
         y:{ 
@@ -362,7 +365,7 @@ async function getWeather(){
     <h3 style="width:100%; text-align:left;">Viewing Score Forecast</h3>
     <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
       ${json.days.slice(0,7).map(day=>`
-        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:1.2rem; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:1.2rem; padding:6px 0;">
           <span style="font-weight:bold;">${day.datetime}</span>
           <span>${telescopeScore(day, light).toFixed(0)}%</span>
         </div>
