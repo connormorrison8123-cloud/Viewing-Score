@@ -360,9 +360,9 @@ async function getWeather(){
 
   document.getElementById('forecast-content').innerHTML = `
     <h3 style="width:100%">Viewing Score Forecast</h3>
-    <div style="display:flex; gap:8px; font-size:0.9rem; justify-content:center;">
+    <div style="display:flex; flex-direction:column; gap:10px; font-size:1rem; align-items:flex-start;">
       ${json.days.slice(0,7).map(day=>`
-        <div style="color:white; min-width:90px; font-size:1.2rem;">
+        <div style="color:white; width:100%; text-align:left; font-size:1.2rem; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
           <div style="font-weight:bold;">${day.datetime}</div>
           <div>${telescopeScore(day, light).toFixed(0)}%</div>
         </div>
