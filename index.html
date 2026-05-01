@@ -180,8 +180,6 @@ html, body { height:100%; }
   <div id="forecast-content"></div>
 </div>
 
-<div id="clock" class="clock"></div>
-
 <script>
 
 // ---- AUTOCOMPLETE ----
@@ -267,13 +265,6 @@ function buildNightHours(hours, sunsetStr, sunriseNextStr){
 
 let chart;
 
-function updateClock(){
-  const now = new Date();
-  const el = document.getElementById('clock');
-  if (el) el.innerText = "Local Time: " + now.toLocaleTimeString();
-}
-setInterval(updateClock, 1000);
-updateClock();
 async function getWeather(){
   // Removed showSection('forecast');
   // Removed document.body.classList.add('searched');
