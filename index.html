@@ -127,7 +127,7 @@ body {
 }
 
 /* ADJUST GRAPH HEIGHT HERE */
-canvas { width:100%; height:425px; }
+canvas { width:100%; height:405px; }
 
 
 .moon-img {
@@ -259,6 +259,7 @@ html, body { height:100%; }
     <div style="display:flex; gap:10px; align-items:center; position:relative;">
       <input id="zip" placeholder="Search city or ZIP">
 <button onclick="(function(){ 
+  suppressSuggestions = true;
   const first=document.querySelector('.suggestion-item'); 
   if(first){ document.getElementById('zip').value=first.dataset.name; }
   document.getElementById('suggestions').innerHTML='';
@@ -283,13 +284,16 @@ html, body { height:100%; }
 const input = document.getElementById('zip');
 const suggestionsEl = document.getElementById('suggestions');
 let debounceTimer;
+let suppressSuggestions = false;
 
 input.addEventListener('input', () => {
   const q = input.value.trim();
+  suppressSuggestions = false;
   clearTimeout(debounceTimer);
   if (!q) { suggestionsEl.innerHTML=''; return; }
 
   debounceTimer = setTimeout(async () => {
+    if (suppressSuggestions) return;
     const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5`);
     const data = await res.json();
     const results = data.results || [];
@@ -311,6 +315,7 @@ suggestionsEl.addEventListener('click', (e) => {
 
 document.getElementById('zip').addEventListener('keypress', e=>{
   if(e.key==='Enter'){
+    suppressSuggestions = true;
     const first = document.querySelector('.suggestion-item');
     if(first){
       input.value = first.dataset.name;
