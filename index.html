@@ -43,7 +43,7 @@ body {
 
 .search-container {
   margin-bottom:20px;
-  margin-top:30px;
+  margin-top:10px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -51,13 +51,13 @@ body {
 }
 
 #zip {
-  width: 420px;
+  width: 315px;
   max-width: 80vw;
-  padding: 14px 16px;
+  padding: 10px 12px;
   border-radius: 24px;
   border: none;
   outline: none;
-  font-size: 1.375rem;
+  font-size: 1rem;
 }
 
 .suggestions {
@@ -91,7 +91,7 @@ body {
 }
 
 .left {
-  width:300px;
+  width:45%;
   flex-shrink:0;
 }
 .right {
@@ -108,8 +108,9 @@ body {
 
 #forecast-content {
   position: relative;
-  width:260px;
+  width:100%;
   text-align:left;
+  margin-top:75px;
 }
 
 /* ADJUST GRAPH HEIGHT HERE */
@@ -239,13 +240,14 @@ html, body { height:100%; }
   <div class="search-container">
     <div style="display:flex; gap:10px; align-items:center;">
       <input id="zip" placeholder="Search city or ZIP">
-      <button onclick="getWeather()" style="padding:10px 16px; font-size:1.2rem; border-radius:12px; border:none; cursor:pointer;">Go</button>
+      <button onclick="getWeather()" style="padding:8px 12px; font-size:0.9rem; border-radius:12px; border:none; cursor:pointer;">Go</button>
     </div>
     <div id="suggestions" class="suggestions"></div>
   </div>
 
+  <div id="forecast-content" class="card"></div>
+
   <div class="content">
-    <div class="left card" id="forecast-content"></div>
     <div class="left card" id="conditions"></div>
     <div class="right card"><canvas id="chart"></canvas></div>
   </div>
@@ -467,11 +469,11 @@ async function getWeather(){
 
   document.getElementById('forecast-content').innerHTML = `
     <h3 style="width:100%; text-align:left;">Viewing Score Forecast</h3>
-    <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
       ${json.days.slice(0,7).map(day=>`
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:1.2rem; padding:6px 0;">
           <span style="font-weight:bold;">${day.datetime}</span>
-          <span>${telescopeScore(day, light).toFixed(0)}%</span>
+          <span style="color:${scoreColor(telescopeScore(day, light))}">${telescopeScore(day, light).toFixed(0)}%</span>
         </div>
       `).join('')}
     </div>
