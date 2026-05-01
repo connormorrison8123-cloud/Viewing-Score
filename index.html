@@ -43,7 +43,7 @@ body {
 
 .search-container {
   margin-bottom:20px;
-  margin-top:-20px;
+  margin-top:10px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -122,7 +122,7 @@ body {
   position: relative;
   width:100%;
   text-align:left;
-  margin-top:-60px;
+  margin-top:-80px;
   z-index: 0;
 }
 
@@ -258,7 +258,12 @@ html, body { height:100%; }
   <div class="search-container">
     <div style="display:flex; gap:10px; align-items:center; position:relative;">
       <input id="zip" placeholder="Search city or ZIP">
-      <button onclick="(function(){ const first=document.querySelector('.suggestion-item'); if(first){ document.getElementById('zip').value=first.dataset.name; document.getElementById('suggestions').innerHTML=''; } getWeather(); })()" style="padding:8px 12px; font-size:0.9rem; border-radius:12px; border:none; cursor:pointer;">Go</button>
+<button onclick="(function(){ 
+  const first=document.querySelector('.suggestion-item'); 
+  if(first){ document.getElementById('zip').value=first.dataset.name; }
+  document.getElementById('suggestions').innerHTML='';
+  getWeather(); 
+})()" style="padding:8px 12px; font-size:0.9rem; border-radius:12px; border:none; cursor:pointer;">Go</button>
       <div id="suggestions" class="suggestions"></div>
     </div>
   </div>
@@ -309,8 +314,8 @@ document.getElementById('zip').addEventListener('keypress', e=>{
     const first = document.querySelector('.suggestion-item');
     if(first){
       input.value = first.dataset.name;
-      suggestionsEl.innerHTML = '';
     }
+    suggestionsEl.innerHTML = '';
     getWeather();
   }
 });
