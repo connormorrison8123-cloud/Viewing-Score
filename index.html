@@ -10,7 +10,7 @@
 body {
   font-family: Arial;
   font-size: calc(100% + 6px);
-  background: url('./images/stars/star_cluster.png') no-repeat center center fixed;
+  background: url('images/stars/star_cluster.png') no-repeat center center fixed;
   background-size: cover;
   color:#e0e6ff;
   text-align:center;
@@ -277,14 +277,14 @@ async function getWeather(){
 
   // moon image helper
   function getMoonImage(p){
-    if (p < 0.0625 || p >= 0.9375) return "./images/moon/moon_new.png";
-    if (p < 0.1875) return "./images/moon/moon_waxing_crescent.png";
-    if (p < 0.3125) return "./images/moon/moon_first_quarter.png";
-    if (p < 0.4375) return "./images/moon/moon_waxing_gibbous.png";
-    if (p < 0.5625) return "./images/moon/moon_full.png";
-    if (p < 0.6875) return "./images/moon/moon_waning_gibbous.png";
-    if (p < 0.8125) return "./images/moon/moon_last_quarter.png";
-    return "./images/moon/moon_waning_crescent.png";
+    if (p < 0.0625 || p >= 0.9375) return "images/moon/moon_new.png";
+    if (p < 0.1875) return "images/moon/moon_waxing_crescent.png";
+    if (p < 0.3125) return "images/moon/moon_first_quarter.png";
+    if (p < 0.4375) return "images/moon/moon_waxing_gibbous.png";
+    if (p < 0.5625) return "images/moon/moon_full.png";
+    if (p < 0.6875) return "images/moon/moon_waning_gibbous.png";
+    if (p < 0.8125) return "images/moon/moon_last_quarter.png";
+    return "images/moon/moon_waning_crescent.png";
   }
 
   function moonPhaseName(p){
