@@ -48,6 +48,8 @@ body {
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  position: relative;
+  z-index: 10;
 }
 
 #zip {
@@ -61,13 +63,17 @@ body {
 }
 
 .suggestions {
-  width: 420px;
-  max-width: 80vw;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-width: 315px;
   background: #11182b;
   border-radius: 12px;
   margin-top: 6px;
   text-align: left;
   overflow: hidden;
+  z-index: 1000;
 }
 
 .suggestion-item {
@@ -97,6 +103,7 @@ body {
 .right {
   flex:1;
   min-width:0;
+  margin-top: -40px;
 }
 
 .card {
@@ -106,15 +113,21 @@ body {
   box-sizing:border-box;
 }
 
+#conditions {
+  font-size: 0.83rem;
+  text-align: left;
+}
+
 #forecast-content {
   position: relative;
   width:100%;
   text-align:left;
-  margin-top:75px;
+  margin-top:-80px;
+  z-index: 0;
 }
 
 /* ADJUST GRAPH HEIGHT HERE */
-canvas { width:100%; height:500px; }
+canvas { width:100%; height:425px; }
 
 
 .moon-img {
@@ -132,6 +145,11 @@ canvas { width:100%; height:500px; }
 .header h1 {
   margin:0;
   font-size:2rem;
+  text-shadow: 
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
 }
 
 .header p {
@@ -231,18 +249,18 @@ html, body { height:100%; }
 <body>
 
 <div class="header">
-  <h1>Astronomy Weather</h1>
+  <h1>Sky Viewer Forecast</h1>
   <p>Worldwide</p>
 </div>
 <div id="moon-global"></div>
 
 <div class="main">
   <div class="search-container">
-    <div style="display:flex; gap:10px; align-items:center;">
+    <div style="display:flex; gap:10px; align-items:center; position:relative;">
       <input id="zip" placeholder="Search city or ZIP">
-      <button onclick="getWeather()" style="padding:8px 12px; font-size:0.9rem; border-radius:12px; border:none; cursor:pointer;">Go</button>
+      <button onclick="(function(){ const first=document.querySelector('.suggestion-item'); if(first){ document.getElementById('zip').value=first.dataset.name; document.getElementById('suggestions').innerHTML=''; } getWeather(); })()" style="padding:8px 12px; font-size:0.9rem; border-radius:12px; border:none; cursor:pointer;">Go</button>
+      <div id="suggestions" class="suggestions"></div>
     </div>
-    <div id="suggestions" class="suggestions"></div>
   </div>
 
   <div id="forecast-content" class="card"></div>
@@ -287,7 +305,14 @@ suggestionsEl.addEventListener('click', (e) => {
 });
 
 document.getElementById('zip').addEventListener('keypress', e=>{
-  if(e.key==='Enter') getWeather();
+  if(e.key==='Enter'){
+    const first = document.querySelector('.suggestion-item');
+    if(first){
+      input.value = first.dataset.name;
+      suggestionsEl.innerHTML = '';
+    }
+    getWeather();
+  }
 });
 
 // ---- VIEWING SCORE FORECAST HELPERS ----
@@ -405,24 +430,25 @@ async function getWeather(){
   const night = buildNightHours(d.hours, d.sunset, dNext.sunrise);
 
   document.getElementById('conditions').innerHTML = `
-    <div>
-      <div>
-        <h2>${json.resolvedAddress}</h2>
-        <h3>Viewing Score: ${score.toFixed(1)}%</h3>
-        <h3>Current Temp: ${json.currentConditions?.temp || d.temp}°F</h3>
-      </div>
+    <div style="text-align:left;">
+      <h2>${json.resolvedAddress}</h2>
+      <h3>Viewing Score: ${score.toFixed(1)}%</h3>
+      <h3>Current Temp: ${json.currentConditions?.temp || d.temp}°F</h3>
     </div>
 
-    <p><b>Conditions:</b> ${d.conditions}</p>
-    <p><b>Temp:</b> ${d.tempmin}–${d.tempmax}°F</p>
-    <p><b>Humidity:</b> ${d.humidity}%</p>
-    <p><b>Wind:</b> ${d.windspeed} mph ${windDir(d.winddir)}</p>
-    <p><b>Visibility:</b> ${d.visibility} miles</p>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align:left; margin-top:10px;">
+      <div><b>Conditions:</b><br>${d.conditions}</div>
+      <div><b>Temp Range:</b><br>${d.tempmin}–${d.tempmax}°F</div>
+      <div><b>Humidity:</b><br>${d.humidity}%</div>
 
-    <p><b>Sunset:</b> ${d.sunset}</p>
-    <p><b>Sunrise:</b> ${d.sunrise}</p>
+      <div><b>Dew Point:</b><br>${d.dew}°F</div>
+      <div><b>Wind:</b><br>${d.windspeed} mph ${windDir(d.winddir)}</div>
+      <div><b>Visibility:</b><br>${d.visibility} miles</div>
 
-    <p><b>Light Pollution:</b> ${(light*100).toFixed(0)}%</p>
+      <div><b>Sunset:</b><br>${d.sunset}</div>
+      <div><b>Sunrise:</b><br>${d.sunrise}</div>
+      <div><b>Light Pollution:</b><br>${(light*100).toFixed(0)}%</div>
+    </div>
   `;
 
   document.getElementById('moon-global').innerHTML = `
@@ -469,10 +495,10 @@ async function getWeather(){
 
   document.getElementById('forecast-content').innerHTML = `
     <h3 style="width:100%; text-align:left;">Viewing Score Forecast</h3>
-    <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+    <div style="display:flex; flex-direction:row; gap:20px; width:100%; overflow-x:auto;">
       ${json.days.slice(0,7).map(day=>`
-        <div style="display:flex; justify-content:space-between; align-items:center; width:100%; font-size:1.2rem; padding:6px 0;">
-          <span style="font-weight:bold;">${day.datetime}</span>
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:90px; font-size:1.1rem; padding:4px 0;">
+          <span style="font-weight:bold; margin-bottom:4px;">${day.datetime}</span>
           <span style="color:${scoreColor(telescopeScore(day, light))}">${telescopeScore(day, light).toFixed(0)}%</span>
         </div>
       `).join('')}
