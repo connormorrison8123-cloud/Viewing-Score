@@ -85,12 +85,12 @@ body {
   align-items:center;
   gap:20px;
   width:100%;
-  max-width:1100px;
+  max-width:1500px;
   margin-top: -50px;
 }
 
-.left { width:25%; }
-.right { width:50%; }
+.left { width:20%; }
+.right { width:60%; }
 
 .card {
   padding:8px;
@@ -148,6 +148,17 @@ html, body { height:100%; }
   margin-top: 10px;
 }
 
+#moon-global {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  text-align: right;
+}
+
+#moon-global img {
+  width: 100px;
+}
+
 </style>
 </head>
 
@@ -157,6 +168,7 @@ html, body { height:100%; }
   <h1>Astronomy Weather</h1>
   <p>Worldwide</p>
 </div>
+<div id="moon-global"></div>
 
 <div class="main">
   <div class="search-container">
@@ -300,15 +312,11 @@ async function getWeather(){
   const night = buildNightHours(d.hours, d.sunset, dNext.sunrise);
 
   document.getElementById('conditions').innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div>
       <div>
         <h2>${json.resolvedAddress}</h2>
         <h3>Viewing Score: ${score.toFixed(1)}%</h3>
         <h3>Current Temp: ${json.currentConditions?.temp || d.temp}°F</h3>
-      </div>
-      <div style="text-align:right;">
-        <p><b>Moon Phase:</b> ${moonPhaseName(d.moonphase)}</p>
-        <img class="moon-img" src="${getMoonImage(d.moonphase)}" style="width:100px;">
       </div>
     </div>
 
@@ -322,6 +330,11 @@ async function getWeather(){
     <p><b>Sunrise:</b> ${d.sunrise}</p>
 
     <p><b>Light Pollution:</b> ${(light*100).toFixed(0)}%</p>
+  `;
+
+  document.getElementById('moon-global').innerHTML = `
+    <p><b>Moon Phase:</b> ${moonPhaseName(d.moonphase)}</p>
+    <img src="${getMoonImage(d.moonphase)}">
   `;
 
   if(chart) chart.destroy();
@@ -350,11 +363,11 @@ async function getWeather(){
         y:{ 
           min:0, 
           max:100, 
-          grid:{color:'#444'}, 
+          grid:{display:false}, 
           ticks:{color:'#e0e6ff', font:{size:14}} 
         },
         x:{ 
-          grid:{color:'#444'}, 
+          grid:{display:false}, 
           ticks:{color:'#e0e6ff', font:{size:14}} 
         }
       }
