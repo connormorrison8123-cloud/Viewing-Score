@@ -81,29 +81,35 @@ body {
 
 .content {
   display:flex;
-  justify-content:center;
-  align-items:center;
+  justify-content:flex-start;
+  align-items:flex-start;
   gap:20px;
   width:100%;
   max-width:1500px;
   margin-top: 0px;
+  padding-left: 20px;
 }
 
-.left { width:25%; }
-.right { width:60%; }
+.left {
+  width:300px;
+  flex-shrink:0;
+}
+.right {
+  flex:1;
+  min-width:0;
+}
 
 .card {
-  padding:8px;
-  margin:5px auto;
+  padding:12px;
+  margin:5px 0;
   font-size:1.25rem;
+  box-sizing:border-box;
 }
 
 #forecast-content {
-  position: absolute;
-  left: 20px;
-  top: 180px;
-  width: 260px;
-  text-align: left;
+  position: relative;
+  width:260px;
+  text-align:left;
 }
 
 /* ADJUST GRAPH HEIGHT HERE */
@@ -162,6 +168,62 @@ html, body { height:100%; }
   width: 100px;
 }
 
+/* ---- MOBILE RESPONSIVE FIX ---- */
+@media (max-width: 768px) {
+
+  body {
+    font-size: 16px;
+  }
+
+  .main {
+    padding-top: 120px;
+  }
+
+  .content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .left, .right {
+    width: 90%;
+  }
+
+  #forecast-content {
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 90%;
+    margin-bottom: 20px;
+  }
+
+  #moon-global {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .header {
+    position: relative;
+    top: 0;
+    left: 0;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  #zip {
+    width: 100%;
+  }
+
+  .search-container div {
+    width: 90%;
+  }
+
+  canvas {
+    height: 300px;
+  }
+}
 </style>
 </head>
 
