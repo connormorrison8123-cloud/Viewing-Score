@@ -240,7 +240,7 @@ function scoreColor(s){
 }
 
 function telescopeScore(d, light){
-  return (
+  let baseScore = (
     (1 - (d.cloudcover||0)/100)*0.3 +
     (1 - (d.humidity||0)/100)*0.15 +
     (1 - (d.precipprob||0)/100)*0.1 +
@@ -249,6 +249,29 @@ function telescopeScore(d, light){
     (2*Math.abs((d.moonphase||0)-0.5))*0.1 +
     (1-light)*0.05
   ) * 100;
+
+  // --- NEW: sunlight penalty ---
+  if (d.datetime && d.sunrise && d.sunset) {
+    const [hour] = d.datetime.split(':').map(Number);
+
+    const [sunriseHour] = d.sunrise.split(':').map(Number);
+    const [sunsetHour] = d.sunset.split(':').map(Number);
+
+    // If during daytime, heavily penalize viewing score
+    if (hour >= sunriseHour && hour <= sunsetHour) {
+      const midday = (sunriseHour + sunsetHour) / 2;
+
+      // stronger penalty near midday
+      const distanceFromMidday = Math.abs(hour - midday);
+      const maxDistance = (sunsetHour - sunriseHour) / 2;
+
+      const sunFactor = distanceFromMidday / maxDistance; // 0 at noon, 1 near sunrise/sunset
+
+      baseScore *= (0.1 + 0.9 * sunFactor); // near zero at noon, partial near edges
+    }
+  }
+
+  return baseScore;
 }
 
 function estimateLightPollution(address){
