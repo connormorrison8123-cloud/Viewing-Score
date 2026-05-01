@@ -8,10 +8,7 @@
 
 <style>
 
-/* GLOBAL FONT CONTROL */
-html {
-  font-size: 22px; /* Increase this to scale EVERYTHING */
-}
+html { font-size: 22px; }
 
 body {
   font-family: Arial;
@@ -28,93 +25,36 @@ body {
   align-items:center;
   justify-content:flex-start;
   height:auto;
-  padding-top:140px; /* lowered content */
-}
-
-#funfact-panel {
-  position: absolute;
-  top: 120px;
-  left: 20px;
-  width: 260px;
-  font-size: 1.375rem;
-  text-align: left;
-  line-height: 1.4;
-}
-
-#funfact-panel img {
-  width: 100%;
-  border-radius: 10px;
-  margin: 10px 0;
+  padding-top:100px;
 }
 
 .search-container {
   margin-bottom:20px;
-  margin-top:30px; /* lowered by 40px */
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-}
-
-#zip {
-  width: 420px;
-  max-width: 80vw;
-  padding: 14px 16px;
-  border-radius: 24px;
-  border: none;
-  outline: none;
-  font-size: 1.375rem;
-}
-
-.suggestions {
-  width: 420px;
-  max-width: 80vw;
-  background: #11182b;
-  border-radius: 12px;
-  margin-top: 6px;
-  text-align: left;
-  overflow: hidden;
-}
-
-.suggestion-item {
-  padding: 10px 14px;
-  cursor: pointer;
-}
-
-.suggestion-item:hover {
-  background: #1b2542;
+  margin-top:30px;
 }
 
 .content {
   display:flex;
   justify-content:center;
-  align-items:center;
-  gap:40px;
+  align-items:flex-start;
+  gap:20px;
   width:100%;
-  max-width:1100px;
-  margin-top: -50px;
+  max-width:1300px; /* widened for 3-column layout */
 }
 
-.left, .right {
-  width:45%;
-}
+.left { width:25%; }
+.middle { width:30%; }
+.right { width:45%; }
 
 .card {
-  padding:8px;
-  margin:5px auto;
-  font-size:1.4375rem;
+  padding:10px;
+  font-size:1.4rem;
 }
 
-#forecast-content {
-  margin-top: -30px;
-  text-align:center;
-}
-
-canvas { width:100%; height:220px; }
-
-.moon-img {
-  display:block;
-  margin:12px auto;
+/* BIGGER GRAPH */
+canvas {
+  width:100%;
+  height:420px;
 }
 
 .header {
@@ -124,32 +64,8 @@ canvas { width:100%; height:220px; }
   text-align:left;
 }
 
-.header h1 {
-  margin:0;
-  font-size:2rem;
-}
-
-.header p {
-  margin:0;
-  font-size:1.5rem;
-  color:#aaa;
-}
-
-html, body { height:100%; }
-
-.home-fact {
-  max-width: 700px;
-  width:100%;
-  text-align: center;
-  margin-top: -40px;
-}
-
-.home-fact img {
-  width: 100%;
-  max-width: 500px;
-  border-radius: 12px;
-  margin-top: 10px;
-}
+.header h1 { font-size:2rem; margin:0; }
+.header p { font-size:1.4rem; margin:0; color:#aaa; }
 
 </style>
 </head>
@@ -162,67 +78,35 @@ html, body { height:100%; }
 </div>
 
 <div class="main">
+
   <div class="search-container">
-    <input id="zip" placeholder="Search city or ZIP">
-    <div id="suggestions" class="suggestions"></div>
+    <input id="zip" placeholder="Search city or ZIP" style="font-size:1.4rem; padding:12px; width:400px;">
+    <div id="suggestions"></div>
   </div>
 
   <div class="content">
-    <div class="left card" id="conditions"></div>
-    <div class="right card"><canvas id="chart"></canvas></div>
+    <!-- LEFT: FORECAST -->
+    <div class="left card" id="forecast-content"></div>
+
+    <!-- MIDDLE: CONDITIONS -->
+    <div class="middle card" id="conditions"></div>
+
+    <!-- RIGHT: GRAPH -->
+    <div class="right card">
+      <canvas id="chart"></canvas>
+    </div>
   </div>
 
-  <div id="forecast-content"></div>
 </div>
 
 <script>
 
-// AUTOCOMPLETE
 const input = document.getElementById('zip');
 const suggestionsEl = document.getElementById('suggestions');
-let debounceTimer;
 
-input.addEventListener('input', () => {
-  const q = input.value.trim();
-  clearTimeout(debounceTimer);
-  if (!q) { suggestionsEl.innerHTML=''; return; }
-
-  debounceTimer = setTimeout(async () => {
-    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5`);
-    const data = await res.json();
-    const results = data.results || [];
-
-    suggestionsEl.innerHTML = results.map(r => {
-      const label = `${r.name}${r.admin1 ? ', ' + r.admin1 : ''}, ${r.country}`;
-      return `<div class="suggestion-item" data-name="${label}">${label}</div>`;
-    }).join('');
-  }, 250);
-});
-
-suggestionsEl.addEventListener('click', (e) => {
-  const item = e.target.closest('.suggestion-item');
-  if (!item) return;
-  input.value = item.dataset.name;
-  suggestionsEl.innerHTML = '';
-  getWeather();
-});
-
-document.getElementById('zip').addEventListener('keypress', e=>{
+input.addEventListener('keypress', e=>{
   if(e.key==='Enter') getWeather();
 });
-
-// HELPERS
-function windDir(deg){
-  const dirs = ['N','NE','E','SE','S','SW','W','NW'];
-  return dirs[Math.round(deg/45)%8];
-}
-
-function scoreColor(s){
-  if (s < 70) return '#e89a9a';
-  if (s < 80) return '#e8d88a';
-  if (s < 90) return '#b7e4c7';
-  return '#2d6a4f';
-}
 
 function telescopeScore(d, light){
   return (
@@ -238,15 +122,14 @@ function telescopeScore(d, light){
 
 function estimateLightPollution(address){
   const a = address.toLowerCase();
-  if(a.includes('new york') || a.includes('los angeles') || a.includes('chicago') || a.includes('london') || a.includes('tokyo')) return 0.8;
-  if(a.includes('phoenix') || a.includes('dallas') || a.includes('miami')) return 0.6;
+  if(a.includes('new york') || a.includes('los angeles')) return 0.8;
   return 0.3;
 }
 
 let chart;
 
 async function getWeather(){
-  const zip = document.getElementById('zip').value;
+  const zip = input.value;
   if(!zip) return;
 
   const res = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${zip}?unitGroup=us&key=ZSMBVQBG98BSW845P5KQ9VVDE&contentType=json&include=hours`);
@@ -254,27 +137,66 @@ async function getWeather(){
 
   const d = json.days[0];
   const light = estimateLightPollution(json.resolvedAddress);
-  const score = telescopeScore(d, light);
-
-  function getMoonImage(p){
-    if (p < 0.0625 || p >= 0.9375) return "images/moon/moon_new.png";
-    if (p < 0.1875) return "images/moon/moon_waxing_crescent.png";
-    if (p < 0.3125) return "images/moon/moon_first_quarter.png";
-    if (p < 0.4375) return "images/moon/moon_waxing_gibbous.png";
-    if (p < 0.5625) return "images/moon/moon_full.png";
-    if (p < 0.6875) return "images/moon/moon_waning_gibbous.png";
-    if (p < 0.8125) return "images/moon/moon_last_quarter.png";
-    return "images/moon/moon_waning_crescent.png";
-  }
 
   document.getElementById('conditions').innerHTML = `
     <h2>${json.resolvedAddress}</h2>
-    <h3>Current Temp: ${d.temp}°F</h3>
+    <p><b>Temp:</b> ${d.temp}°F</p>
     <p><b>Conditions:</b> ${d.conditions}</p>
-    <p><b>Temp:</b> ${d.tempmin}–${d.tempmax}°F</p>
-    <img class="moon-img" src="${getMoonImage(d.moonphase)}" style="width:120px;">
-    <h3>Viewing Score: ${score.toFixed(1)}%</h3>
+    <h3>Viewing Score: ${telescopeScore(d, light).toFixed(1)}%</h3>
   `;
+
+  // FORECAST LEFT SIDE
+  document.getElementById('forecast-content').innerHTML = `
+    <h3>Viewing Score Forecast</h3>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      ${json.days.slice(0,7).map(day=>`
+        <div>
+          <b>${day.datetime}</b>: ${telescopeScore(day, light).toFixed(0)}%
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // GRAPH
+  if(chart) chart.destroy();
+
+  chart = new Chart(document.getElementById('chart'), {
+    type:'line',
+    data:{
+      labels: json.days.slice(0,7).map(d=>d.datetime),
+      datasets:[{
+        data: json.days.slice(0,7).map(d=>telescopeScore(d, light)),
+        borderColor:'#888',
+        pointRadius:5
+      }]
+    },
+    options:{
+      maintainAspectRatio:false,
+      plugins:{
+        title:{
+          display:true,
+          text:'Viewing Score Trend',
+          font:{size:22}
+        }
+      },
+      scales:{
+        y:{
+          min:0,
+          max:100,
+          ticks:{
+            color:'#fff',
+            font:{size:16} /* bigger y-axis text */
+          }
+        },
+        x:{
+          ticks:{
+            color:'#fff',
+            font:{size:16} /* bigger x-axis text */
+          }
+        }
+      }
+    }
+  });
 }
 
 </script>
