@@ -21,9 +21,10 @@ body {
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  height:auto;
+  height:auto; /* allow content to show */
   padding-top:100px;
 }
+
 
 .search-container {
   margin-bottom:20px;
@@ -88,8 +89,10 @@ body {
   text-align:center;
 }
 
+/* ADJUST GRAPH HEIGHT HERE */
 canvas { width:100%; height:220px; }
 
+/* ADJUST CLOCK POSITION HERE */
 .clock {
   position: absolute;
   top: 5px;
@@ -123,6 +126,7 @@ canvas { width:100%; height:220px; }
 
 html, body { height:100%; }
 
+/* HOME FACT CENTERING */
 .home-fact {
   max-width: 700px;
   width:100%;
@@ -136,6 +140,7 @@ html, body { height:100%; }
   border-radius: 12px;
   margin-top: 10px;
 }
+
 </style>
 </head>
 
@@ -163,6 +168,7 @@ html, body { height:100%; }
 <div id="clock" class="clock"></div>
 
 <script>
+
 
 // ---- AUTOCOMPLETE ----
 const input = document.getElementById('zip');
@@ -254,8 +260,9 @@ function updateClock(){
 }
 setInterval(updateClock, 1000);
 updateClock();
-
 async function getWeather(){
+  // Removed showSection('forecast');
+  // Removed document.body.classList.add('searched');
   document.body.classList.remove('lock-scroll');
 
   const zip = document.getElementById('zip').value;
@@ -270,6 +277,7 @@ async function getWeather(){
   const light = estimateLightPollution(json.resolvedAddress);
   const score = telescopeScore(d, light);
 
+  // moon image helper
   function getMoonImage(p){
     if (p < 0.0625 || p >= 0.9375) return "./images/moon/moon_new.png";
     if (p < 0.1875) return "./images/moon/moon_waxing_crescent.png";
@@ -352,12 +360,6 @@ async function getWeather(){
       `).join('')}
     </div>
   `;
-
-  // ENLARGE CONTENT BY 2X AFTER SEARCH
-  document.querySelector('.content').style.transform = 'scale(2)';
-  document.querySelector('.content').style.transformOrigin = 'top center';
-  document.getElementById('forecast-content').style.transform = 'scale(2)';
-  document.getElementById('forecast-content').style.transformOrigin = 'top center';
 }
 
 window.addEventListener('DOMContentLoaded', () => {
