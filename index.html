@@ -92,7 +92,7 @@ body {
   gap:20px;
   width:100%;
   max-width:1500px;
-  margin-top: 0px;
+  margin-top: -20px;
   padding-left: 20px;
 }
 
@@ -116,13 +116,14 @@ body {
 #conditions {
   font-size: 0.83rem;
   text-align: left;
+  margin-top: 30px;
 }
 
 #forecast-content {
   position: relative;
   width:100%;
   text-align:left;
-  margin-top:-50px;
+  margin-top:-70px;
   z-index: 0;
 }
 
@@ -176,15 +177,55 @@ html, body { height:100%; }
   margin-top: 10px;
 }
 
+
+.top-row {
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:18px;
+  width:100%;
+  max-width:1200px;
+  margin:0 auto 10px auto;
+  padding:0 20px;
+}
+
+#moon-phase-panel {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 280px;
+  text-align: right;
+  font-size: 1.08rem;
+  line-height: 1.35;
+  padding-top: 4px;
+  z-index: 20;
+}
+
+#moon-phase-panel p {
+  margin: 0 0 8px 0;
+}
+
+#moon-phase-panel img {
+  width: 110px;
+  display: block;
+  margin-top: 8px;
+  margin-left: auto;
+}
+
 #moon-global {
   position: absolute;
   top: 20px;
   right: 20px;
   text-align: right;
+  width: 320px;
+  max-width: 34vw;
 }
 
 #moon-global img {
-  width: 100px;
+  width: 100%;
+  border-radius: 12px;
+  display: block;
+  margin-top: 8px;
 }
 
 /* ---- MOBILE RESPONSIVE FIX ---- */
@@ -215,12 +256,37 @@ html, body { height:100%; }
     margin-bottom: 20px;
   }
 
+
+  .top-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  #moon-phase-panel {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 90%;
+    text-align: center;
+    font-size: 1.08rem;
+  }
+
+  #moon-phase-panel img {
+    width: 110px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
   #moon-global {
     position: relative;
     top: 0;
     right: 0;
     margin-bottom: 10px;
     text-align: center;
+    width: 90%;
+    max-width: none;
   }
 
   .header {
@@ -252,12 +318,12 @@ html, body { height:100%; }
   <h1>Sky Viewer Forecast</h1>
   <p>Worldwide</p>
 </div>
-<div id="moon-global"></div>
 
 <div class="main">
-  <div class="search-container">
-    <div style="display:flex; gap:10px; align-items:center; position:relative;">
-      <input id="zip" placeholder="Search city or ZIP">
+  <div class="top-row">
+    <div class="search-container">
+      <div style="display:flex; gap:10px; align-items:center; position:relative;">
+        <input id="zip" placeholder="Search city or ZIP">
 <button onclick="(function(){ 
   suppressSuggestions = true;
   const first=document.querySelector('.suggestion-item'); 
@@ -265,9 +331,12 @@ html, body { height:100%; }
   document.getElementById('suggestions').innerHTML='';
   getWeather(); 
 })()" style="padding:8px 12px; font-size:0.9rem; border-radius:12px; border:none; cursor:pointer;">Go</button>
-      <div id="suggestions" class="suggestions"></div>
+        <div id="suggestions" class="suggestions"></div>
+      </div>
     </div>
   </div>
+
+<div id="moon-phase-panel" class="card"></div>
 
   <div id="forecast-content" class="card"></div>
 
@@ -285,6 +354,14 @@ const input = document.getElementById('zip');
 const suggestionsEl = document.getElementById('suggestions');
 let debounceTimer;
 let suppressSuggestions = false;
+
+input.addEventListener('focus', () => {
+  requestAnimationFrame(() => input.select());
+});
+
+input.addEventListener('click', () => {
+  requestAnimationFrame(() => input.select());
+});
 
 input.addEventListener('input', () => {
   const q = input.value.trim();
@@ -381,21 +458,90 @@ function estimateLightPollution(address){
 }
 
 function buildNightHours(hours, sunsetStr, sunriseNextStr){
-  const today = new Date();
+  if (!hours || !hours.length) return { points: [], sunsetEpoch: null, sunriseNextEpoch: null };
+
   const [sh, sm] = sunsetStr.split(':').map(Number);
   const [rh, rm] = sunriseNextStr.split(':').map(Number);
-  const sunset = new Date(today.getFullYear(), today.getMonth(), today.getDate(), sh, sm);
-  const sunriseNext = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1, rh, rm);
 
-  return hours.map(h=>{
-    const [hh, mm] = h.datetime.split(':').map(Number);
-    let d = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hh, mm);
-    if(hh < 12) d = new Date(today.getFullYear(), today.getMonth(), today.getDate()+1, hh, mm);
-    return {...h, date:d};
-  }).filter(h => h.date >= sunset && h.date <= sunriseNext);
+  const firstEpoch = hours[0].datetimeEpoch ? hours[0].datetimeEpoch * 1000 : Date.now();
+  const firstDate = new Date(firstEpoch);
+  const year = firstDate.getFullYear();
+  const month = firstDate.getMonth();
+  const day = firstDate.getDate();
+
+  const sunsetEpoch = new Date(year, month, day, sh, sm, 0, 0).getTime();
+  const sunriseNextEpoch = new Date(year, month, day + 1, rh, rm, 0, 0).getTime();
+
+  const toPoint = (h) => {
+    const epochMs = h.datetimeEpoch ? h.datetimeEpoch * 1000 : null;
+    if (epochMs === null) return null;
+    return {
+      ...h,
+      epochMs,
+      kind: 'hour',
+      label: new Date(epochMs).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+    };
+  };
+
+  const closestPoint = (targetEpoch, kindLabel) => {
+    let best = null;
+    let bestDistance = Infinity;
+
+    for (const h of hours) {
+      if (!h.datetimeEpoch) continue;
+      const epochMs = h.datetimeEpoch * 1000;
+      const distance = Math.abs(epochMs - targetEpoch);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = h;
+      }
+    }
+
+    if (!best) return null;
+
+    return {
+      ...best,
+      epochMs: targetEpoch,
+      kind: kindLabel,
+      label: `${new Date(targetEpoch).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} ${kindLabel === 'sunset' ? 'Sunset' : 'Sunrise'}`
+    };
+  };
+
+  const hourlyPoints = hours
+    .map(toPoint)
+    .filter(h => h && h.epochMs >= sunsetEpoch && h.epochMs <= sunriseNextEpoch);
+
+  const sunsetPoint = closestPoint(sunsetEpoch, 'sunset');
+  const sunrisePoint = closestPoint(sunriseNextEpoch, 'sunrise');
+
+  const points = [...hourlyPoints, sunsetPoint, sunrisePoint]
+    .filter(Boolean)
+    .sort((a, b) => a.epochMs - b.epochMs)
+    .filter((point, index, arr) => index === 0 || point.epochMs !== arr[index - 1].epochMs);
+
+  return { points, sunsetEpoch, sunriseNextEpoch };
+}
+
+function twilightFactor(epochMs, sunsetEpoch, sunriseNextEpoch){
+  if (!epochMs || !sunsetEpoch || !sunriseNextEpoch) return 1;
+
+  const twilightMinutes = 90;
+  const minutesFromSunset = (epochMs - sunsetEpoch) / 60000;
+  const minutesToSunrise = (sunriseNextEpoch - epochMs) / 60000;
+
+  if (minutesFromSunset >= 0 && minutesFromSunset < twilightMinutes) {
+    return 0.15 + 0.85 * (minutesFromSunset / twilightMinutes);
+  }
+
+  if (minutesToSunrise >= 0 && minutesToSunrise < twilightMinutes) {
+    return 0.15 + 0.85 * (minutesToSunrise / twilightMinutes);
+  }
+
+  return 1;
 }
 
 let chart;
+
 
 async function getWeather(){
   // Removed showSection('forecast');
@@ -437,11 +583,18 @@ async function getWeather(){
     return "Waning Crescent";
   }
 
-  const night = buildNightHours(d.hours, d.sunset, dNext.sunrise);
+  function moonIllumination(p){
+    return ((1 - Math.cos(2 * Math.PI * p)) / 2) * 100;
+  }
+
+  const nightInfo = buildNightHours([
+    ...(d.hours || []),
+    ...(dNext.hours || [])
+  ], d.sunset, dNext.sunrise);
+  const night = nightInfo.points;
 
   document.getElementById('conditions').innerHTML = `
     <div style="text-align:left;">
-      <h2>${json.resolvedAddress}</h2>
       <h3>Viewing Score: ${score.toFixed(1)}%</h3>
       <h3>Current Temp: ${json.currentConditions?.temp || d.temp}°F</h3>
     </div>
@@ -461,19 +614,24 @@ async function getWeather(){
     </div>
   `;
 
-  document.getElementById('moon-global').innerHTML = `
-    <p><b>Moon Phase:</b> ${moonPhaseName(d.moonphase)}</p>
-    <img src="${getMoonImage(d.moonphase)}">
+  document.getElementById('moon-phase-panel').innerHTML = `
+    <p><b>${moonPhaseName(d.moonphase)}</b></p>
+    <p>Illumination: ${moonIllumination(d.moonphase).toFixed(0)}%</p>
+    <img src="${getMoonImage(d.moonphase)}" alt="Moon phase">
   `;
+
 
   if(chart) chart.destroy();
   chart = new Chart(document.getElementById('chart'), {
     type:'line',
     data:{
-      labels: night.map(h=>h.datetime),
+      labels: night.map(h => h.label),
       datasets:[{
-        data: night.map(h=>telescopeScore(h, light)),
+        data: night.map(h => telescopeScore(h, light) * twilightFactor(h.epochMs, nightInfo.sunsetEpoch, nightInfo.sunriseNextEpoch)),
         borderColor:'#444444',
+        tension: 0.35,
+        cubicInterpolationMode: 'monotone',
+        spanGaps: true,
         segment:{ borderColor: ctx => scoreColor(ctx.p1.parsed.y) },
         pointRadius: 4,
         pointStyle: 'circle',
@@ -504,10 +662,13 @@ async function getWeather(){
   });
 
   document.getElementById('forecast-content').innerHTML = `
-    <h3 style="width:100%; text-align:left;">Viewing Score Forecast</h3>
-    <div style="display:flex; flex-direction:row; gap:20px; width:100%; overflow-x:auto;">
+    <div style="width:100%; text-align:left; margin-bottom:6px;">
+      <div style="font-size:0.83rem;">${json.resolvedAddress}</div>
+      <h3 style="width:100%; text-align:left; margin:4px 0 0 0; font-size:0.83rem;">Forecast</h3>
+    </div>
+    <div style="display:flex; flex-direction:row; gap:20px; width:100%; overflow-x:auto; font-size:0.83rem;">
       ${json.days.slice(0,7).map(day=>`
-        <div style="display:flex; flex-direction:column; align-items:center; min-width:90px; font-size:1.1rem; padding:4px 0;">
+        <div style="display:flex; flex-direction:column; align-items:center; min-width:90px; font-size:0.83rem; padding:4px 0;">
           <span style="font-weight:bold; margin-bottom:4px;">${day.datetime}</span>
           <span style="color:${scoreColor(telescopeScore(day, light))}">${telescopeScore(day, light).toFixed(0)}%</span>
         </div>
@@ -517,6 +678,7 @@ async function getWeather(){
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  getWeather();
 });
 
 </script>
