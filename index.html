@@ -778,7 +778,7 @@
   /* ── RESPONSIVE ── */
   @media (max-width: 780px) {
     /* ── Layout ── */
-    .site-wrap { padding: 0 16px 60px; }
+    .site-wrap { padding: 0 14px 60px; }
     .main-grid { grid-template-columns: 1fr; }
     .bottom-row { grid-template-columns: 1fr; }
 
@@ -845,6 +845,35 @@
     /* ── Location bar ── */
     .location-bar-inner { max-width: 100%; border-radius: 10px; }
     #locationBarText { font-size: 0.85rem; }
+
+    /* ── Sub-nav: scrollable pill strip ── */
+    #subNav { padding: 10px 0 2px; }
+    .sub-nav-inner { overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start; border-radius: 12px; scrollbar-width: none; }
+    .sub-nav-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link { padding: 8px 14px; font-size: 0.7rem; flex-shrink: 0; flex: none; gap: 5px; }
+    .sub-nav-link svg { width: 12px; height: 12px; }
+
+    /* ── Header ── */
+    header { flex-wrap: wrap; gap: 8px; padding: 16px 0 18px; }
+    .header-tools { gap: 4px; }
+    .tool-btn { width: 32px; height: 32px; }
+
+    /* ── Weekly outlook ── */
+    .weekly-grid { gap: 0; }
+    .weekly-day { padding: 10px 3px 8px; }
+    .weekly-score-box { width: 36px; }
+    .weekly-score-num { font-size: 0.78rem; }
+    .weekly-score-bar-track { height: 30px; }
+    .weekly-label { font-size: 0.58rem; }
+
+    /* ── Moon anatomy ── */
+    .moon-feat-grid { grid-template-columns: 1fr; }
+    .moon-facts-grid { grid-template-columns: repeat(3, 1fr); }
+    .moon-anatomy-img-wrap { padding: 10px; }
+
+    /* ── Light pollution page ── */
+    .lpm-hero-grid { grid-template-columns: 1fr; }
+    .lpm-map-frame { height: 300px; }
 
     /* ── Graph tabs ── */
 
@@ -1223,9 +1252,7 @@
 
 
   /* ── WEEKLY OUTLOOK ── */
-  .weekly-section { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .weekly-section::-webkit-scrollbar { display: none; }
-  .weekly-section-UNUSED {
+  .weekly-section {
     margin-top: 24px;
     opacity: 0;
     animation: fadeUp 1s 1.6s forwards;
@@ -1333,10 +1360,8 @@
   .weekly-icons svg { color: var(--muted); }
 
   @media (max-width: 780px) {
-    .weekly-panel { overflow-x: visible; }
-    .weekly-grid { display: flex; min-width: max-content; gap: 0; }
-    .weekly-day { min-width: 78px; flex: 1; }
-    .weekly-day { padding: 12px 4px 10px; min-height: 112px; }
+    .weekly-grid { grid-template-columns: repeat(7, 1fr); gap: 0; padding: 0 4px; }
+    .weekly-day { padding: 12px 4px 10px; }
     .weekly-score-num { font-size: 0.82rem; }
     .weekly-score-bar-track { height: 32px; }
     .weekly-dow { font-size: 0.52rem; }
@@ -1346,7 +1371,6 @@
   }
 
   @media (max-width: 420px) {
-    .weekly-day { min-width: 68px; }
     .weekly-score-num { font-size: 0.7rem; }
     .weekly-score-bar-track { height: 26px; }
   }
@@ -1457,17 +1481,26 @@
   .notif-clear-btn { background: rgba(255,255,255,0.07); color: var(--muted); border: 1px solid var(--border); }
   .notif-clear-btn:hover { color: var(--text); }
   .notif-status { font-size: 0.74rem; color: var(--muted); margin-top: 6px; min-height: 18px; }
-  .notif-hint { font-size: 0.7rem; color: var(--fair); margin-top: 4px; line-height: 1.4; }
 
   /* ════════════════════════════════════
      RED NIGHT-VISION MODE
   ════════════════════════════════════ */
-  /* ── RED NIGHT-VISION: filter entire <html> so every element turns red ── */
-  html.red-mode {
-    filter: grayscale(1) sepia(1) hue-rotate(320deg) saturate(10) brightness(0.62);
-    background: #0a0000;
+  /* ════ TRUE RED NIGHT-VISION MODE ════
+     grayscale→sepia→hue-rotate→saturate pipeline removes ALL non-red color.
+     Applied to every visible layer so no blue/green/cyan survives. */
+  body.red-mode #starfield {
+    filter: grayscale(1) sepia(1) hue-rotate(320deg) saturate(12) brightness(0.45);
   }
-  html.red-mode body { background: #0a0000; }
+  body.red-mode .site-wrap,
+  body.red-mode header,
+  body.red-mode #subNav,
+  body.red-mode #locationBar {
+    filter: grayscale(1) sepia(1) hue-rotate(320deg) saturate(10) brightness(0.65);
+  }
+  /* Remove filter from canvas elements inside site-wrap that have their own */
+  body.red-mode canvas { filter: none; }
+  /* Tone down panel backgrounds */
+  body.red-mode { background: #0a0000; }
 
   /* ════════════════════════════════════
      CONSTELLATIONS PAGE
@@ -2023,79 +2056,40 @@
   }
 
 
-  /* ── LIGHT POLLUTION PAGE ── */
-  .lpm-frame-panel { padding: 0; overflow: hidden; margin-bottom: 16px; }
-
-  .lpm-frame-bar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 11px 18px; border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.02); flex-wrap: wrap; gap: 8px;
-  }
-
-  .lpm-frame-title {
-    display: flex; align-items: center; gap: 8px;
-    font-family: 'Orbitron', monospace; font-size: 0.64rem;
-    letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase;
-  }
-
-  .lpm-newwin-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(56,217,245,0.08); border: 1px solid rgba(56,217,245,0.25);
-    color: var(--cyan); font-size: 0.74rem; font-weight: 600;
-    font-family: 'Outfit', sans-serif; padding: 6px 14px; border-radius: 8px;
-    text-decoration: none; transition: background 0.2s;
-    -webkit-tap-highlight-color: transparent; white-space: nowrap;
-  }
-  .lpm-newwin-btn:hover { background: rgba(56,217,245,0.16); }
-
-  .lpm-frame-container { position: relative; }
-
-  #lpmIframe {
-    display: block; width: 100%; height: 640px;
-    border: none; background: #08111e;
-  }
-
-  .lpm-frame-fallback {
-    display: none; flex-direction: column; align-items: center;
-    justify-content: center; text-align: center; padding: 56px 24px;
-    color: var(--muted); min-height: 300px;
-  }
-
-  .lpm-bortle-card { padding: 22px 28px; margin-top: 16px; }
-  .lpm-bortle-inner { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
-  .lpm-b-label { font-family: 'Orbitron',monospace; font-size: 0.6rem; letter-spacing: 0.18em; color: var(--cyan); text-transform: uppercase; margin-bottom: 4px; }
-  .lpm-b-class { font-family: 'Orbitron',monospace; font-size: 2.4rem; font-weight: 800; color: #fff; line-height: 1; }
-  .lpm-b-name  { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
-  .lpm-b-stats { display: flex; gap: 24px; flex-wrap: wrap; }
-  .lpm-b-val   { font-family: 'Orbitron',monospace; font-size: 0.9rem; font-weight: 700; color: var(--cyan); margin-bottom: 3px; }
-  .lpm-b-lbl   { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
-  .lpm-b-scale { flex: 1; min-width: 160px; }
-  .lpm-b-bar   { height: 8px; border-radius: 4px; background: linear-gradient(90deg,#9b59b6,#2980b9,#27ae60,#f39c12,#e74c3c); position: relative; margin-bottom: 5px; }
-  .lpm-b-pointer { position: absolute; top: -6px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; background: var(--cyan); transform: translateX(-50%); left: 0%; transition: left 0.6s ease, background 0.4s ease; }
-  .lpm-b-scale-ends { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--muted); }
-
-  @media (max-width: 780px) {
-    #lpmIframe { height: 440px; }
-    .lpm-bortle-inner { gap: 20px; }
-    .lpm-b-class { font-size: 1.9rem; }
-    .lpm-frame-bar { padding: 10px 14px; }
-  }
-  @media (max-width: 420px) {
-    #lpmIframe { height: 340px; }
-  }
-
-
-  .location-bar-refresh {
-    display: flex; align-items: center; gap: 5px;
-    background: none; border: 1px solid var(--border); border-radius: 7px;
-    color: var(--muted); font-family: 'Outfit', sans-serif; font-size: 0.75rem;
-    font-weight: 600; padding: 5px 10px; cursor: pointer;
-    transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+  /* ════ LIGHT POLLUTION PAGE ════ */
+  .lpm-hero-panel { padding: 28px 32px 28px; margin-bottom: 20px; }
+  .lpm-hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .lpm-label { font-family: 'Orbitron',monospace; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--cyan); text-transform: uppercase; margin-bottom: 8px; }
+  .lpm-bortle-big { font-family: 'Orbitron',monospace; font-size: 3.5rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 6px; }
+  .lpm-bortle-name { font-size: 1rem; font-weight: 500; color: var(--text); margin-bottom: 8px; }
+  .lpm-sqm-row { font-size: 0.8rem; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .lpm-sqm-row strong { color: var(--text); }
+  .lpm-scale-wrap { width: 100%; }
+  .lpm-scale-bar { height: 10px; border-radius: 5px; background: linear-gradient(90deg,#9b59b6,#2980b9,#27ae60,#f39c12,#e74c3c); position: relative; margin-bottom: 6px; }
+  .lpm-scale-pointer { position: absolute; top: -5px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; background: var(--cyan); transform: translateX(-50%); transition: left 0.8s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 0 8px rgba(56,217,245,0.6); }
+  .lpm-scale-labels { display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--muted); }
+  .lpm-scale-labels small { display: block; font-size: 0.58rem; }
+  .lpm-drive-title { font-family: 'Orbitron',monospace; font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .lpm-drive-row { display: flex; gap: 24px; margin-bottom: 20px; }
+  .lpm-drive-val { font-family: 'Orbitron',monospace; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .lpm-drive-lbl { font-size: 0.68rem; color: var(--muted); }
+  .lpm-open-btn-wrap { margin-top: 4px; }
+  .lpm-open-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(56,217,245,0.1); border: 1px solid rgba(56,217,245,0.3);
+    color: var(--cyan); font-size: 0.8rem; font-weight: 600; font-family: 'Outfit',sans-serif;
+    padding: 11px 20px; border-radius: 10px; text-decoration: none;
+    transition: background 0.2s, box-shadow 0.2s; letter-spacing: 0.04em;
     -webkit-tap-highlight-color: transparent;
   }
-  .location-bar-refresh:hover { color: var(--cyan); border-color: var(--cyan); }
-  .location-bar-refresh.spinning svg { animation: spinRefresh 0.8s linear infinite; }
-  @keyframes spinRefresh { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .lpm-open-btn:hover { background: rgba(56,217,245,0.18); box-shadow: 0 0 16px rgba(56,217,245,0.25); }
+  .lpm-credit { font-size: 0.74rem; color: var(--muted); line-height: 1.55; margin-top: 10px; }
+
+  @media (max-width: 780px) {
+    .lpm-hero-grid { grid-template-columns: 1fr; gap: 20px; }
+    .lpm-hero-panel { padding: 20px; }
+    .lpm-bortle-big { font-size: 2.8rem; }
+  }
 
 </style>
 </head>
@@ -2120,6 +2114,10 @@
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="display:inline-block;vertical-align:-1px;margin-right:5px"><path d="M10.5 7.5A5 5 0 0 1 5.5 2.5a5 5 0 1 0 5 5z"/></svg>
         Moon
       </a>
+      <a href="#" class="nav-link" data-page="lightpollution" onclick="switchPage(event,'lightpollution')">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="display:inline-block;vertical-align:-1px;margin-right:5px"><circle cx="6.5" cy="6.5" r="5"/><path d="M6.5 3v3.5l2.5 1.5"/><path d="M1.5 6.5h1M11.5 6.5h-1M6.5 1.5v1M6.5 11.5v-1"/></svg>
+        Light Pollution
+      </a>
       <a href="#" class="nav-link" data-page="about" onclick="switchPage(event,'about')">About</a>
     </nav>
     <div class="header-tools">
@@ -2139,11 +2137,10 @@
           <input type="number" id="notifThreshold" class="notif-input" min="1" max="100" value="75" />
         </div>
         <div class="notif-row" style="gap:8px">
-          <button class="notif-save-btn" onclick="saveNotifSettings()">Enable</button>
+          <button class="notif-save-btn" onclick="saveNotifSettings()">Enable Alerts</button>
           <button class="notif-clear-btn" onclick="clearNotif()">Disable</button>
         </div>
         <div id="notifStatus" class="notif-status"></div>
-        <div id="notifHint" class="notif-hint" style="display:none"></div>
       </div>
       <!-- Red Mode Toggle -->
       <button class="tool-btn" id="redModeBtn" onclick="toggleRedMode()" title="Red night-vision mode">
@@ -2229,15 +2226,6 @@
         <circle cx="6" cy="5.5" r="1.6" fill="var(--cyan)" stroke="none"/>
       </svg>
       <span id="locationBarText"></span>
-      <button class="location-bar-refresh" id="refreshNowBtn" onclick="manualRefresh()" title="Refresh forecast now">
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11.5 2.5A5.5 5.5 0 0 0 1 6.5"/>
-          <path d="M1.5 10.5A5.5 5.5 0 0 0 12 6.5"/>
-          <polyline points="11.5 0 11.5 3 8.5 3"/>
-          <polyline points="1.5 13 1.5 10 4.5 10"/>
-        </svg>
-        Refresh
-      </button>
       <button class="location-bar-change" onclick="goHome(event)">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
           <circle cx="5" cy="5" r="3.8"/>
@@ -2294,15 +2282,15 @@
       <div class="detail-chips">
         <div class="chip">
           <span class="chip-label">Sunset</span>
-          <span class="chip-value highlight" id="sunsetChip">—</span>
+          <span class="chip-value highlight">7:42 PM</span>
         </div>
         <div class="chip">
           <span class="chip-label">Sunrise</span>
-          <span class="chip-value highlight" id="sunriseChip">—</span>
+          <span class="chip-value highlight">5:58 AM</span>
         </div>
         <div class="chip">
           <span class="chip-label">Dark Until</span>
-          <span class="chip-value" id="darkUntilChip">—</span>
+          <span class="chip-value">9:14 PM</span>
         </div>
         <div class="chip">
           <span class="chip-label">Bortle</span>
@@ -3326,6 +3314,83 @@
     </div>
   </div><!-- /page-moon -->
 
+
+  <!-- ══════════════════════════════════════════════════════════
+       PAGE: LIGHT POLLUTION MAP
+  ══════════════════════════════════════════════════════════ -->
+  <div class="page-section" id="page-lightpollution">
+    <div class="page-hero">
+      <h2 class="page-h1">Light <em>Pollution</em></h2>
+      <p class="page-sub">Sky brightness and Bortle class for <span id="lpm-location">your location</span></p>
+    </div>
+
+    <!-- LOCATION BORTLE HERO -->
+    <div class="panel lpm-hero-panel" id="lpmHeroPanel">
+      <div class="lpm-hero-grid">
+        <div class="lpm-hero-left">
+          <div class="lpm-label">YOUR LOCATION SKY QUALITY</div>
+          <div class="lpm-bortle-big" id="lpmBortleNum">—</div>
+          <div class="lpm-bortle-name" id="lpmBortleName">Search a location to begin</div>
+          <div class="lpm-sqm-row">
+            <span>SQM: <strong id="lpmSQM">—</strong></span>
+            <span>Limiting magnitude: <strong id="lpmMagLim">—</strong></span>
+          </div>
+          <div class="lpm-scale-wrap">
+            <div class="lpm-scale-bar">
+              <div class="lpm-scale-pointer" id="lpmScalePointer" style="left:50%"></div>
+            </div>
+            <div class="lpm-scale-labels">
+              <span>1<br/><small>Darkest</small></span>
+              <span>3</span>
+              <span>5</span>
+              <span>7</span>
+              <span>9<br/><small>Brightest</small></span>
+            </div>
+          </div>
+        </div>
+        <div class="lpm-hero-right">
+          <div class="lpm-drive-title">Est. drive to darker skies</div>
+          <div class="lpm-drive-row" id="lpmDriveRow">
+            <div class="lpm-drive-item"><div class="lpm-drive-val" id="lpmDrive3">—</div><div class="lpm-drive-lbl">Bortle 3–4</div></div>
+            <div class="lpm-drive-item"><div class="lpm-drive-val" id="lpmDrive2">—</div><div class="lpm-drive-lbl">Bortle 2</div></div>
+            <div class="lpm-drive-item"><div class="lpm-drive-val" id="lpmDrive1">—</div><div class="lpm-drive-lbl">Bortle 1</div></div>
+          </div>
+          <div class="lpm-open-btn-wrap">
+            <a href="https://lightpollutionmap.app/" target="_blank" rel="noopener" class="lpm-open-btn" id="lpmOpenBtn">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V8"/><polyline points="9 1 13 1 13 5"/><line x1="5" y1="9" x2="13" y2="1"/></svg>
+              Open Full Map — lightpollutionmap.app
+            </a>
+            <p class="lpm-credit">Interactive light pollution map powered by NOAA VIIRS annual satellite data. Bortle scale overlay, SQM readings, dark sky location finder, aurora forecast, and historical data back to 2012.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BORTLE REFERENCE SCALE -->
+    <div class="bortle-title" style="margin-top:24px">Bortle Scale Reference</div>
+    <div class="bortle-grid">
+      <div class="bortle-card" style="--bortle-col:#9b59b6"><div class="bortle-num" style="color:#9b59b6">Class 1</div><div class="bortle-name">Zodiacal Light visible</div><div class="bortle-sky">Truly dark sky</div><p class="bortle-desc">The Zodiacal Light is prominent and M33 is visible with the naked eye. The gegenschein is easily seen.</p></div>
+      <div class="bortle-card" style="--bortle-col:#2980b9"><div class="bortle-num" style="color:#2980b9">Class 2</div><div class="bortle-name">Typical dark site</div><div class="bortle-sky">Truly dark sky</div><p class="bortle-desc">Airglow weakly visible near horizon. M33 directly visible. Milky Way shows extensive structure.</p></div>
+      <div class="bortle-card" style="--bortle-col:#27ae60"><div class="bortle-num" style="color:#27ae60">Class 3</div><div class="bortle-name">Rural sky</div><div class="bortle-sky">Rural</div><p class="bortle-desc">Some light pollution domes visible on horizon. Milky Way shows complex structure overhead.</p></div>
+      <div class="bortle-card" style="--bortle-col:#8bc34a"><div class="bortle-num" style="color:#8bc34a">Class 4</div><div class="bortle-name">Rural/suburban</div><div class="bortle-sky">Rural/suburban</div><p class="bortle-desc">Light pollution visible in several directions. Milky Way still impressive but lacks detail near horizon.</p></div>
+      <div class="bortle-card" style="--bortle-col:#f39c12"><div class="bortle-num" style="color:#f39c12">Class 5</div><div class="bortle-name">Suburban sky</div><div class="bortle-sky">Suburban</div><p class="bortle-desc">Milky Way is washed out near horizon. Light pollution glow obvious in multiple directions.</p></div>
+      <div class="bortle-card" style="--bortle-col:#e67e22"><div class="bortle-num" style="color:#e67e22">Class 6</div><div class="bortle-name">Bright suburban</div><div class="bortle-sky">Bright suburban</div><p class="bortle-desc">Milky Way only visible near zenith. Most Messier objects visible with binoculars.</p></div>
+      <div class="bortle-card" style="--bortle-col:#e74c3c"><div class="bortle-num" style="color:#e74c3c">Class 7</div><div class="bortle-name">Suburban/urban</div><div class="bortle-sky">Suburban/urban</div><p class="bortle-desc">Sky background gray to orange. Milky Way barely visible. Bright Messier objects visible in small scopes.</p></div>
+      <div class="bortle-card" style="--bortle-col:#c0392b"><div class="bortle-num" style="color:#c0392b">Class 8–9</div><div class="bortle-name">City sky</div><div class="bortle-sky">Urban / Inner city</div><p class="bortle-desc">Sky bright gray or orange. Milky Way invisible. Only bright clusters and double stars visible.</p></div>
+    </div>
+
+    <!-- DARK SKY TIPS -->
+    <div class="panel dark-tips-panel" style="margin-top:20px">
+      <div class="panel-header"><span class="panel-title">Finding Dark Skies</span></div>
+      <div class="dark-tips-grid">
+        <div class="dark-tip"><div class="dark-tip-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="9"/><path d="M11 6v5l3 2"/></svg></div><div class="dark-tip-text"><strong>Time it right</strong><br/>New moon nights offer the darkest skies. The 5 nights before and after new moon add roughly 20% more visible sky.</div></div>
+        <div class="dark-tip"><div class="dark-tip-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><path d="M3 11h18M11 3v18"/><circle cx="11" cy="11" r="3"/></svg></div><div class="dark-tip-text"><strong>Head west or north</strong><br/>Light pollution domes stretch east from population centers. Driving west often yields the fastest improvement in sky quality.</div></div>
+        <div class="dark-tip"><div class="dark-tip-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><path d="M11 3C6.5 3 3 6.5 3 11s3.5 8 8 8 8-3.5 8-8-3.5-8-8-8z"/><path d="M8 11h6M11 8v6"/></svg></div><div class="dark-tip-text"><strong>Gain elevation</strong><br/>Even 2,000 ft above your city puts you above valley haze and light domes. Transparency and limiting magnitude improve measurably.</div></div>
+        <div class="dark-tip"><div class="dark-tip-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M5 19a6 6 0 0 1 12 0"/></svg></div><div class="dark-tip-text"><strong>Dark-adapt fully</strong><br/>Full dark adaptation takes 20–30 minutes. Any white light resets the process. Use a red flashlight and avoid looking at your phone screen.</div></div>
+      </div>
+    </div>
+  </div><!-- /page-lightpollution -->
+
   <!-- ══════════════════════════════════════════════════════════
        PAGE: ABOUT
   ══════════════════════════════════════════════════════════ -->
@@ -3367,14 +3432,36 @@
         </div>
         <h3 class="about-card-title">Data Sources</h3>
         <div class="source-list">
-          <div class="source-row"><div class="source-name">Open-Meteo Weather API</div><div class="source-desc">Hourly cloud cover, wind (10 m &amp; 180 m), humidity, temperature (°F), visibility, and precipitation. 48-hour forecasts using Unix timestamps. Models: ECMWF, GFS, ICON. Free, no API key.</div></div>
-          <div class="source-row"><div class="source-name">Open-Meteo Geocoding API</div><div class="source-desc">Forward geocoding — resolves city names and zip codes to lat/lon, elevation, timezone, and population. Powers the search autocomplete (6 candidates per keystroke).</div></div>
-          <div class="source-row"><div class="source-name">BigDataCloud Reverse Geocoding</div><div class="source-desc">Converts GPS coordinates to city/state/country text for "Use my location," and provides county-level population as a Bortle fallback when VIIRS is unavailable. Free, no key.</div></div>
-          <div class="source-row"><div class="source-name">NOAA VIIRS — ArcGIS ImageServer</div><div class="source-desc">Annual nighttime radiance composites (VIIRS/NighttimeLightsMDNB) via the ArcGIS ic.img.arcgis.com REST identify endpoint. Primary source for Bortle class, SQM, and the Light Pollution factor in the viewing score.</div></div>
-          <div class="source-row"><div class="source-name">Celestrak — NORAD TLE Data</div><div class="source-desc">Fresh Two-Line Element sets for the ISS (NORAD #25544). Propagated with satellite.js v4.1.3 SGP4 to predict passes ≥ 10° elevation for the next 24 hours.</div></div>
-          <div class="source-row"><div class="source-name">Astronomy Engine v2.1.19</div><div class="source-desc">All celestial mechanics: moon phase, rise/set/transit for Sun, Moon, and planets, astronomical twilight (SearchAltitude at −18°), and deep-sky altitude. Times localised to searched location's IANA timezone.</div></div>
-          <div class="source-row"><div class="source-name">NASA Image and Video Library</div><div class="source-desc">Planetary photography (Mercury–Neptune), eight moon phase images, ISS photo, and deep-sky images in the Astro Planner. Moon anatomy diagram from public-domain astrophotography.</div></div>
+          <div class="source-row">
+            <div class="source-name">Open-Meteo Weather API</div>
+            <div class="source-desc">Primary weather data — cloud cover, wind speed (10m and 180m), humidity, temperature (°F), visibility, precipitation, and weather codes. Fetches 48-hour hourly forecasts using Unix timestamps for timezone-safe processing. Updated from ECMWF, GFS, and ICON models. Free, open-source, no API key.</div>
+          </div>
+          <div class="source-row">
+            <div class="source-name">Open-Meteo Geocoding API</div>
+            <div class="source-desc">Forward geocoding for location search — resolves city names, zip codes, and partial queries to canonical place names with latitude, longitude, timezone, elevation, and city population. Returns up to 6 autocomplete suggestions per keystroke.</div>
+          </div>
+          <div class="source-row">
+            <div class="source-name">BigDataCloud Reverse Geocoding</div>
+            <div class="source-desc">Used for two purposes: (1) converting GPS coordinates to a readable city/state/country name when using the "Use my location" button, and (2) retrieving county-level population data for accurate Bortle class estimation — city populations alone significantly underestimate light pollution in suburban areas.</div>
+          </div>
+          <div class="source-row">
+            <div class="source-name">Celestrak — NORAD TLE Data</div>
+            <div class="source-desc">Two-Line Element sets for the International Space Station (NORAD catalog #25544). Propagated client-side using satellite.js v4.1.3 to compute real-time ISS position and predict all visible passes for the next 24 hours from any location. Passes below 10° elevation are filtered out.</div>
+          </div>
+          <div class="source-row">
+            <div class="source-name">Astronomy Engine v2.1.19</div>
+            <div class="source-desc">All on-device celestial mechanics: moon phase, illumination percentage, planet altitude/azimuth/magnitude, rise/set/transit times for the Sun, Moon, and all planets, solar twilight calculations, and deep sky object position tracking. All times formatted in the searched location's IANA timezone.</div>
+          </div>
+          <div class="source-row">
+            <div class="source-name">NOAA VIIRS (via lightpollutionmap.app)</div>
+            <div class="source-desc">Annual satellite radiance data from NOAA's Visible Infrared Imaging Radiometer Suite. Used as the reference for the Bortle scale on the Light Pollution page. The BigDataCloud county population model approximates this data for any searched location.</div>
+          </div>
+          <div class="source-row">
+            <div class="source-name">NASA Image and Video Library</div>
+            <div class="source-desc">Source for all planetary and deep-sky object photography: ISS photograph, all eight moon phase images, planet imagery (Mercury through Neptune), and nebula/galaxy images in the Astrophotography Planner. Constellation images by independent astrophotographers.</div>
+          </div>
         </div>
+      </div>
 
       <!-- FAQ -->
       <div class="panel about-card about-card-wide">
@@ -3400,31 +3487,7 @@
           </div>
           <div class="faq-item">
             <div class="faq-q">Can I use AstronoSight for astrophotography planning?</div>
-            <div class="faq-a">Yes — the Astro Planner tab lists 10 deep-sky targets with recommended focal lengths, exposures, and ISO settings. The atmospheric factors panel shows transparency and seeing independently so you can judge whether conditions suit wide-field imaging or high-resolution planetary work.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">What is the Bortle scale and how does it affect my score?</div>
-            <div class="faq-a">The Bortle scale runs from 1 (truly dark, remote desert) to 9 (inner city). AstronoSight fetches your sky brightness from the NOAA VIIRS nighttime satellite dataset via ArcGIS, then converts to Bortle class. This contributes 8% of your viewing score — enough to distinguish a dark rural site from a suburban one, but balanced so a perfectly clear city night isn't unfairly penalised.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">What does "Dark Until" mean on the forecast card?</div>
-            <div class="faq-a">"Dark Until" shows the end of astronomical twilight — when the Sun drops 18° below the horizon and the sky reaches true nighttime darkness. Before this time, scattered sunlight still washes out faint nebulae. This is the earliest you should start serious deep-sky work. It's calculated in real time by Astronomy Engine for your exact coordinates and date.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Why does my location show "BigDataCloud" instead of VIIRS data?</div>
-            <div class="faq-a">The ArcGIS VIIRS endpoint covers global data but can occasionally return no result for remote ocean coordinates or rate-limited requests. When that happens, AstronoSight falls back to a county-level population model from BigDataCloud. The source label on the Dark Sites and Forecast pages always shows which method was used.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">How accurate are the ISS pass predictions?</div>
-            <div class="faq-a">ISS passes use fresh TLE data from Celestrak, propagated with satellite.js SGP4 directly in your browser. Accuracy is typically within 30 seconds for passes in the next 24 hours. Passes below 10° elevation are filtered out since horizon obstructions usually block these. TLE accuracy decreases slightly for passes further in the future due to atmospheric drag variability.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Is AstronoSight free? Do I need an account?</div>
-            <div class="faq-a">Completely free. AstronoSight runs entirely in your browser with no account, no subscription, and no ads. All APIs used (Open-Meteo, Celestrak, BigDataCloud, ArcGIS VIIRS) are free or open-source. Your location is only used to fetch current data and is never stored on any server.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Can I see the planets with just binoculars?</div>
-            <div class="faq-a">Absolutely. Venus, Mars, Jupiter, and Saturn show significant detail even in 10×50 binoculars — Jupiter's moons are visible, Saturn's rings are resolved at 20×+, and Mars shows polar cap hints near opposition. Uranus is a naked-eye object in dark skies (magnitude ~5.7). The planet panel shows current altitude, magnitude, and rise/set times so you know exactly what's accessible tonight.</div>
+            <div class="faq-a">Yes — the graph shows score hour-by-hour from sunset to sunrise. Look for the highest scoring window and cross-reference with object altitude using the Deep Sky page. The peak label marks the best single hour of the night.</div>
           </div>
         </div>
       </div>
@@ -3439,18 +3502,18 @@
         <span class="footer-version">v1.0.0</span>
       </div>
       <div class="footer-links">
-        <span onclick="switchPage(null,'about')" style="cursor:pointer">About</span>
-        <span onclick="showFooterModal('privacy')" style="cursor:pointer">Privacy</span>
-        <span onclick="window.open('https://open-meteo.com/en/docs','_blank')" style="cursor:pointer">API Access</span>
-        <span onclick="showFooterModal('feedback')" style="cursor:pointer">Feedback</span>
+        <span>About</span>
+        <span>Privacy</span>
+        <span>API Access</span>
+        <span>Feedback</span>
       </div>
       <div class="footer-sections">
-        <span onclick="footerNav('forecast')" style="cursor:pointer">Forecast</span>
-        <span onclick="footerNav('deepsky')" style="cursor:pointer">Deep Sky</span>
-        <span onclick="footerNav('satellites')" style="cursor:pointer">Satellites</span>
-        <span onclick="footerNav('constellations')" style="cursor:pointer">Constellations</span>
-        <span onclick="footerNav('astroplanner')" style="cursor:pointer">Astro Planner</span>
-        <span onclick="footerNav('darksites')" style="cursor:pointer">Dark Sites</span>
+        <span>Forecast</span>
+        <span>Deep Sky</span>
+        <span>Satellites</span>
+        <span>Constellations</span>
+        <span>Astro Planner</span>
+        <span>Dark Sites</span>
       </div>
       <div class="footer-data">
         Weather: <span>Open-Meteo</span> &nbsp;·&nbsp;
@@ -3999,10 +4062,10 @@ async function renderWeeklyOutlook(lat, lon, timezone) {
    RED NIGHT-VISION MODE
 ════════════════════════════════════ */
 function toggleRedMode() {
-  const root = document.documentElement;
+  const body = document.body;
   const btn = document.getElementById('redModeBtn');
-  root.classList.toggle('red-mode');
-  const on = root.classList.contains('red-mode');
+  body.classList.toggle('red-mode');
+  const on = body.classList.contains('red-mode');
   btn.classList.toggle('active', on);
   btn.title = on ? 'Exit night-vision mode' : 'Red night-vision mode';
   localStorage.setItem('redMode', on ? '1' : '');
@@ -4010,7 +4073,10 @@ function toggleRedMode() {
   if (typeof drawGraph === 'function' && document.getElementById('viewGraph')) setTimeout(drawGraph, 50);
 }
 // Restore on load
-// Red mode: session only, not persisted
+if (localStorage.getItem('redMode')) {
+  document.body.classList.add('red-mode');
+  document.getElementById('redModeBtn')?.classList.add('active');
+}
 
 /* ════════════════════════════════════
    NOTIFICATION / ALERT SYSTEM
@@ -4041,39 +4107,34 @@ function toggleNotifPanel() {
 async function saveNotifSettings() {
   const threshold = parseInt(document.getElementById('notifThreshold').value) || 75;
   const status = document.getElementById('notifStatus');
-  const hint   = document.getElementById('notifHint');
+
+  if (!('Notification' in window)) {
+    status.textContent = 'Notifications not supported in this browser.';
+    return;
+  }
+
+  let perm = Notification.permission;
+  if (perm === 'default') perm = await Notification.requestPermission();
+
+  if (perm === 'denied') {
+    status.textContent = 'Permission denied. Enable in browser settings.';
+    return;
+  }
+
   _notifThreshold = threshold;
   _notifEnabled   = true;
   _notifChecked   = false;
   localStorage.setItem('notifThreshold', threshold);
   document.getElementById('notifDot').style.display = 'block';
   document.getElementById('notifBtn').classList.add('active');
-
-  // Try native push (needs HTTPS)
-  if ('Notification' in window && location.protocol === 'https:') {
-    let perm = Notification.permission;
-    if (perm === 'default') {
-      try { perm = await Notification.requestPermission(); } catch(e) { perm = 'denied'; }
-    }
-    if (perm === 'granted') {
-      status.style.color = 'var(--good)';
-      status.textContent = `✓ Push + in-app alerts when score > ${threshold}`;
-      if (hint) hint.style.display = 'none';
-      try { new Notification('AstronoSight Alerts Active', { body: `Push alerts enabled for score > ${threshold}.` }); } catch(e) {}
-      return;
-    }
-    if (perm === 'denied' && hint) {
-      hint.textContent = 'Push blocked — allow notifications in browser settings for background alerts.';
-      hint.style.display = 'block';
-    }
-  }
-  // HTTP / file:// fallback — in-app banner works everywhere
   status.style.color = 'var(--good)';
-  status.textContent = `✓ In-app alerts set for score > ${threshold}`;
-  if (hint && location.protocol !== 'https:') {
-    hint.textContent = 'Serve over HTTPS to also enable push notifications.';
-    hint.style.display = 'block';
-  }
+  status.textContent = `✓ Alert set for score > ${threshold}`;
+
+  // Test notification
+  new Notification('AstroSight Alerts Active', {
+    body: `You will be notified when the viewing score exceeds ${threshold}.`,
+    icon: ''
+  });
 }
 
 function clearNotif() {
@@ -4088,21 +4149,12 @@ function clearNotif() {
 }
 
 function checkNotification(score) {
-  if (!_notifEnabled || _notifChecked) return;
+  if (!_notifEnabled || _notifChecked || Notification.permission !== 'granted') return;
   if (score >= _notifThreshold) {
     _notifChecked = true;
-    // In-app banner — works on all browsers and protocols
-    const banner = document.getElementById('skyAlertBanner');
-    const msg    = document.getElementById('skyAlertMsg');
-    if (banner && msg) {
-      msg.textContent = `Score is ${score}/100 — exceeds your threshold of ${_notifThreshold}. Clear skies!`;
-      banner.style.display = 'block';
-      setTimeout(() => { if (banner) banner.style.display = 'none'; }, 12000);
-    }
-    // Push if granted (HTTPS)
-    if (Notification?.permission === 'granted') {
-      try { new Notification('AstronoSight — Great Viewing Tonight!', { body: `Score ${score}/100 exceeds threshold of ${_notifThreshold}.` }); } catch(e) {}
-    }
+    new Notification('AstroSight — Great Viewing Tonight!', {
+      body: `Current viewing score is ${score} — conditions exceed your threshold of ${_notifThreshold}. Clear skies!`,
+    });
   }
 }
 
@@ -4338,99 +4390,37 @@ function updateObjectOfNight(lat, lon, timezone) {
 renderObjectOfNight(pickObjectOfNight());
 
 
-/* ── LIGHT POLLUTION PAGE ── */
-(function(){
-  function initLPM() {
-    const iframe = document.getElementById('lpmIframe');
-    const fallback = document.getElementById('lpmFallback');
-    if (!iframe) return;
-    let ok = false;
-    iframe.addEventListener('load', function() {
-      ok = true;
-      try {
-        // If browser blocked the frame, contentDocument will be accessible but empty
-        const d = iframe.contentDocument || iframe.contentWindow.document;
-        if (d && d.body && d.body.innerHTML.trim() === '') {
-          iframe.style.display = 'none';
-          if (fallback) fallback.style.display = 'flex';
-        }
-      } catch(e) { /* cross-origin success — content loaded fine */ }
-    });
-    // 10s timeout fallback
-    setTimeout(function() {
-      if (!ok && fallback) {
-        iframe.style.display = 'none';
-        fallback.style.display = 'flex';
-      }
-    }, 10000);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLPM);
-  else initLPM();
-})();
-
+/* ════ LIGHT POLLUTION MAP PAGE ════ */
 function updateLPMPage(bortle, sqm, locText) {
-  const bColors = {1:'#9b59b6',2:'#2980b9',3:'#27ae60',4:'#8bc34a',5:'#f39c12',6:'#e67e22',7:'#e74c3c',8:'#c0392b',9:'#922b21'};
-  const bNames  = {1:'Truly dark sky',2:'Truly dark sky',3:'Rural sky',4:'Rural/suburban',5:'Suburban sky',6:'Bright suburban',7:'Suburban/urban',8:'City sky',9:'Inner city sky'};
-  const col = bColors[bortle] || '#fff';
-  const el = (id) => document.getElementById(id);
-  if (el('lpmBortleNum'))  { el('lpmBortleNum').textContent = 'Class ' + bortle; el('lpmBortleNum').style.color = col; }
-  if (el('lpmBortleName')) el('lpmBortleName').textContent = bNames[bortle] || '—';
-  if (el('lpmSQM'))        el('lpmSQM').textContent = sqm.toFixed(1);
-  if (el('lpmMagLim'))     el('lpmMagLim').textContent = ((sqm - 9.5) * 1.4 + 2).toFixed(1);
-  if (el('lpmDrive3'))     el('lpmDrive3').textContent = '~' + Math.max(5, (bortle - 2) * 15) + ' mi';
-  if (el('lpmDrive1'))     el('lpmDrive1').textContent = '~' + Math.max(25, bortle * 35) + ' mi';
-  if (el('lpmBortlePtr'))  { el('lpmBortlePtr').style.left = ((bortle-1)/8*100) + '%'; el('lpmBortlePtr').style.background = col; }
-}
+  const bortleColors = {1:'#9b59b6',2:'#2980b9',3:'#27ae60',4:'#8bc34a',5:'#f39c12',6:'#e67e22',7:'#e74c3c',8:'#c0392b',9:'#922b21'};
+  const bortleNames  = {1:'Truly dark sky',2:'Truly dark sky',3:'Rural sky',4:'Rural/suburban',5:'Suburban sky',6:'Bright suburban',7:'Suburban/urban',8:'City sky',9:'Inner city sky'};
+  const col = bortleColors[bortle] || '#fff';
 
+  const numEl  = document.getElementById('lpmBortleNum');
+  const nameEl = document.getElementById('lpmBortleName');
+  const sqmEl  = document.getElementById('lpmSQM');
+  const magEl  = document.getElementById('lpmMagLim');
+  const ptr    = document.getElementById('lpmScalePointer');
+  const locEl  = document.getElementById('lpm-location');
+  const d3El   = document.getElementById('lpmDrive3');
+  const d2El   = document.getElementById('lpmDrive2');
+  const d1El   = document.getElementById('lpmDrive1');
 
-function manualRefresh() {
-  const btn = document.getElementById('refreshNowBtn');
-  const q   = liveState?.query;
-  const loc = liveState?.preResolved;
-  if (!q) return;
-  if (btn) btn.classList.add('spinning');
-  refreshEverything(q, false, loc)
-    .catch(() => {})
-    .finally(() => { if (btn) btn.classList.remove('spinning'); });
-}
+  if (locEl) locEl.textContent = locText || '—';
+  if (numEl) { numEl.textContent = `Class ${bortle}`; numEl.style.color = col; }
+  if (nameEl) nameEl.textContent = bortleNames[bortle] || '—';
+  if (sqmEl) sqmEl.textContent = sqm.toFixed(1);
+  const mag = ((sqm - 9.5) * 1.4 + 2).toFixed(1);
+  if (magEl) magEl.textContent = mag;
+  if (ptr) { ptr.style.left = `${((bortle - 1) / 8) * 100}%`; ptr.style.background = col; }
 
-function footerNav(page) {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  const rw = document.getElementById('resultsWrap');
-  if (rw && rw.style.display === 'none' && page !== 'about') {
-    const input = document.getElementById('locationInput');
-    if (input) input.focus();
-    return;
-  }
-  switchPage(null, page);
-}
-
-const FOOTER_CONTENT = {
-  privacy: `<h3 style="font-family:'Orbitron',monospace;font-size:0.9rem;color:#fff;margin-bottom:16px">PRIVACY POLICY</h3>
-    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:10px">AstronoSight runs entirely in your browser. No personal data, search history, or location is stored on any server.</p>
-    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:10px"><strong style="color:var(--text)">Location data</strong> — used only to fetch weather and astronomical data. Not logged or retained beyond the current session.</p>
-    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:10px"><strong style="color:var(--text)">Third-party APIs</strong> — Open-Meteo, BigDataCloud, Celestrak, and ArcGIS VIIRS are called with your coordinates. Each service has its own privacy policy.</p>
-    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7"><strong style="color:var(--text)">Local storage</strong> — only notification threshold is stored. No cookies, no tracking, no ads.</p>`,
-  feedback: `<h3 style="font-family:'Orbitron',monospace;font-size:0.9rem;color:#fff;margin-bottom:16px">SEND FEEDBACK</h3>
-    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:20px">Found a bug or have a feature idea?</p>
-    <a href="mailto:feedback@astronosight.com?subject=AstronoSight Feedback" style="display:flex;align-items:center;gap:10px;background:rgba(56,217,245,0.08);border:1px solid rgba(56,217,245,0.25);border-radius:10px;padding:14px 18px;text-decoration:none;color:var(--cyan);font-size:0.84rem;font-weight:600">
-      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="1" width="14" height="10" rx="2"/><path d="M1 3l7 4 7-4"/></svg>
-      Email Feedback
-    </a>`
-};
-
-function showFooterModal(type) {
-  const modal = document.getElementById('footerModal');
-  const content = document.getElementById('footerModalContent');
-  if (!modal || !content) return;
-  content.innerHTML = FOOTER_CONTENT[type] || '';
-  modal.style.display = 'flex';
-  modal.onclick = (e) => { if (e.target === modal) closeFooterModal(); };
-}
-
-function closeFooterModal() {
-  const m = document.getElementById('footerModal');
-  if (m) m.style.display = 'none';
+  // Drive estimates based on how far into a metro you are
+  const d3 = Math.max(5,  (bortle - 2) * 15);
+  const d2 = Math.max(15, (bortle - 1) * 25);
+  const d1 = Math.max(25, bortle * 35);
+  if (d3El) { d3El.textContent = `~${d3} mi`; d3El.style.color = '#27ae60'; }
+  if (d2El) { d2El.textContent = `~${d2} mi`; d2El.style.color = '#2980b9'; }
+  if (d1El) { d1El.textContent = `~${d1} mi`; d1El.style.color = '#9b59b6'; }
 }
 
 function filterDSO(btn, type) {
@@ -4485,8 +4475,7 @@ function filterDSO(btn, type) {
     weather: null,
     query: DEFAULT_LOCATION.name,
     refreshTimer: null,
-    tle: null,
-    lightPollutionPct: null
+    tle: null
   };
 
   function clamp(v, min, max) {
@@ -4645,50 +4634,38 @@ function filterDSO(btn, type) {
   // Sources: Cinzano & Falchi model — population density correlates strongly with sky glow
   // Fetch Bortle class using BigDataCloud's county-level population
   // County/metro population is far more accurate than city population for sky brightness
-  
-async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
+  async function fetchBortleFromCoords(lat, lon, elevationM) {
     try {
-      const endpoint = new URL('https://ic.img.arcgis.com/arcgis/rest/services/VIIRS/NighttimeLightsMDNB/ImageServer/identify');
-      endpoint.searchParams.set('f', 'json');
-      endpoint.searchParams.set('geometryType', 'esriGeometryPoint');
-      endpoint.searchParams.set('geometry', JSON.stringify({
-        x: lon,
-        y: lat,
-        spatialReference: { wkid: 4326 }
-      }));
-      endpoint.searchParams.set('returnGeometry', 'false');
-      endpoint.searchParams.set('returnCatalogItems', 'false');
-      endpoint.searchParams.set('returnPixelValues', 'true');
-      endpoint.searchParams.set('mosaicRule', JSON.stringify({ mosaicMethod: 'esriMosaicNone' }));
-
-      const res = await fetch(endpoint.toString());
-      if (!res.ok) return null;
+      const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
+      const res = await fetch(url);
       const data = await res.json();
 
-      const candidates = [
-        data?.value,
-        data?.results?.[0]?.value,
-        data?.results?.[0]?.attributes?.Raster_ServicePixelValue,
-        data?.samples?.[0]?.value,
-        data?.sampleResults?.[0]?.value,
-        data?.catalogItems?.features?.[0]?.attributes?.Raster_ServicePixelValue,
-        data?.pixel?.value,
-        data?.properties?.value
-      ].map(v => Number(v)).filter(v => Number.isFinite(v) && v >= 0);
+      const admin = data.localityInfo?.administrative || [];
+      // Filter out continent and country level (population > 50M)
+      const filtered = admin
+        .filter(a => (a.population || 0) < 50000000 && (a.population || 0) > 0)
+        .sort((a, b) => (b.population || 0) - (a.population || 0)); // largest first
 
-      const radiance = candidates.length ? candidates[0] : null;
-      if (radiance == null) return null;
+      // Use the second-largest non-country entry — this is typically the county/metro
+      // (e.g. Chandler → Maricopa County 4.4M, not Chandler city 241K)
+      // If only one entry, use it; if none, use city population from geocoding
+      const countyPop = filtered.length >= 2
+        ? filtered[1].population   // 2nd = county (1st is usually state in US)
+        : (filtered[0]?.population || 0);
 
-      const pct = Math.round((Math.log10(radiance + 1) / Math.log10(9)) * 100);
-      return Math.min(100, Math.max(0, pct));
+      // For truly rural areas, take the smallest available pop (most local)
+      // If county is < 10K, use the smallest non-zero entry (most local/accurate)
+      const smallestPop = filtered.length
+        ? filtered[filtered.length - 1].population || 0
+        : 0;
+
+      // Use smallest if it's rural (< 20K), otherwise use county-level
+      const pop = smallestPop > 0 && smallestPop < 20000 ? smallestPop : countyPop;
+
+      return estimateBortle(pop, elevationM || 0);
     } catch {
-      return null; // VIIRS unavailable — caller will use BigDataCloud fallback
+      return null; // null = couldn't fetch, caller should use fallback
     }
-  }
-
-  async function fetchBortleFromCoords(lat, lon, elevationM) {
-    const pct = await fetchLightPollutionPctFromCoords(lat, lon, elevationM);
-    return pct == null ? null : lightPollutionPctToBortle(pct);
   }
 
   function estimateBortle(population, elevationM) {
@@ -4716,55 +4693,6 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
   function bortleToSQM(bortle) {
     const map = {1:22.0, 2:21.5, 3:21.2, 4:20.5, 5:19.5, 6:18.5, 7:17.5, 8:16.5, 9:15.0};
     return map[bortle] || 18.0;
-  }
-
-  function sqmToBortle(sqm) {
-    if (sqm >= 21.75) return 1;
-    if (sqm >= 21.30) return 2;
-    if (sqm >= 20.80) return 3;
-    if (sqm >= 20.00) return 4;
-    if (sqm >= 19.00) return 5;
-    if (sqm >= 18.00) return 6;
-    if (sqm >= 17.00) return 7;
-    if (sqm >= 16.00) return 8;
-    return 9;
-  }
-
-  function sqmToLightPollutionPct(sqm) {
-    const pct = ((22.0 - clamp(sqm, 15.0, 22.0)) / 7.0) * 100;
-    return Math.round(clamp(pct, 0, 100));
-  }
-
-  function lightPollutionPctToSQM(pct) {
-    const p = clamp(pct ?? 0, 0, 100) / 100;
-    return 22.0 - (p * 7.0);
-  }
-
-  function lightPollutionPctToBortle(pct) {
-    const p = clamp(pct ?? 0, 0, 100);
-    return Math.min(9, Math.max(1, Math.floor(p / 11.1) + 1));
-  }
-
-  function bortleToLightPollutionPct(bortle) {
-    return sqmToLightPollutionPct(bortleToSQM(bortle));
-  }
-
-  function estimateLightPollutionPct(population, elevationM) {
-    let pct;
-    if      (population >= 4000000)  pct = 94;
-    else if (population >= 1500000)  pct = 86;
-    else if (population >= 500000)   pct = 78;
-    else if (population >= 150000)   pct = 68;
-    else if (population >= 50000)    pct = 56;
-    else if (population >= 15000)    pct = 44;
-    else if (population >= 3000)     pct = 30;
-    else if (population >= 500)      pct = 18;
-    else                             pct = 8;
-
-    if      (elevationM >= 3000) pct = Math.max(0, pct - 12);
-    else if (elevationM >= 1500) pct = Math.max(0, pct - 6);
-
-    return Math.min(100, Math.max(0, pct));
   }
 
   async function fetchWeather(lat, lon) {
@@ -4826,19 +4754,16 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     const tempScore = clamp(100 - Math.abs(temp - 54) * 2.33, 15, 100);
     const precipScore = clamp(100 - precip * 20 - (weatherCode >= 51 ? 18 : 0), 0, 100);
     const jetScore = clamp(100 - wind180 * 2.9, 0, 100);
-    const bortle   = clamp(snapshot.bortle ?? liveState?.bortle ?? 5, 1, 9);
-    const lpScore  = clamp(Math.round(100 - (bortle - 1) * 10.6), 15, 100);
 
     const weighted =
-      cloudScore        * 0.22 +
-      seeingScore       * 0.17 +
-      humidityScore     * 0.09 +
-      transparencyScore * 0.13 +
-      windScore         * 0.09 +
-      tempScore         * 0.07 +
-      precipScore       * 0.11 +
-      jetScore          * 0.04 +
-      lpScore           * 0.08;
+      cloudScore * 0.24 +
+      seeingScore * 0.18 +
+      humidityScore * 0.10 +
+      transparencyScore * 0.14 +
+      windScore * 0.10 +
+      tempScore * 0.08 +
+      precipScore * 0.12 +
+      jetScore * 0.04;
 
     return {
       score: clamp(Math.round(weighted), 0, 100),
@@ -4850,8 +4775,7 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
         windScore,
         tempScore,
         precipScore,
-        jetScore,
-      lpScore
+        jetScore
       }
     };
   }
@@ -4892,8 +4816,7 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       { icon: factorIcons[4], name: "Wind", value: `${round1(snapshot.wind10)} mph`, pct: Math.round(scoreSet.factors.windScore), quality: qualityClass(scoreSet.factors.windScore) },
       { icon: factorIcons[5], name: "Temperature", value: `${round1(snapshot.temp)}°F`, pct: Math.round(scoreSet.factors.tempScore), quality: qualityClass(scoreSet.factors.tempScore) },
       { icon: factorIcons[6], name: "Precipitation", value: `${round1(snapshot.precip)} mm`, pct: Math.round(scoreSet.factors.precipScore), quality: qualityClass(scoreSet.factors.precipScore) },
-      { icon: factorIcons[7], name: "Jet Stream", value: `${round1(snapshot.wind180)} mph`, pct: Math.round(scoreSet.factors.jetScore), quality: qualityClass(scoreSet.factors.jetScore) },
-      { icon: factorIcons[0], name: "Light Pollution", value: `Bortle ${liveState.bortle || '—'}`, pct: Math.round(scoreSet.factors.lpScore ?? 100), quality: qualityClass(scoreSet.factors.lpScore ?? 100) }
+      { icon: factorIcons[7], name: "Jet Stream", value: `${round1(snapshot.wind180)} mph`, pct: Math.round(scoreSet.factors.jetScore), quality: qualityClass(scoreSet.factors.jetScore) }
     ];
 
     const list = document.getElementById("factorsList");
@@ -5648,6 +5571,11 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
         renderWeeklyOutlook(liveState.location.latitude, liveState.location.longitude, liveState.location.timezone);
       }
 
+      // Update dark site info from Bortle (already computed in liveState)
+      // Update dark site and light pollution page with accurate county-based Bortle
+      updateDarkSite(liveState.bortle || 6, liveState.sqm || 19.2, locText);
+      updateLPMPage(liveState.bortle || 6, liveState.sqm || 19.2, locText);
+
       // Update rotating Object of the Night
       updateObjectOfNight(liveState.location.latitude, liveState.location.longitude, liveState.location.timezone);
 
@@ -5664,43 +5592,17 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       // Start atomic clock ticking in the searched timezone
       startAtomicClock(liveState.location.timezone);
 
-      // Fetch weather and VIIRS light pollution in parallel
-      const [weather, viirsLPpct] = await Promise.all([
+      // Fetch weather and Bortle estimate in parallel (BigDataCloud uses county-level pop)
+      const [weather, bortleClass] = await Promise.all([
         fetchWeather(location.latitude, location.longitude),
-        fetchLightPollutionPctFromCoords(location.latitude, location.longitude, location.elevation || 0)
+        fetchBortleFromCoords(location.latitude, location.longitude, location.elevation || 0)
       ]);
       liveState.weather = weather;
       if (weather.timezone) liveState.location.timezone = weather.timezone;
 
-      // Bortle resolution order:
-      //   1. NOAA VIIRS satellite (most accurate — real measured radiance)
-      //   2. BigDataCloud county population (good proxy — metro area, not just city)
-      //   3. Open-Meteo geocoding city population (last resort)
-      let resolvedLPpct = viirsLPpct;  // null if VIIRS failed
-      liveState.viirsRadiance = viirsLPpct;
-
-      if (resolvedLPpct == null) {
-        // VIIRS unavailable — get county population from BigDataCloud
-        try {
-          const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${location.latitude}&longitude=${location.longitude}&localityLanguage=en`;
-          const rgRes = await fetch(rgUrl);
-          const rg    = await rgRes.json();
-          // Administrative array sorted by specificity; county = 2nd-most-specific non-country entry
-          const admin = (rg.localityInfo?.administrative || [])
-            .filter(a => (a.population || 0) < 50_000_000 && (a.population || 0) > 0)
-            .sort((a, b) => (b.population || 0) - (a.population || 0));
-          const countyPop = admin.length >= 2 ? admin[1].population
-                          : admin.length === 1 ? admin[0].population
-                          : (location.population || 0);
-          resolvedLPpct = estimateLightPollutionPct(countyPop, location.elevation || 0);
-        } catch {
-          // Last resort: Open-Meteo city population (often underestimates suburban areas)
-          resolvedLPpct = estimateLightPollutionPct(location.population || 0, location.elevation || 0);
-        }
-      }
-
-      liveState.lightPollutionPct = resolvedLPpct;
-      liveState.bortle = lightPollutionPctToBortle(resolvedLPpct);
+      // Set Bortle — BigDataCloud county result if available, else fall back to city pop
+      const fallbackBortle = estimateBortle(location.population || 0, location.elevation || 0);
+      liveState.bortle = bortleClass ?? fallbackBortle;
       liveState.sqm    = bortleToSQM(liveState.bortle);
 
       // Update Bortle/SQM chips with real values
@@ -5711,11 +5613,6 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       const magLimB = ((liveState.sqm - 9.5) * 1.4 + 2).toFixed(1);
       if (magLimChipB) magLimChipB.textContent = magLimB;
       if (sqmChipElB)  sqmChipElB.textContent  = liveState.sqm.toFixed(1);
-
-      updateDarkSite(liveState.bortle, liveState.sqm, locText);
-      if (typeof updateLPMPage === 'function') {
-        updateLPMPage(liveState.bortle, liveState.sqm, locText);
-      }
 
       const observer = new Astronomy.Observer(location.latitude, location.longitude, location.elevation || 0);
       const now = new Date();
@@ -5736,27 +5633,8 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       const score = renderFactors(weather);
       updateScoreUI(score);
 
-      const sunSet  = Astronomy.SearchRiseSet("Sun", observer, -1, now, 2, 0);
+      const sunSet = Astronomy.SearchRiseSet("Sun", observer, -1, now, 2, 0);
       const sunRise = Astronomy.SearchRiseSet("Sun", observer, +1, now, 2, 0);
-
-      // Astronomical twilight end: Sun reaches -18° altitude after sunset
-      const astroTwiEnd = (function() {
-        try {
-          const afterSunset = extractDate(sunSet) || now;
-          return Astronomy.SearchAltitude("Sun", observer, -1, afterSunset, 0.15, -18);
-        } catch(e) { return null; }
-      })();
-
-      // Update forecast chips with real times
-      const tz = liveState.location.timezone;
-      const sunsetEl    = document.getElementById('sunsetChip');
-      const sunriseEl   = document.getElementById('sunriseChip');
-      const darkUntilEl = document.getElementById('darkUntilChip');
-      if (sunsetEl)    sunsetEl.textContent    = sunSet   ? fmtTime(extractDate(sunSet),  tz) : '—';
-      if (sunriseEl)   sunriseEl.textContent   = sunRise  ? fmtTime(extractDate(sunRise), tz) : '—';
-      if (darkUntilEl) darkUntilEl.textContent = astroTwiEnd
-        ? fmtTime(extractDate(astroTwiEnd), tz)
-        : sunSet ? fmtTime(new Date(extractDate(sunSet).getTime() + 90 * 60000), tz) : '—';
       const jupTransit = Astronomy.SearchHourAngle("Jupiter", observer, 0, now, 2);
       const andromeda = DSO_CATALOG.M31;
       const andromedaTimes = riseSetFromRADec(now, location.latitude, location.longitude, andromeda.ra, andromeda.dec);
@@ -5907,24 +5785,6 @@ function startAtomicClock(timeZone) {
 }
 
 </script>
-
-  <div id="skyAlertBanner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:998;max-width:420px;width:calc(100% - 40px)">
-    <div style="background:#0d1829;border:1px solid var(--good);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,0.6)">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round"><path d="M10 2a8 8 0 1 1 0 16A8 8 0 0 1 10 2z"/><path d="M10 6v5"/><circle cx="10" cy="14" r="0.8" fill="var(--good)"/></svg>
-      <div style="flex:1">
-        <div style="font-family:'Orbitron',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--good);margin-bottom:3px">CLEAR SKY ALERT</div>
-        <div id="skyAlertMsg" style="font-size:0.82rem;color:var(--text)">Viewing conditions are excellent!</div>
-      </div>
-      <button onclick="document.getElementById('skyAlertBanner').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:4px;line-height:1">✕</button>
-    </div>
-  </div>
-
-  <div id="footerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;padding:20px">
-    <div style="background:#0d1829;border:1px solid rgba(80,160,255,0.25);border-radius:18px;max-width:480px;width:100%;padding:32px;position:relative;max-height:80vh;overflow-y:auto">
-      <button onclick="closeFooterModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
-      <div id="footerModalContent"></div>
-    </div>
-  </div>
 
 </body>
 </html>
