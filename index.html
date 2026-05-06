@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3855383829699724"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AstronoSight — Sky Viewing Forecast</title>
+<title>Stargazing Forecast & Sky Conditions Tonight | AstronoSight</title>
+<meta name="description" content="Check stargazing conditions tonight with a real-time sky quality score, cloud cover, seeing, and light pollution forecast for your location.">
+<meta name="keywords" content="stargazing forecast, sky conditions tonight, astronomy weather, Bortle scale, seeing conditions">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
@@ -2328,8 +2327,27 @@
         </button>
       </div>
     </div>
+
+    <div style="margin-top:18px;font-size:0.8rem;color:var(--muted);text-align:center">
+      Popular forecasts:
+      <a href="?city=new-york" style="color:var(--cyan);text-decoration:none">New York</a> •
+      <a href="?city=los-angeles" style="color:var(--cyan);text-decoration:none">Los Angeles</a> •
+      <a href="?city=london" style="color:var(--cyan);text-decoration:none">London</a> •
+      <a href="?city=tokyo" style="color:var(--cyan);text-decoration:none">Tokyo</a>
+    </div>
   </div>
   </div>
+
+  <section style="max-width:760px;margin:12px auto 0;padding:0 0 12px;text-align:center">
+    <h2 style="font-family:Orbitron, monospace;font-size:1rem;letter-spacing:0.12em;color:var(--cyan);margin-bottom:10px">Stargazing Conditions Tonight</h2>
+    <p style="font-size:0.92rem;line-height:1.7;color:var(--muted);margin-bottom:8px">
+      AstronoSight combines cloud cover, atmospheric seeing, transparency, and light pollution into a single sky-quality score.
+      Use it to compare locations, plan observing sessions, and find the best nights for deep-sky targets.
+    </p>
+    <p style="font-size:0.9rem;line-height:1.7;color:var(--muted)">
+      The forecast is designed for visual astronomy, binocular observing, and astrophotography planning.
+    </p>
+  </section>
 
   <!-- LOCATION BAR (shown after search, replaces hero) -->
   <div id="locationBar" style="display:none">
@@ -6700,5 +6718,19 @@ function startAtomicClock(timeZone) {
     </div>
   </div>
 
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const city = params.get("city");
+      if (!city) return;
+      const input = document.getElementById("locationInput");
+      if (!input) return;
+      input.value = city.replace(/-/g, " ");
+      setTimeout(() => {
+        if (typeof runForecast === "function") runForecast();
+      }, 250);
+    })();
+  </script>
 </body>
 </html>
