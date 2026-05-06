@@ -6648,55 +6648,69 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       }
     };
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
+    // iOS Safari splits location into "precise" vs "approximate."
+    // enableHighAccuracy:true fails with PERMISSION_DENIED when user
+    // has only granted approximate location (the iOS 14+ default).
+    // Fix: try coarse first — works for all permission levels — then
+    // optionally upgrade to high accuracy if the first call succeeds.
+    const doPosition = (highAcc) => {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
 
-        // Use the exact coordinates immediately; reverse geocoding is best-effort.
-        let displayName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-        try {
-          const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
-          const rgRes = await fetch(rgUrl, { cache: "no-store" });
-          if (rgRes.ok) {
-            const rg = await rgRes.json();
-            const parts = [
-              rg.city || rg.locality || rg.principalSubdivision,
-              rg.principalSubdivision !== (rg.city || rg.locality) ? rg.principalSubdivision : null,
-              rg.countryName
-            ].filter(Boolean);
-            if (parts.length) displayName = parts.join(', ');
+          let displayName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+          try {
+            const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
+            const rgRes = await fetch(rgUrl, { cache: "no-store" });
+            if (rgRes.ok) {
+              const rg = await rgRes.json();
+              const parts = [
+                rg.city || rg.locality || rg.principalSubdivision,
+                rg.principalSubdivision !== (rg.city || rg.locality) ? rg.principalSubdivision : null,
+                rg.countryName
+              ].filter(Boolean);
+              if (parts.length) displayName = parts.join(', ');
+            }
+          } catch (_) { /* keep coordinate fallback */ }
+
+          const input = document.getElementById("locationInput");
+          if (input) input.value = displayName;
+          restoreButton();
+
+          const locObj = {
+            name: displayName,
+            latitude: lat,
+            longitude: lon,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            elevation: Number.isFinite(pos.coords.altitude) ? pos.coords.altitude : 0
+          };
+
+          try {
+            await refreshEverything(displayName, true, locObj);
+          } catch (err) {
+            console.error(err);
+            handleError(err);
           }
-        } catch (_) {
-          // Keep coordinate fallback.
+        },
+        (err) => {
+          // If high-accuracy was rejected (code 1 = PERMISSION_DENIED),
+          // silently retry with coarse location — covers iOS "approximate" mode.
+          if (highAcc && err && err.code === 1) {
+            doPosition(false);
+          } else {
+            handleError(err);
+          }
+        },
+        {
+          enableHighAccuracy: highAcc,
+          timeout: highAcc ? 10000 : 15000,
+          maximumAge: 300000
         }
+      );
+    };
 
-        const input = document.getElementById("locationInput");
-        if (input) input.value = displayName;
-        restoreButton();
-
-        const locObj = {
-          name: displayName,
-          latitude: lat,
-          longitude: lon,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          elevation: Number.isFinite(pos.coords.altitude) ? pos.coords.altitude : 0
-        };
-
-        try {
-          await refreshEverything(displayName, true, locObj);
-        } catch (err) {
-          console.error(err);
-          handleError(err);
-        }
-      },
-      handleError,
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 300000
-      }
-    );
+    doPosition(false); // start with coarse — works on all iOS permission levels
   };
 
   async function init() {
