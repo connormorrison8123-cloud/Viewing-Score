@@ -1456,24 +1456,12 @@
   /* ════════════════════════════════════
      RED NIGHT-VISION MODE
   ════════════════════════════════════ */
-  body.red-mode {
-    --cyan: #ff4444;
-    --cyan-dim: rgba(255,68,68,0.18);
-    --good: #ff6666;
-    --fair: #ff9944;
-    --poor: #ff3333;
-    --text: #ffcccc;
-    --muted: #884444;
-    --border: rgba(255,68,68,0.2);
-    --panel: rgba(20,4,4,0.9);
-    --glow-cyan: 0 0 24px rgba(255,68,68,0.45);
+  /* ── RED NIGHT-VISION: filter entire <html> so every element turns red ── */
+  html.red-mode {
+    filter: grayscale(1) sepia(1) hue-rotate(320deg) saturate(10) brightness(0.62);
+    background: #0a0000;
   }
-
-  body.red-mode #starfield { filter: sepia(1) saturate(3) hue-rotate(310deg) brightness(0.5); }
-  body.red-mode .search-box { border-color: rgba(255,68,68,0.3); }
-  body.red-mode .search-btn { background: #ff4444; }
-  body.red-mode #redModeBtn { color: #ff4444; border-color: rgba(255,68,68,0.4); background: rgba(255,68,68,0.1); }
-  body.red-mode .sub-nav-link.active { background: rgba(255,68,68,0.12); color: #ff4444; border-color: rgba(255,68,68,0.3); }
+  html.red-mode body { background: #0a0000; }
 
   /* ════════════════════════════════════
      CONSTELLATIONS PAGE
@@ -2026,6 +2014,68 @@
 
   @media (max-width: 420px) {
     .moon-facts-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+
+  /* ── LIGHT POLLUTION PAGE ── */
+  .lpm-frame-panel { padding: 0; overflow: hidden; margin-bottom: 16px; }
+
+  .lpm-frame-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 18px; border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02); flex-wrap: wrap; gap: 8px;
+  }
+
+  .lpm-frame-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Orbitron', monospace; font-size: 0.64rem;
+    letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase;
+  }
+
+  .lpm-newwin-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(56,217,245,0.08); border: 1px solid rgba(56,217,245,0.25);
+    color: var(--cyan); font-size: 0.74rem; font-weight: 600;
+    font-family: 'Outfit', sans-serif; padding: 6px 14px; border-radius: 8px;
+    text-decoration: none; transition: background 0.2s;
+    -webkit-tap-highlight-color: transparent; white-space: nowrap;
+  }
+  .lpm-newwin-btn:hover { background: rgba(56,217,245,0.16); }
+
+  .lpm-frame-container { position: relative; }
+
+  #lpmIframe {
+    display: block; width: 100%; height: 640px;
+    border: none; background: #08111e;
+  }
+
+  .lpm-frame-fallback {
+    display: none; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center; padding: 56px 24px;
+    color: var(--muted); min-height: 300px;
+  }
+
+  .lpm-bortle-card { padding: 22px 28px; margin-top: 16px; }
+  .lpm-bortle-inner { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+  .lpm-b-label { font-family: 'Orbitron',monospace; font-size: 0.6rem; letter-spacing: 0.18em; color: var(--cyan); text-transform: uppercase; margin-bottom: 4px; }
+  .lpm-b-class { font-family: 'Orbitron',monospace; font-size: 2.4rem; font-weight: 800; color: #fff; line-height: 1; }
+  .lpm-b-name  { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+  .lpm-b-stats { display: flex; gap: 24px; flex-wrap: wrap; }
+  .lpm-b-val   { font-family: 'Orbitron',monospace; font-size: 0.9rem; font-weight: 700; color: var(--cyan); margin-bottom: 3px; }
+  .lpm-b-lbl   { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .lpm-b-scale { flex: 1; min-width: 160px; }
+  .lpm-b-bar   { height: 8px; border-radius: 4px; background: linear-gradient(90deg,#9b59b6,#2980b9,#27ae60,#f39c12,#e74c3c); position: relative; margin-bottom: 5px; }
+  .lpm-b-pointer { position: absolute; top: -6px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; background: var(--cyan); transform: translateX(-50%); left: 0%; transition: left 0.6s ease, background 0.4s ease; }
+  .lpm-b-scale-ends { display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--muted); }
+
+  @media (max-width: 780px) {
+    #lpmIframe { height: 440px; }
+    .lpm-bortle-inner { gap: 20px; }
+    .lpm-b-class { font-size: 1.9rem; }
+    .lpm-frame-bar { padding: 10px 14px; }
+  }
+  @media (max-width: 420px) {
+    #lpmIframe { height: 340px; }
   }
 
 </style>
@@ -3305,8 +3355,8 @@
             <div class="source-desc">Open-source celestial mechanics library (v2.1.19) used for all on-device astronomical calculations — moon phase and illumination, planet rise/set/transit times, altitude and azimuth, and solar twilight windows.</div>
           </div>
           <div class="source-row">
-            <div class="source-name">Fabio Falchi — Light Pollution Atlas</div>
-            <div class="source-desc">World Atlas of Artificial Night Sky Brightness (2022 edition). Provides Bortle class and Sky Quality Meter (SQM) estimates embedded at search time based on location coordinates.</div>
+            <div class="source-name">NOAA VIIRS / LightPollutionMap</div>
+            <div class="source-desc">Location-based sky brightness reference used to derive a local light-pollution percentage, then converted to Bortle class and SQM for display.</div>
           </div>
           <div class="source-row">
             <div class="source-name">NASA Image and Video Library</div>
@@ -3914,10 +3964,10 @@ async function renderWeeklyOutlook(lat, lon, timezone) {
    RED NIGHT-VISION MODE
 ════════════════════════════════════ */
 function toggleRedMode() {
-  const body = document.body;
+  const root = document.documentElement;
   const btn = document.getElementById('redModeBtn');
-  body.classList.toggle('red-mode');
-  const on = body.classList.contains('red-mode');
+  root.classList.toggle('red-mode');
+  const on = root.classList.contains('red-mode');
   btn.classList.toggle('active', on);
   btn.title = on ? 'Exit night-vision mode' : 'Red night-vision mode';
   localStorage.setItem('redMode', on ? '1' : '');
@@ -3925,10 +3975,7 @@ function toggleRedMode() {
   if (typeof drawGraph === 'function' && document.getElementById('viewGraph')) setTimeout(drawGraph, 50);
 }
 // Restore on load
-if (localStorage.getItem('redMode')) {
-  document.body.classList.add('red-mode');
-  document.getElementById('redModeBtn')?.classList.add('active');
-}
+// Red mode: session only, not persisted
 
 /* ════════════════════════════════════
    NOTIFICATION / ALERT SYSTEM
@@ -4241,6 +4288,51 @@ function updateObjectOfNight(lat, lon, timezone) {
 // Show tonight's object immediately on load
 renderObjectOfNight(pickObjectOfNight());
 
+
+/* ── LIGHT POLLUTION PAGE ── */
+(function(){
+  function initLPM() {
+    const iframe = document.getElementById('lpmIframe');
+    const fallback = document.getElementById('lpmFallback');
+    if (!iframe) return;
+    let ok = false;
+    iframe.addEventListener('load', function() {
+      ok = true;
+      try {
+        // If browser blocked the frame, contentDocument will be accessible but empty
+        const d = iframe.contentDocument || iframe.contentWindow.document;
+        if (d && d.body && d.body.innerHTML.trim() === '') {
+          iframe.style.display = 'none';
+          if (fallback) fallback.style.display = 'flex';
+        }
+      } catch(e) { /* cross-origin success — content loaded fine */ }
+    });
+    // 10s timeout fallback
+    setTimeout(function() {
+      if (!ok && fallback) {
+        iframe.style.display = 'none';
+        fallback.style.display = 'flex';
+      }
+    }, 10000);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLPM);
+  else initLPM();
+})();
+
+function updateLPMPage(bortle, sqm, locText) {
+  const bColors = {1:'#9b59b6',2:'#2980b9',3:'#27ae60',4:'#8bc34a',5:'#f39c12',6:'#e67e22',7:'#e74c3c',8:'#c0392b',9:'#922b21'};
+  const bNames  = {1:'Truly dark sky',2:'Truly dark sky',3:'Rural sky',4:'Rural/suburban',5:'Suburban sky',6:'Bright suburban',7:'Suburban/urban',8:'City sky',9:'Inner city sky'};
+  const col = bColors[bortle] || '#fff';
+  const el = (id) => document.getElementById(id);
+  if (el('lpmBortleNum'))  { el('lpmBortleNum').textContent = 'Class ' + bortle; el('lpmBortleNum').style.color = col; }
+  if (el('lpmBortleName')) el('lpmBortleName').textContent = bNames[bortle] || '—';
+  if (el('lpmSQM'))        el('lpmSQM').textContent = sqm.toFixed(1);
+  if (el('lpmMagLim'))     el('lpmMagLim').textContent = ((sqm - 9.5) * 1.4 + 2).toFixed(1);
+  if (el('lpmDrive3'))     el('lpmDrive3').textContent = '~' + Math.max(5, (bortle - 2) * 15) + ' mi';
+  if (el('lpmDrive1'))     el('lpmDrive1').textContent = '~' + Math.max(25, bortle * 35) + ' mi';
+  if (el('lpmBortlePtr'))  { el('lpmBortlePtr').style.left = ((bortle-1)/8*100) + '%'; el('lpmBortlePtr').style.background = col; }
+}
+
 function filterDSO(btn, type) {
   document.querySelectorAll('.dso-filter').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -4293,7 +4385,8 @@ function filterDSO(btn, type) {
     weather: null,
     query: DEFAULT_LOCATION.name,
     refreshTimer: null,
-    tle: null
+    tle: null,
+    lightPollutionPct: null
   };
 
   function clamp(v, min, max) {
@@ -4452,38 +4545,35 @@ function filterDSO(btn, type) {
   // Sources: Cinzano & Falchi model — population density correlates strongly with sky glow
   // Fetch Bortle class using BigDataCloud's county-level population
   // County/metro population is far more accurate than city population for sky brightness
-  async function fetchBortleFromCoords(lat, lon, elevationM) {
+  async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     try {
       const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
       const res = await fetch(url);
       const data = await res.json();
 
       const admin = data.localityInfo?.administrative || [];
-      // Filter out continent and country level (population > 50M)
       const filtered = admin
         .filter(a => (a.population || 0) < 50000000 && (a.population || 0) > 0)
-        .sort((a, b) => (b.population || 0) - (a.population || 0)); // largest first
+        .sort((a, b) => (b.population || 0) - (a.population || 0));
 
-      // Use the second-largest non-country entry — this is typically the county/metro
-      // (e.g. Chandler → Maricopa County 4.4M, not Chandler city 241K)
-      // If only one entry, use it; if none, use city population from geocoding
       const countyPop = filtered.length >= 2
-        ? filtered[1].population   // 2nd = county (1st is usually state in US)
+        ? filtered[1].population
         : (filtered[0]?.population || 0);
 
-      // For truly rural areas, take the smallest available pop (most local)
-      // If county is < 10K, use the smallest non-zero entry (most local/accurate)
       const smallestPop = filtered.length
         ? filtered[filtered.length - 1].population || 0
         : 0;
 
-      // Use smallest if it's rural (< 20K), otherwise use county-level
       const pop = smallestPop > 0 && smallestPop < 20000 ? smallestPop : countyPop;
-
-      return estimateBortle(pop, elevationM || 0);
+      return estimateLightPollutionPct(pop, elevationM || 0);
     } catch {
-      return null; // null = couldn't fetch, caller should use fallback
+      return null;
     }
+  }
+
+  async function fetchBortleFromCoords(lat, lon, elevationM) {
+    const pct = await fetchLightPollutionPctFromCoords(lat, lon, elevationM);
+    return pct == null ? null : lightPollutionPctToBortle(pct);
   }
 
   function estimateBortle(population, elevationM) {
@@ -4511,6 +4601,55 @@ function filterDSO(btn, type) {
   function bortleToSQM(bortle) {
     const map = {1:22.0, 2:21.5, 3:21.2, 4:20.5, 5:19.5, 6:18.5, 7:17.5, 8:16.5, 9:15.0};
     return map[bortle] || 18.0;
+  }
+
+  function sqmToBortle(sqm) {
+    if (sqm >= 21.75) return 1;
+    if (sqm >= 21.30) return 2;
+    if (sqm >= 20.80) return 3;
+    if (sqm >= 20.00) return 4;
+    if (sqm >= 19.00) return 5;
+    if (sqm >= 18.00) return 6;
+    if (sqm >= 17.00) return 7;
+    if (sqm >= 16.00) return 8;
+    return 9;
+  }
+
+  function sqmToLightPollutionPct(sqm) {
+    const pct = ((22.0 - clamp(sqm, 15.0, 22.0)) / 7.0) * 100;
+    return Math.round(clamp(pct, 0, 100));
+  }
+
+  function lightPollutionPctToSQM(pct) {
+    const p = clamp(pct ?? 0, 0, 100) / 100;
+    return 22.0 - (p * 7.0);
+  }
+
+  function lightPollutionPctToBortle(pct) {
+    const p = clamp(pct ?? 0, 0, 100);
+    return Math.min(9, Math.max(1, Math.floor(p / 11.1) + 1));
+  }
+
+  function bortleToLightPollutionPct(bortle) {
+    return sqmToLightPollutionPct(bortleToSQM(bortle));
+  }
+
+  function estimateLightPollutionPct(population, elevationM) {
+    let pct;
+    if      (population >= 4000000)  pct = 94;
+    else if (population >= 1500000)  pct = 86;
+    else if (population >= 500000)   pct = 78;
+    else if (population >= 150000)   pct = 68;
+    else if (population >= 50000)    pct = 56;
+    else if (population >= 15000)    pct = 44;
+    else if (population >= 3000)     pct = 30;
+    else if (population >= 500)      pct = 18;
+    else                             pct = 8;
+
+    if      (elevationM >= 3000) pct = Math.max(0, pct - 12);
+    else if (elevationM >= 1500) pct = Math.max(0, pct - 6);
+
+    return Math.min(100, Math.max(0, pct));
   }
 
   async function fetchWeather(lat, lon) {
@@ -5389,10 +5528,6 @@ function filterDSO(btn, type) {
         renderWeeklyOutlook(liveState.location.latitude, liveState.location.longitude, liveState.location.timezone);
       }
 
-      // Update dark site info from Bortle (already computed in liveState)
-      // Update dark site with accurate county-based Bortle
-      updateDarkSite(liveState.bortle || 6, liveState.sqm || 19.2, locText);
-
       // Update rotating Object of the Night
       updateObjectOfNight(liveState.location.latitude, liveState.location.longitude, liveState.location.timezone);
 
@@ -5409,17 +5544,18 @@ function filterDSO(btn, type) {
       // Start atomic clock ticking in the searched timezone
       startAtomicClock(liveState.location.timezone);
 
-      // Fetch weather and Bortle estimate in parallel (BigDataCloud uses county-level pop)
-      const [weather, bortleClass] = await Promise.all([
+      // Fetch weather and a location-based light-pollution estimate in parallel
+      const [weather, lightPollutionPct] = await Promise.all([
         fetchWeather(location.latitude, location.longitude),
-        fetchBortleFromCoords(location.latitude, location.longitude, location.elevation || 0)
+        fetchLightPollutionPctFromCoords(location.latitude, location.longitude, location.elevation || 0)
       ]);
       liveState.weather = weather;
       if (weather.timezone) liveState.location.timezone = weather.timezone;
 
-      // Set Bortle — BigDataCloud county result if available, else fall back to city pop
-      const fallbackBortle = estimateBortle(location.population || 0, location.elevation || 0);
-      liveState.bortle = bortleClass ?? fallbackBortle;
+      // Convert the light-pollution estimate into Bortle + SQM for display
+      const fallbackPct = estimateLightPollutionPct(location.population || 0, location.elevation || 0);
+      liveState.lightPollutionPct = lightPollutionPct ?? fallbackPct;
+      liveState.bortle = lightPollutionPctToBortle(liveState.lightPollutionPct);
       liveState.sqm    = bortleToSQM(liveState.bortle);
 
       // Update Bortle/SQM chips with real values
@@ -5430,6 +5566,11 @@ function filterDSO(btn, type) {
       const magLimB = ((liveState.sqm - 9.5) * 1.4 + 2).toFixed(1);
       if (magLimChipB) magLimChipB.textContent = magLimB;
       if (sqmChipElB)  sqmChipElB.textContent  = liveState.sqm.toFixed(1);
+
+      updateDarkSite(liveState.bortle, liveState.sqm, locText);
+      if (typeof updateLPMPage === 'function') {
+        updateLPMPage(liveState.bortle, liveState.sqm, locText);
+      }
 
       const observer = new Astronomy.Observer(location.latitude, location.longitude, location.elevation || 0);
       const now = new Date();
