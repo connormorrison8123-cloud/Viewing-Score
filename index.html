@@ -4662,6 +4662,7 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       endpoint.searchParams.set('mosaicRule', JSON.stringify({ mosaicMethod: 'esriMosaicNone' }));
 
       const res = await fetch(endpoint.toString());
+      if (!res.ok) return null;
       const data = await res.json();
 
       const candidates = [
@@ -4673,18 +4674,15 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
         data?.catalogItems?.features?.[0]?.attributes?.Raster_ServicePixelValue,
         data?.pixel?.value,
         data?.properties?.value
-      ].map(v => Number(v)).filter(v => Number.isFinite(v));
+      ].map(v => Number(v)).filter(v => Number.isFinite(v) && v >= 0);
 
       const radiance = candidates.length ? candidates[0] : null;
       if (radiance == null) return null;
 
-      // Convert VIIRS radiance to a 0-100 brightness percentage for the UI.
-      // Lower radiance = darker sky; higher radiance = more light pollution.
       const pct = Math.round((Math.log10(radiance + 1) / Math.log10(9)) * 100);
       return Math.min(100, Math.max(0, pct));
     } catch {
-      // Fallback only if the API is unavailable.
-      return estimateLightPollutionPct(0, elevationM || 0);
+      return null; // VIIRS unavailable — caller will use BigDataCloud fallback
     }
   }
 
@@ -5666,18 +5664,43 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       // Start atomic clock ticking in the searched timezone
       startAtomicClock(liveState.location.timezone);
 
-      // Fetch weather and a location-based light-pollution estimate in parallel
-      const [weather, lightPollutionPct] = await Promise.all([
+      // Fetch weather and VIIRS light pollution in parallel
+      const [weather, viirsLPpct] = await Promise.all([
         fetchWeather(location.latitude, location.longitude),
         fetchLightPollutionPctFromCoords(location.latitude, location.longitude, location.elevation || 0)
       ]);
       liveState.weather = weather;
       if (weather.timezone) liveState.location.timezone = weather.timezone;
 
-      // Convert the light-pollution estimate into Bortle + SQM for display
-      const fallbackPct = estimateLightPollutionPct(location.population || 0, location.elevation || 0);
-      liveState.lightPollutionPct = lightPollutionPct ?? fallbackPct;
-      liveState.bortle = lightPollutionPctToBortle(liveState.lightPollutionPct);
+      // Bortle resolution order:
+      //   1. NOAA VIIRS satellite (most accurate — real measured radiance)
+      //   2. BigDataCloud county population (good proxy — metro area, not just city)
+      //   3. Open-Meteo geocoding city population (last resort)
+      let resolvedLPpct = viirsLPpct;  // null if VIIRS failed
+      liveState.viirsRadiance = viirsLPpct;
+
+      if (resolvedLPpct == null) {
+        // VIIRS unavailable — get county population from BigDataCloud
+        try {
+          const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${location.latitude}&longitude=${location.longitude}&localityLanguage=en`;
+          const rgRes = await fetch(rgUrl);
+          const rg    = await rgRes.json();
+          // Administrative array sorted by specificity; county = 2nd-most-specific non-country entry
+          const admin = (rg.localityInfo?.administrative || [])
+            .filter(a => (a.population || 0) < 50_000_000 && (a.population || 0) > 0)
+            .sort((a, b) => (b.population || 0) - (a.population || 0));
+          const countyPop = admin.length >= 2 ? admin[1].population
+                          : admin.length === 1 ? admin[0].population
+                          : (location.population || 0);
+          resolvedLPpct = estimateLightPollutionPct(countyPop, location.elevation || 0);
+        } catch {
+          // Last resort: Open-Meteo city population (often underestimates suburban areas)
+          resolvedLPpct = estimateLightPollutionPct(location.population || 0, location.elevation || 0);
+        }
+      }
+
+      liveState.lightPollutionPct = resolvedLPpct;
+      liveState.bortle = lightPollutionPctToBortle(resolvedLPpct);
       liveState.sqm    = bortleToSQM(liveState.bortle);
 
       // Update Bortle/SQM chips with real values
