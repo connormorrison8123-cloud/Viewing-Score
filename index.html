@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+]<!DOCTYPE html>
 <html lang="en">
 <head>
 </script>
@@ -4049,7 +4049,7 @@ document.getElementById('locationInput').addEventListener('keydown', e => {
 });
 
 
-(function syncInitialCityFromUrl() {
+(function syncInitialCityFromUrl_DISABLED() {
   const params = new URLSearchParams(window.location.search);
   const city = params.get("city");
   const input = document.getElementById("locationInput");
@@ -6725,6 +6725,18 @@ function startAtomicClock(timeZone) {
       <div id="footerModalContent"></div>
     </div>
   </div>
+
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("locationInput");
+  if (input) input.value = "";
+
+  if (window.location.search.includes("city=")) {
+    history.replaceState({}, "", window.location.pathname);
+  }
+});
+</script>
 
 </body>
 </html>
