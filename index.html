@@ -312,7 +312,7 @@
   .badge-poor { background: rgba(255, 107, 107, 0.14); color: var(--poor); border: 1px solid rgba(255, 107, 107, 0.3); }
 
   /* ── SCORE PANEL ── */
-  .score-panel { padding-bottom: 28px; }
+  .score-panel { padding-bottom: 24px; }
 
   .score-ring-wrap {
     display: flex;
@@ -450,7 +450,7 @@
   }
 
   /* ── DETAIL CARDS ── */
-  .details-panel { padding-bottom: 28px; }
+  .details-panel { padding-bottom: 24px; }
 
   .detail-chips {
     display: flex;
@@ -762,15 +762,8 @@
     letter-spacing: 0.04em;
   }
 
-  /* old footer rules kept for compat */
   footer {
-    text-align: center;
-    padding-top: 56px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
-    margin-top: 56px;
-    letter-spacing: 0.05em;
+    padding: 40px 0 32px;
   }
 
   footer span { color: var(--cyan); }
@@ -818,7 +811,7 @@
     .score-num { font-size: 2.4rem; }
 
     /* ── Detail chips ── */
-    .detail-chips { gap: 8px; padding: 14px 18px 4px; }
+    .detail-chips { gap: 8px; padding: 14px 18px 8px; }
     .chip { min-width: 66px; padding: 7px 10px; }
     .chip-label { font-size: 0.6rem; }
     .chip-value { font-size: 0.82rem; }
@@ -879,80 +872,6 @@
     margin-top: 56px;
   }
 
-  .footer-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    text-align: center;
-  }
-
-  .footer-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .footer-logo {
-    font-family: 'Orbitron', monospace;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    color: #fff;
-  }
-
-  .footer-logo span { color: var(--cyan); }
-
-  .footer-version {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.62rem;
-    color: var(--muted);
-    background: rgba(255,255,255,0.06);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 2px 8px;
-    letter-spacing: 0.1em;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 20px;
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-
-  .footer-links span {
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-
-  .footer-links span:hover { color: var(--cyan); }
-
-  .footer-sections {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px 16px;
-    font-size: 0.72rem;
-    color: rgba(90,122,154,0.6);
-    letter-spacing: 0.05em;
-  }
-
-  .footer-data {
-    font-size: 0.74rem;
-    color: var(--muted);
-  }
-
-  .footer-data span { color: var(--cyan); }
-
-  .footer-copy {
-    font-size: 0.7rem;
-    color: rgba(90,122,154,0.5);
-    letter-spacing: 0.04em;
-  }
-
-  /* old footer rules kept for compat */
-  footer { font-size: 0.72rem; padding-top: 36px; }
   }
 
   @media (max-width: 420px) {
@@ -1346,7 +1265,7 @@
   }
 
   @media (max-width: 420px) {
-    .weekly-day { min-width: 68px; }
+    .weekly-day { min-width: 66px; }
     .weekly-score-num { font-size: 0.7rem; }
     .weekly-score-bar-track { height: 26px; }
   }
@@ -2214,7 +2133,7 @@
 
   /* ── TONIGHT AT A GLANCE ── */
   .tonight-glance {
-    padding: 18px 24px 0;
+    padding: 18px 24px 20px;
     border-top: 1px solid var(--border);
     margin-top: 2px;
   }
@@ -3659,7 +3578,7 @@
           <div class="source-list">
             <div class="source-row"><div class="source-name">Open-Meteo Weather</div><div class="source-desc">Hourly cloud, wind, humidity, temperature, visibility, precipitation. 48-hour forecasts. Models: ECMWF, GFS, ICON.</div></div>
             <div class="source-row"><div class="source-name">Open-Meteo Geocoding</div><div class="source-desc">City name → lat/lon, elevation, timezone, population. Powers 6-candidate autocomplete.</div></div>
-            <div class="source-row"><div class="source-name">BigDataCloud</div><div class="source-desc">GPS → city/state/country name for "Use my location" button. Free, no key.</div></div>
+            <div class="source-row"><div class="source-name">BigDataCloud</div><div class="source-desc">GPS reverse geocoding — converts coordinates to city/state/country name when "Use my location" is tapped. Free, no API key.</div></div>
             <div class="source-row"><div class="source-name">Bortle DB (VIIRS)</div><div class="source-desc">503-city embedded database calibrated to NOAA VIIRS annual nighttime radiance. No API call required.</div></div>
             <div class="source-row"><div class="source-name">Celestrak TLE</div><div class="source-desc">ISS Two-Line Elements. Propagated with satellite.js SGP4 for pass predictions.</div></div>
             <div class="source-row"><div class="source-name">Astronomy Engine v2.1.19</div><div class="source-desc">Moon phase, planet rise/set/transit, astronomical twilight. All times in location timezone.</div></div>
