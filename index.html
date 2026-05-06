@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Stargazing Forecast & Sky Conditions Tonight | AstronoSight</title>
-<meta name="description" content="Check stargazing conditions tonight with a real-time sky quality score, cloud cover, seeing, and light pollution forecast for your location.">
-<meta name="keywords" content="stargazing forecast, sky conditions tonight, astronomy weather, Bortle scale, seeing conditions">
+<title>AstronoSight — Sky Viewing Forecast</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
@@ -2327,27 +2326,8 @@
         </button>
       </div>
     </div>
-
-    <div style="margin-top:18px;font-size:0.8rem;color:var(--muted);text-align:center">
-      Popular forecasts:
-      <a href="?city=new-york" style="color:var(--cyan);text-decoration:none">New York</a> •
-      <a href="?city=los-angeles" style="color:var(--cyan);text-decoration:none">Los Angeles</a> •
-      <a href="?city=london" style="color:var(--cyan);text-decoration:none">London</a> •
-      <a href="?city=tokyo" style="color:var(--cyan);text-decoration:none">Tokyo</a>
-    </div>
   </div>
   </div>
-
-  <section style="max-width:760px;margin:12px auto 0;padding:0 0 12px;text-align:center">
-    <h2 style="font-family:Orbitron, monospace;font-size:1rem;letter-spacing:0.12em;color:var(--cyan);margin-bottom:10px">Stargazing Conditions Tonight</h2>
-    <p style="font-size:0.92rem;line-height:1.7;color:var(--muted);margin-bottom:8px">
-      AstronoSight combines cloud cover, atmospheric seeing, transparency, and light pollution into a single sky-quality score.
-      Use it to compare locations, plan observing sessions, and find the best nights for deep-sky targets.
-    </p>
-    <p style="font-size:0.9rem;line-height:1.7;color:var(--muted)">
-      The forecast is designed for visual astronomy, binocular observing, and astrophotography planning.
-    </p>
-  </section>
 
   <!-- LOCATION BAR (shown after search, replaces hero) -->
   <div id="locationBar" style="display:none">
@@ -6595,69 +6575,92 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     await refreshEverything(query, true);
   };
 
+  let gpsRequestInFlight = false;
+
   window.useGPS = function () {
     const btn = document.getElementById("gpsBtn");
     const btnText = document.getElementById("gpsBtnText");
+
+    if (gpsRequestInFlight) return;
+
+    if (!window.isSecureContext) {
+      if (btnText) btnText.textContent = "HTTPS required";
+      return;
+    }
 
     if (!navigator.geolocation) {
       if (btnText) btnText.textContent = "Not supported";
       return;
     }
 
-    if (btn) { btn.disabled = true; btn.classList.add("loading"); }
+    gpsRequestInFlight = true;
+    if (btn) btn.classList.add("loading");
     if (btnText) btnText.textContent = "Locating…";
 
     const reset = () => {
-      if (btn) { btn.disabled = false; btn.classList.remove("loading"); }
+      gpsRequestInFlight = false;
+      if (btn) btn.classList.remove("loading");
       if (btnText) btnText.textContent = "Use my location";
     };
 
+    const lookup = async (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      // Reverse geocode to get city name (BigDataCloud — free, no key needed)
+      let displayName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; // fallback
+      try {
+        const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
+        const rgRes = await fetch(rgUrl);
+        const rg = await rgRes.json();
+        const parts = [
+          rg.city || rg.locality || rg.principalSubdivision,
+          rg.principalSubdivision !== (rg.city || rg.locality) ? rg.principalSubdivision : null,
+          rg.countryName
+        ].filter(Boolean);
+        if (parts.length) displayName = parts.join(', ');
+      } catch (_) { /* fallback to coordinates if reverse geocode fails */ }
+
+      const input = document.getElementById("locationInput");
+      if (input) input.value = displayName;
+      reset();
+
+      // Pass exact GPS coordinates to avoid re-geocoding drift
+      const locObj = {
+        name: displayName,
+        latitude: lat,
+        longitude: lon,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        elevation: pos.coords.altitude || 0
+      };
+      await refreshEverything(displayName, true, locObj);
+    };
+
+    const fail = (err, retry = false) => {
+      if (retry) {
+        navigator.geolocation.getCurrentPosition(
+          lookup,
+          finalErr => fail(finalErr, false),
+          { enableHighAccuracy: false, timeout: 25000, maximumAge: 0 }
+        );
+        return;
+      }
+
+      reset();
+      let msg = "Location unavailable";
+      if (err && err.code === 1) msg = "Permission denied";
+      else if (err && err.code === 2) msg = "Position unavailable";
+      else if (err && err.code === 3) msg = "Request timed out";
+      if (btnText) {
+        btnText.textContent = msg;
+        setTimeout(() => { if (btnText) btnText.textContent = "Use my location"; }, 3000);
+      }
+    };
+
     navigator.geolocation.getCurrentPosition(
-      async pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-
-        // Reverse geocode to get city name (BigDataCloud — free, no key needed)
-        let displayName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; // fallback
-        try {
-          const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
-          const rgRes = await fetch(rgUrl);
-          const rg = await rgRes.json();
-          const parts = [
-            rg.city || rg.locality || rg.principalSubdivision,
-            rg.principalSubdivision !== (rg.city || rg.locality) ? rg.principalSubdivision : null,
-            rg.countryName
-          ].filter(Boolean);
-          if (parts.length) displayName = parts.join(', ');
-        } catch (_) { /* fallback to coordinates if reverse geocode fails */ }
-
-        const input = document.getElementById("locationInput");
-        if (input) input.value = displayName;
-        reset();
-
-        // Pass the display name as query — geocode() will resolve it,
-        // but override with exact GPS coordinates to avoid re-geocoding drift
-        const locObj = {
-          name: displayName,
-          latitude: lat,
-          longitude: lon,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          elevation: pos.coords.altitude || 0
-        };
-        await refreshEverything(displayName, true, locObj);
-      },
-      err => {
-        reset();
-        let msg = "Location denied";
-        if (err.code === 1) msg = "Permission denied";
-        else if (err.code === 2) msg = "Position unavailable";
-        else if (err.code === 3) msg = "Request timed out";
-        if (btnText) {
-          btnText.textContent = msg;
-          setTimeout(() => { if (btnText) btnText.textContent = "Use my location"; }, 3000);
-        }
-      },
-      { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 }
+      lookup,
+      err => fail(err, err && err.code === 3),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
     );
   };
   async function init() {
@@ -6718,19 +6721,5 @@ function startAtomicClock(timeZone) {
     </div>
   </div>
 
-
-  <script>
-    (function () {
-      const params = new URLSearchParams(window.location.search);
-      const city = params.get("city");
-      if (!city) return;
-      const input = document.getElementById("locationInput");
-      if (!input) return;
-      input.value = city.replace(/-/g, " ");
-      setTimeout(() => {
-        if (typeof runForecast === "function") runForecast();
-      }, 250);
-    })();
-  </script>
 </body>
 </html>
