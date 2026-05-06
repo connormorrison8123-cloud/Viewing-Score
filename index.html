@@ -1,17 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-79RE6LGC7S"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-79RE6LGC7S');
 </script>
-<!-- Google AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3855383829699724"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AstronoSight — Sky Viewing Forecast</title>
@@ -2206,6 +2196,16 @@
   }
 
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-79RE6LGC7S"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-79RE6LGC7S');
+</script>
+
 </head>
 <body>
 
@@ -3569,19 +3569,19 @@
             </svg>
           </div>
           <h3 class="about-card-title">How the Score Works</h3>
-          <p class="about-card-body">The Viewing Score (0–100) is a weighted composite of 9 atmospheric and environmental factors. A score above 80 indicates excellent conditions for visual astronomy or astrophotography.</p>
+          <p class="about-card-body">The Viewing Score (0–100) is a weighted composite of 9 atmospheric and environmental factors, with light pollution now carrying the largest weight. A score above 80 indicates excellent conditions for visual astronomy or astrophotography.</p>
           <div class="score-weights">
-            <div class="weight-row"><span>Cloud Cover</span><div class="weight-bar-track"><div class="weight-bar" style="width:22%"></div></div><span class="weight-pct">22%</span></div>
-            <div class="weight-row"><span>Atmospheric Seeing</span><div class="weight-bar-track"><div class="weight-bar" style="width:17%"></div></div><span class="weight-pct">17%</span></div>
-            <div class="weight-row"><span>Transparency</span><div class="weight-bar-track"><div class="weight-bar" style="width:13%"></div></div><span class="weight-pct">13%</span></div>
-            <div class="weight-row"><span>Precipitation</span><div class="weight-bar-track"><div class="weight-bar" style="width:11%"></div></div><span class="weight-pct">11%</span></div>
-            <div class="weight-row"><span>Wind Speed</span><div class="weight-bar-track"><div class="weight-bar" style="width:9%"></div></div><span class="weight-pct">9%</span></div>
-            <div class="weight-row"><span>Humidity</span><div class="weight-bar-track"><div class="weight-bar" style="width:9%"></div></div><span class="weight-pct">9%</span></div>
-            <div class="weight-row"><span class="weight-highlight">Light Pollution (Bortle)</span><div class="weight-bar-track"><div class="weight-bar" style="width:8%;background:var(--fair)"></div></div><span class="weight-pct weight-highlight">8%</span></div>
-            <div class="weight-row"><span>Temperature</span><div class="weight-bar-track"><div class="weight-bar" style="width:7%;background:rgba(56,217,245,0.5)"></div></div><span class="weight-pct">7%</span></div>
+            <div class="weight-row"><span>Cloud Cover</span><div class="weight-bar-track"><div class="weight-bar" style="width:20%"></div></div><span class="weight-pct">20%</span></div>
+            <div class="weight-row"><span>Atmospheric Seeing</span><div class="weight-bar-track"><div class="weight-bar" style="width:16%"></div></div><span class="weight-pct">16%</span></div>
+            <div class="weight-row"><span>Transparency</span><div class="weight-bar-track"><div class="weight-bar" style="width:12%"></div></div><span class="weight-pct">12%</span></div>
+            <div class="weight-row"><span>Precipitation</span><div class="weight-bar-track"><div class="weight-bar" style="width:8%"></div></div><span class="weight-pct">8%</span></div>
+            <div class="weight-row"><span>Wind Speed</span><div class="weight-bar-track"><div class="weight-bar" style="width:6%"></div></div><span class="weight-pct">6%</span></div>
+            <div class="weight-row"><span>Humidity</span><div class="weight-bar-track"><div class="weight-bar" style="width:7%"></div></div><span class="weight-pct">7%</span></div>
+            <div class="weight-row"><span class="weight-highlight">Light Pollution (Bortle)</span><div class="weight-bar-track"><div class="weight-bar" style="width:24%;background:var(--fair)"></div></div><span class="weight-pct weight-highlight">24%</span></div>
+            <div class="weight-row"><span>Temperature</span><div class="weight-bar-track"><div class="weight-bar" style="width:3%;background:rgba(56,217,245,0.5)"></div></div><span class="weight-pct">3%</span></div>
             <div class="weight-row"><span>Jet Stream</span><div class="weight-bar-track"><div class="weight-bar" style="width:4%;background:var(--muted)"></div></div><span class="weight-pct">4%</span></div>
           </div>
-          <p class="about-score-note">Bortle class is looked up from a 503-city VIIRS-calibrated database. Dark skies (Bortle 1–3) add up to 8 points; city cores (Bortle 8–9) subtract up to 8 points.</p>
+          <p class="about-score-note">Bortle class is looked up from a 503-city VIIRS-calibrated database and now carries the largest share of the final score.</p>
         </div>
 
         <!-- Data Sources -->
@@ -5567,15 +5567,15 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     const lpScore  = clamp(Math.round(100 - (bortle - 1) * 10.6), 15, 100);
 
     const weighted =
-      cloudScore        * 0.22 +
-      seeingScore       * 0.17 +
-      humidityScore     * 0.09 +
-      transparencyScore * 0.13 +
-      windScore         * 0.09 +
-      tempScore         * 0.07 +
-      precipScore       * 0.11 +
+      lpScore           * 0.24 +
+      cloudScore        * 0.20 +
+      seeingScore       * 0.16 +
+      transparencyScore * 0.12 +
+      precipScore       * 0.08 +
+      humidityScore     * 0.07 +
+      windScore         * 0.06 +
       jetScore          * 0.04 +
-      lpScore           * 0.08;
+      tempScore         * 0.03;
 
     return {
       score: clamp(Math.round(weighted), 0, 100),
