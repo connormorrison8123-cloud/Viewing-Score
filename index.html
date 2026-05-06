@@ -1130,7 +1130,7 @@
   .sat-table-panel { padding-bottom: 20px; }
 
   /* ── ABOUT ── */
-  .about-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 20px; align-items: start; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .about-card { padding: 28px; }
   .about-card-wide { grid-column: span 2; }
   .about-card-icon { margin-bottom: 14px; }
@@ -2098,91 +2098,181 @@
   @keyframes spinRefresh { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
 
 
-  /* ── PER-PAGE BOTTOM NAV BAR ── */
-  .page-nav-bar {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border);
-  }
   .page-nav-inner {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
   }
-  .page-nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 16px;
+  @media (max-width: 600px) {
+    .page-nav-inner { flex-direction: column; align-items: flex-start; }
+    .pnb-link { font-size: 0.7rem; }
   }
-  .page-nav-link {
-    font-size: 0.75rem;
-    color: var(--muted);
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.15s;
-    white-space: nowrap;
-    -webkit-tap-highlight-color: transparent;
+
+
+  /* ── ABOUT PAGE V2 ── */
+  .about-grid-v2 {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 20px;
+    align-items: start;
   }
-  .page-nav-link:hover { color: var(--cyan); }
-  .page-nav-meta {
+
+  .about-faq-panel {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .about-faq-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-  @media (max-width: 500px) {
-    .page-nav-links { gap: 6px 12px; }
-    .page-nav-link { font-size: 0.7rem; }
+    gap: 12px;
+    padding: 22px 26px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(56,217,245,0.03);
   }
 
-
-  /* ── FAQ 2-COLUMN LAYOUT ── */
-  .faq-layout {
+  .about-faq-body {
     display: grid;
-    grid-template-columns: 220px 1fr;
-    min-height: 400px;
+    grid-template-columns: 200px 1fr;
+    min-height: 500px;
   }
-  .faq-sidebar {
+
+  .about-faq-index {
     background: rgba(255,255,255,0.02);
     border-right: 1px solid var(--border);
-    padding: 24px 18px;
+    padding: 18px 14px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
   }
-  .faq-sidebar-title {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Orbitron', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.16em;
-    color: var(--cyan);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .faq-index-item {
-    font-size: 0.76rem;
+
+  .faq-idx-item {
+    font-size: 0.73rem;
     color: var(--muted);
     cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 7px;
+    padding: 7px 10px;
+    border-radius: 8px;
     line-height: 1.35;
     transition: background 0.15s, color 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
-  .faq-index-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-  .faq-index-item.active { color: var(--cyan); background: rgba(56,217,245,0.08); }
-  .faq-content {
-    padding: 24px 28px;
+  .faq-idx-item:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .faq-idx-item.active { color: var(--cyan); background: rgba(56,217,245,0.09); }
+
+  .about-faq-answers {
+    padding: 20px 24px;
     overflow-y: auto;
+    max-height: 680px;
   }
+
+  .about-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .weight-highlight { color: var(--fair); font-weight: 600; }
+
+  .about-score-note {
+    font-size: 0.74rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 900px) {
+    .about-grid-v2 { grid-template-columns: 1fr; }
+    .about-faq-body { grid-template-columns: 160px 1fr; }
+    .about-faq-answers { max-height: none; }
+  }
+  @media (max-width: 600px) {
+    .about-faq-body { grid-template-columns: 1fr; }
+    .about-faq-index { border-right: none; border-bottom: 1px solid var(--border); display: flex; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+    .faq-idx-item { white-space: nowrap; }
+    .about-faq-answers { padding: 16px; }
+  }
+
+
+  .moon-rise-set {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+  .moon-rise-set span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.79rem;
+  }
+
+
+  /* ── TONIGHT AT A GLANCE ── */
+  .tonight-glance {
+    padding: 18px 24px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 2px;
+  }
+  .tg-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+  .tg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .tg-grid-2col { grid-template-columns: 1fr 1fr; }
+  .tg-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: border-color 0.2s;
+  }
+  .tg-card:hover { border-color: rgba(56,217,245,0.3); }
+  .tg-icon { line-height: 0; }
+  .tg-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+  .tg-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+
   @media (max-width: 780px) {
-    .faq-layout { grid-template-columns: 1fr; }
-    .faq-sidebar { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
-    .faq-index { display: flex; flex-wrap: wrap; gap: 6px; }
-    .faq-index-item { white-space: nowrap; }
-    .faq-content { padding: 16px; }
+    .tg-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tonight-glance { padding: 14px 16px 0; }
+  }
+
+
+
+
+
+  @media (max-width: 780px) {
   }
 
 </style>
@@ -2394,7 +2484,7 @@
         </div>
         <div class="chip">
           <span class="chip-label">Bortle</span>
-          <span class="chip-value" id="bortleChip">—</span>
+          <span class="chip-value" id="bortleChip" style="font-weight:700">—</span>
         </div>
         <div class="chip">
           <span class="chip-label">Mag Limit</span>
@@ -2409,9 +2499,34 @@
           <span class="chip-value highlight" id="atomicClock">—</span>
         </div>
       </div>
+
+      <!-- ── TONIGHT AT A GLANCE ── -->
+      <div class="tonight-glance">
+        <div class="tg-title">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><path d="M6 3v3l2 1"/></svg>
+          Tonight at a Glance
+        </div>
+        <div class="tg-grid tg-grid-2col">
+          <div class="tg-card">
+            <div class="tg-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--cyan)" stroke-width="1.4" stroke-linecap="round"><path d="M13 8.5A5.5 5.5 0 0 1 7.5 14 5.5 5.5 0 1 0 13 8.5z"/></svg>
+            </div>
+            <div class="tg-label">Moon Phase</div>
+            <div class="tg-value" id="tgMoonPhase">—</div>
+          </div>
+          <div class="tg-card">
+            <div class="tg-icon">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.5" fill="none"/><circle cx="8" cy="8" r="0.8" fill="var(--muted)"/></svg>
+            </div>
+            <div class="tg-label">Naked Eye Limit</div>
+            <div class="tg-value" id="tgMagLimit">—</div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- RIGHT: Factors -->
+    <!-- RIGHT: Factors + Extended Metrics -->
     <div class="panel details-panel">
       <div class="panel-header">
         <span class="panel-title">Atmospheric Factors</span>
@@ -2419,6 +2534,7 @@
       <div class="factors-list" id="factorsList">
         <!-- injected by JS -->
       </div>
+
     </div>
   </div>
 
@@ -2445,10 +2561,19 @@
       <div class="moon-display">
         <img id="moonPhaseImg" class="moon-img" src="" alt="Moon phase" />
         <div class="moon-info">
-          <div class="moon-phase-name">Waning Gibbous</div>
-          <div class="moon-sub">72% illuminated</div>
-          <div class="moon-sub" style="margin-top:4px; color: var(--amber)">Rises 11:28 PM</div>
-          <div class="moon-sub">Interference: Moderate</div>
+          <div class="moon-phase-name">—</div>
+          <div class="moon-sub" id="moonIllumSub">—</div>
+          <div class="moon-sub moon-rise-set">
+            <span id="moonRiseVal" style="color:var(--good)">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 8V2"/><path d="M2 5l3-3 3 3"/></svg>
+              —
+            </span>
+            <span id="moonSetVal" style="color:var(--amber)">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 2v6"/><path d="M2 5l3 3 3-3"/></svg>
+              —
+            </span>
+          </div>
+          <div class="moon-sub" id="moonInterferSub">Interference: —</div>
         </div>
       </div>
     </div>
@@ -2523,27 +2648,6 @@
   </div><!-- /resultsWrap -->
 
 
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
-        </div>
-      </div>
-    </div>
   </div><!-- /page-forecast -->
 
   <!-- ══════════════════════════════════════════════════════════
@@ -2608,28 +2712,7 @@
         </table>
       </div>
     </div>
-  
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
-        </div>
-      </div>
-    </div>
+
   </div><!-- /page-deepsky -->
 
   <!-- ══════════════════════════════════════════════════════════
@@ -2674,28 +2757,7 @@
       </div>
       <p class="table-note">Times are local · Passes with max elevation &lt;10° omitted · Source: Celestrak TLE + satellite.js</p>
     </div>
-  
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
-        </div>
-      </div>
-    </div>
+
   </div><!-- /page-satellites -->
 
 
@@ -3025,28 +3087,7 @@
           </div>
         </div>
     </div>
-  
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
-        </div>
-      </div>
-    </div>
+
   </div><!-- /page-constellations -->
 
   <!-- ══════════════════════════════════════════════════════════
@@ -3318,28 +3359,7 @@
           </div>
         </div>
     </div>
-  
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
-        </div>
-      </div>
-    </div>
+
   </div><!-- /page-astroplanner -->
 
   <!-- ══════════════════════════════════════════════════════════
@@ -3438,28 +3458,7 @@
         <div class="dark-tip"><div class="dark-tip-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M5 19a6 6 0 0 1 12 0"/></svg></div><div class="dark-tip-text"><strong>Let your eyes adapt</strong><br/>Full dark adaptation takes 20–30 minutes. Avoid white light completely; use a red flashlight. Your sensitivity can increase up to 100,000× during this period.</div></div>
       </div>
     </div>
-  
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
-        </div>
-      </div>
-    </div>
+
   </div><!-- /page-darksites -->
 
 
@@ -3544,28 +3543,7 @@
         <div class="moon-fact"><div class="moon-fact-val">4.5 <small>Byr</small></div><div class="moon-fact-lbl">Age</div></div>
       </div>
     </div>
-  
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
-        </div>
-      </div>
-    </div>
+
   </div><!-- /page-moon -->
 
   <!-- ══════════════════════════════════════════════════════════
@@ -3577,131 +3555,122 @@
       <p class="page-sub">How the forecast works and where the data comes from</p>
     </div>
 
-    <div class="about-grid">
+    <div class="about-grid-v2">
 
-      <!-- Score methodology -->
-      <div class="panel about-card">
-        <div class="about-card-icon">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round">
+      <!-- ── LEFT: FAQ (dominant, full height) ── -->
+      <div class="panel about-faq-panel">
+        <div class="about-faq-header">
+          <svg width="20" height="20" viewBox="0 0 28 28" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="14" cy="14" r="11"/>
-            <path d="M14 8v6l4 2"/>
+            <path d="M11 10.5a3 3 0 0 1 6 0c0 2-3 2.5-3 5"/>
+            <circle cx="14" cy="19.5" r="0.8" fill="var(--cyan)"/>
           </svg>
+          <h3 class="about-card-title" style="margin:0">Frequently Asked Questions</h3>
         </div>
-        <h3 class="about-card-title">How the Score Works</h3>
-        <p class="about-card-body">The Viewing Score (0–100) is a weighted composite of eight atmospheric and environmental factors. Each factor is normalized to a 0–100 sub-score and blended using the weights below. A score above 80 means conditions are excellent for telescope viewing or astrophotography.</p>
-        <div class="score-weights">
-          <div class="weight-row"><span>Cloud Cover</span><div class="weight-bar-track"><div class="weight-bar" style="width:28%"></div></div><span class="weight-pct">28%</span></div>
-          <div class="weight-row"><span>Atmospheric Seeing</span><div class="weight-bar-track"><div class="weight-bar" style="width:22%"></div></div><span class="weight-pct">22%</span></div>
-          <div class="weight-row"><span>Transparency</span><div class="weight-bar-track"><div class="weight-bar" style="width:18%"></div></div><span class="weight-pct">18%</span></div>
-          <div class="weight-row"><span>Wind Speed</span><div class="weight-bar-track"><div class="weight-bar" style="width:12%"></div></div><span class="weight-pct">12%</span></div>
-          <div class="weight-row"><span>Humidity</span><div class="weight-bar-track"><div class="weight-bar" style="width:10%"></div></div><span class="weight-pct">10%</span></div>
-          <div class="weight-row"><span>Light Pollution</span><div class="weight-bar-track"><div class="weight-bar" style="width:6%;background:var(--fair)"></div></div><span class="weight-pct">6%</span></div>
-          <div class="weight-row"><span>Jet Stream</span><div class="weight-bar-track"><div class="weight-bar" style="width:4%;background:var(--muted)"></div></div><span class="weight-pct">4%</span></div>
-        </div>
-      </div>
-      <!-- Data sources — spans both grid rows in right column -->
-      <div class="panel about-card" style="grid-row:1/3;grid-column:2">
-        <div class="about-card-icon">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="6" width="20" height="16" rx="2"/>
-            <path d="M4 11h20"/><path d="M9 6v5"/><path d="M19 6v5"/>
-          </svg>
-        </div>
-        <h3 class="about-card-title">Data Sources</h3>
-        <div class="source-list">
-          <div class="source-row"><div class="source-name">Open-Meteo Weather API</div><div class="source-desc">Hourly cloud cover, wind (10 m &amp; 180 m), humidity, temperature (°F), visibility, and precipitation. 48-hour forecasts using Unix timestamps. Models: ECMWF, GFS, ICON. Free, no API key.</div></div>
-          <div class="source-row"><div class="source-name">Open-Meteo Geocoding API</div><div class="source-desc">Forward geocoding — resolves city names and zip codes to lat/lon, elevation, timezone, and population. Powers the search autocomplete (6 candidates per keystroke).</div></div>
-          <div class="source-row"><div class="source-name">BigDataCloud Reverse Geocoding</div><div class="source-desc">Converts GPS coordinates to city/state/country text for "Use my location," and provides county-level population as a Bortle fallback when VIIRS is unavailable. Free, no key.</div></div>
-          <div class="source-row"><div class="source-name">NOAA VIIRS — ArcGIS ImageServer</div><div class="source-desc">Annual nighttime radiance composites (VIIRS/NighttimeLightsMDNB) via the ArcGIS ic.img.arcgis.com REST identify endpoint. Primary source for Bortle class, SQM, and the Light Pollution factor in the viewing score.</div></div>
-          <div class="source-row"><div class="source-name">Celestrak — NORAD TLE Data</div><div class="source-desc">Fresh Two-Line Element sets for the ISS (NORAD #25544). Propagated with satellite.js v4.1.3 SGP4 to predict passes ≥ 10° elevation for the next 24 hours.</div></div>
-          <div class="source-row"><div class="source-name">Astronomy Engine v2.1.19</div><div class="source-desc">All celestial mechanics: moon phase, rise/set/transit for Sun, Moon, and planets, astronomical twilight (SearchAltitude at −18°), and deep-sky altitude. Times localised to searched location's IANA timezone.</div></div>
-          <div class="source-row"><div class="source-name">NASA Image and Video Library</div><div class="source-desc">Planetary photography (Mercury–Neptune), eight moon phase images, ISS photo, and deep-sky images in the Astro Planner. Moon anatomy diagram from public-domain astrophotography.</div></div>
-        </div>
-      </div><!-- /data-sources card -->
-
-      <!-- FAQ — placed below "How it Works" in left column -->
-      <div class="panel about-card faq-card" style="padding:0;overflow:hidden;grid-row:2;grid-column:1">
-        <div class="faq-layout">
-          <div class="faq-sidebar">
-            <div class="faq-sidebar-title">
-              <svg width="18" height="18" viewBox="0 0 28 28" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
-                <circle cx="14" cy="14" r="11"/>
-                <path d="M11 10.5a3 3 0 0 1 6 0c0 2-3 2.5-3 5"/><circle cx="14" cy="19.5" r="0.8" fill="var(--cyan)"/>
-              </svg>
-              FAQ
+        <div class="about-faq-body">
+          <div class="about-faq-index" id="faqIndex">
+            <!-- Built by JS -->
+          </div>
+          <div class="about-faq-answers" id="faqList">
+            <div class="faq-item">
+              <div class="faq-q">What does the Antoniadi scale mean for Seeing?</div>
+              <div class="faq-a">The Antoniadi scale rates atmospheric stability from I (perfect, no quivering) to V (very bad, barely allows rough sketching). A score of III or better is generally needed for planetary detail work. AstronoSight converts this to a 0–100 sub-score for the composite.</div>
             </div>
-            <div class="faq-index" id="faqIndex"></div>
+            <div class="faq-item">
+              <div class="faq-q">How often is the forecast updated?</div>
+              <div class="faq-a">Weather data refreshes every 15 minutes automatically after your first search. The Bortle class is derived from a curated 503-city database calibrated to NOAA VIIRS satellite data and does not require a live API call.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Why does my score differ from Clear Outside or Clear Dark Sky?</div>
+              <div class="faq-a">Different services weight factors differently and use different numerical weather models. AstronoSight emphasises cloud cover and atmospheric seeing most heavily since these dominate the visual experience. Cross-referencing multiple sources is recommended for critical sessions.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">What is the Bortle scale and how does it affect my score?</div>
+              <div class="faq-a">The Bortle scale (1–9) measures sky brightness — 1 is truly dark desert sky, 9 is inner city. AstronoSight looks up your location against a 503-city database calibrated to NOAA VIIRS nighttime satellite radiance. Light pollution carries 8% weight in the viewing score, so a Bortle 9 city loses roughly 8 points vs a Bortle 1 dark sky, all else equal.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">What does "Dark Until" mean on the forecast card?</div>
+              <div class="faq-a">"Dark Until" shows the end of astronomical twilight — when the Sun drops 18° below the horizon and the sky reaches true nighttime darkness. Before this time, scattered sunlight still washes out faint nebulae and galaxies. Calculated in real time by Astronomy Engine for your exact coordinates and date.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">How accurate are the ISS pass predictions?</div>
+              <div class="faq-a">ISS passes use fresh TLE data from Celestrak, propagated with satellite.js SGP4 in your browser. Accuracy is typically within 30 seconds for passes within the next 24 hours. Passes below 10° elevation are filtered out. TLE accuracy degrades slightly for passes further in the future due to atmospheric drag variability.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Can I use AstronoSight for astrophotography planning?</div>
+              <div class="faq-a">Yes — the Astro Planner tab lists 10 deep-sky targets with recommended focal lengths, exposures, and ISO settings. Cross-reference transparency and seeing factors to judge whether conditions suit wide-field imaging or high-resolution planetary work.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Why does the Bortle class say "Curated city DB"?</div>
+              <div class="faq-a">The NOAA VIIRS ArcGIS API is blocked by CORS in browser environments (it requires a server-side proxy). Rather than showing Bortle 1 for every location, AstronoSight uses an embedded 503-city database calibrated directly from published VIIRS radiance data. This gives accurate results instantly with no API calls.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Is AstronoSight free? Do I need an account?</div>
+              <div class="faq-a">Completely free. No account, no subscription, no ads. All APIs used (Open-Meteo, Celestrak, BigDataCloud) are free or open-source. Your location is only used to fetch real-time data and is never stored on any server.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">Can I observe planets with just binoculars?</div>
+              <div class="faq-a">Absolutely. Venus, Mars, Jupiter, and Saturn show significant detail in 10×50 binoculars — Jupiter's four Galilean moons are visible, Saturn's rings resolve at 20×+, and Mars shows polar cap hints near opposition. The planet panel shows current altitude, magnitude, and rise/set times so you know what's accessible tonight.</div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">What does each colour on the score ring mean?</div>
+              <div class="faq-a">The score ring and atmospheric factor bars use a consistent colour scale: green (≥ 80 — excellent), cyan (65–79 — good), amber (45–64 — fair), and red (below 45 — poor). The same colours appear in the 7-day weekly outlook bars and the factor list so you can instantly gauge each contributor.</div>
+            </div>
           </div>
-          <div class="faq-content">
-            <h3 class="about-card-title" style="margin-bottom:20px">Frequently Asked Questions</h3>
-            <div class="faq-list" id="faqList">
-          <div class="faq-item">
-            <div class="faq-q">What does the Antoniadi scale mean for Seeing?</div>
-            <div class="faq-a">The Antoniadi scale rates atmospheric stability from I (perfect, no quivering) to V (very bad, barely allows rough sketching). A score of III or better is generally needed for planetary detail work. AstronoSight converts this to a 0–100 sub-score for the composite.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">How often is the forecast updated?</div>
-            <div class="faq-a">Weather data refreshes every 15 minutes from Open-Meteo's API. Seeing estimates update hourly. Light pollution data is static and based on the most recent atlas version (2022).</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Why does my score differ from Clear Outside or Clear Dark Sky?</div>
-            <div class="faq-a">Different services weight factors differently and use different NWP models. AstronoSight emphasizes cloud cover and seeing most heavily, since these dominate the visual experience. We recommend cross-referencing multiple sources for critical observing sessions.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Can I use AstronoSight for astrophotography planning?</div>
-            <div class="faq-a">Yes — the Astro Planner tab lists 10 deep-sky targets with recommended focal lengths, exposures, and ISO settings. The atmospheric factors panel shows transparency and seeing independently so you can judge whether conditions suit wide-field imaging or high-resolution planetary work.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">What is the Bortle scale and how does it affect my score?</div>
-            <div class="faq-a">The Bortle scale runs from 1 (truly dark, remote desert) to 9 (inner city). AstronoSight fetches your sky brightness from the NOAA VIIRS nighttime satellite dataset via ArcGIS, then converts to Bortle class. This contributes 8% of your viewing score — enough to distinguish a dark rural site from a suburban one, but balanced so a perfectly clear city night isn't unfairly penalised.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">What does "Dark Until" mean on the forecast card?</div>
-            <div class="faq-a">"Dark Until" shows the end of astronomical twilight — when the Sun drops 18° below the horizon and the sky reaches true nighttime darkness. Before this time, scattered sunlight still washes out faint nebulae. This is the earliest you should start serious deep-sky work. It's calculated in real time by Astronomy Engine for your exact coordinates and date.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Why does my location show "BigDataCloud" instead of VIIRS data?</div>
-            <div class="faq-a">The ArcGIS VIIRS endpoint covers global data but can occasionally return no result for remote ocean coordinates or rate-limited requests. When that happens, AstronoSight falls back to a county-level population model from BigDataCloud. The source label on the Dark Sites and Forecast pages always shows which method was used.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">How accurate are the ISS pass predictions?</div>
-            <div class="faq-a">ISS passes use fresh TLE data from Celestrak, propagated with satellite.js SGP4 directly in your browser. Accuracy is typically within 30 seconds for passes in the next 24 hours. Passes below 10° elevation are filtered out since horizon obstructions usually block these. TLE accuracy decreases slightly for passes further in the future due to atmospheric drag variability.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Is AstronoSight free? Do I need an account?</div>
-            <div class="faq-a">Completely free. AstronoSight runs entirely in your browser with no account, no subscription, and no ads. All APIs used (Open-Meteo, Celestrak, BigDataCloud, ArcGIS VIIRS) are free or open-source. Your location is only used to fetch current data and is never stored on any server.</div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Can I see the planets with just binoculars?</div>
-            <div class="faq-a">Absolutely. Venus, Mars, Jupiter, and Saturn show significant detail even in 10×50 binoculars — Jupiter's moons are visible, Saturn's rings are resolved at 20×+, and Mars shows polar cap hints near opposition. Uranus is a naked-eye object in dark skies (magnitude ~5.7). The planet panel shows current altitude, magnitude, and rise/set times so you know exactly what's accessible tonight.</div>
-          </div>
-            </div><!-- /faq-list -->
-          </div><!-- /faq-content -->
-        </div><!-- /faq-layout -->
-      </div><!-- /faq-card -->
-    </div><!-- /about-grid -->
-  
-    <div class="page-nav-bar">
-      <div class="page-nav-inner">
-        <div class="page-nav-links">
-          <a onclick="footerNav('forecast')" class="page-nav-link">Forecast</a>
-          <a onclick="footerNav('deepsky')" class="page-nav-link">Deep Sky</a>
-          <a onclick="footerNav('satellites')" class="page-nav-link">Satellites</a>
-          <a onclick="footerNav('constellations')" class="page-nav-link">Constellations</a>
-          <a onclick="footerNav('astroplanner')" class="page-nav-link">Astro Planner</a>
-          <a onclick="footerNav('darksites')" class="page-nav-link">Dark Sites</a>
-          <a onclick="footerNav('moon')" class="page-nav-link">Moon</a>
-          <a onclick="footerNav('lightpollution')" class="page-nav-link">Light Pollution</a>
-          <a onclick="switchPage(null,'about')" class="page-nav-link">About</a>
-        </div>
-        <div class="page-nav-meta">
-          <span class="footer-logo" style="font-size:0.68rem">Astrono<span>Sight</span></span>
-          <span style="color:var(--muted);font-size:0.62rem">v1.0.0</span>
-          <span onclick="showFooterModal('privacy')" class="page-nav-link">Privacy</span>
-          <span onclick="showFooterModal('feedback')" class="page-nav-link">Feedback</span>
         </div>
       </div>
-    </div>
+
+      <!-- ── RIGHT COLUMN: Score Methodology + Data Sources stacked ── -->
+      <div class="about-right-col">
+
+        <!-- How the Score Works -->
+        <div class="panel about-card" style="margin-bottom:20px">
+          <div class="about-card-icon">
+            <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="14" cy="14" r="11"/>
+              <path d="M14 8v6l4 2"/>
+            </svg>
+          </div>
+          <h3 class="about-card-title">How the Score Works</h3>
+          <p class="about-card-body">The Viewing Score (0–100) is a weighted composite of 9 atmospheric and environmental factors. A score above 80 indicates excellent conditions for visual astronomy or astrophotography.</p>
+          <div class="score-weights">
+            <div class="weight-row"><span>Cloud Cover</span><div class="weight-bar-track"><div class="weight-bar" style="width:22%"></div></div><span class="weight-pct">22%</span></div>
+            <div class="weight-row"><span>Atmospheric Seeing</span><div class="weight-bar-track"><div class="weight-bar" style="width:17%"></div></div><span class="weight-pct">17%</span></div>
+            <div class="weight-row"><span>Transparency</span><div class="weight-bar-track"><div class="weight-bar" style="width:13%"></div></div><span class="weight-pct">13%</span></div>
+            <div class="weight-row"><span>Precipitation</span><div class="weight-bar-track"><div class="weight-bar" style="width:11%"></div></div><span class="weight-pct">11%</span></div>
+            <div class="weight-row"><span>Wind Speed</span><div class="weight-bar-track"><div class="weight-bar" style="width:9%"></div></div><span class="weight-pct">9%</span></div>
+            <div class="weight-row"><span>Humidity</span><div class="weight-bar-track"><div class="weight-bar" style="width:9%"></div></div><span class="weight-pct">9%</span></div>
+            <div class="weight-row"><span class="weight-highlight">Light Pollution (Bortle)</span><div class="weight-bar-track"><div class="weight-bar" style="width:8%;background:var(--fair)"></div></div><span class="weight-pct weight-highlight">8%</span></div>
+            <div class="weight-row"><span>Temperature</span><div class="weight-bar-track"><div class="weight-bar" style="width:7%;background:rgba(56,217,245,0.5)"></div></div><span class="weight-pct">7%</span></div>
+            <div class="weight-row"><span>Jet Stream</span><div class="weight-bar-track"><div class="weight-bar" style="width:4%;background:var(--muted)"></div></div><span class="weight-pct">4%</span></div>
+          </div>
+          <p class="about-score-note">Bortle class is looked up from a 503-city VIIRS-calibrated database. Dark skies (Bortle 1–3) add up to 8 points; city cores (Bortle 8–9) subtract up to 8 points.</p>
+        </div>
+
+        <!-- Data Sources -->
+        <div class="panel about-card">
+          <div class="about-card-icon">
+            <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="6" width="20" height="16" rx="2"/>
+              <path d="M4 11h20"/><path d="M9 6v5"/><path d="M19 6v5"/>
+            </svg>
+          </div>
+          <h3 class="about-card-title">Data Sources</h3>
+          <div class="source-list">
+            <div class="source-row"><div class="source-name">Open-Meteo Weather</div><div class="source-desc">Hourly cloud, wind, humidity, temperature, visibility, precipitation. 48-hour forecasts. Models: ECMWF, GFS, ICON.</div></div>
+            <div class="source-row"><div class="source-name">Open-Meteo Geocoding</div><div class="source-desc">City name → lat/lon, elevation, timezone, population. Powers 6-candidate autocomplete.</div></div>
+            <div class="source-row"><div class="source-name">BigDataCloud</div><div class="source-desc">GPS → city/state/country name for "Use my location" button. Free, no key.</div></div>
+            <div class="source-row"><div class="source-name">Bortle DB (VIIRS)</div><div class="source-desc">503-city embedded database calibrated to NOAA VIIRS annual nighttime radiance. No API call required.</div></div>
+            <div class="source-row"><div class="source-name">Celestrak TLE</div><div class="source-desc">ISS Two-Line Elements. Propagated with satellite.js SGP4 for pass predictions.</div></div>
+            <div class="source-row"><div class="source-name">Astronomy Engine v2.1.19</div><div class="source-desc">Moon phase, planet rise/set/transit, astronomical twilight. All times in location timezone.</div></div>
+            <div class="source-row"><div class="source-name">NASA Image Library</div><div class="source-desc">Planet photos, moon phase images, ISS photo, deep-sky imagery.</div></div>
+          </div>
+        </div>
+
+      </div><!-- /about-right-col -->
+
+    </div><!-- /about-grid-v2 -->
+
   </div><!-- /page-about -->
 
   <!-- FOOTER -->
@@ -4104,6 +4073,30 @@ document.querySelectorAll('[data-planet]').forEach(img => {
   if (IMGS[p]) img.src = IMGS[p];
 });
 
+
+(function() {
+  function buildFAQIndex() {
+    const list  = document.getElementById('faqList');
+    const index = document.getElementById('faqIndex');
+    if (!list || !index) return;
+    list.querySelectorAll('.faq-item').forEach((item, i) => {
+      const q = item.querySelector('.faq-q')?.textContent || '';
+      const short = q.length > 38 ? q.slice(0, 36) + '…' : q;
+      const el = document.createElement('div');
+      el.className = 'faq-idx-item';
+      el.textContent = short;
+      el.onclick = () => {
+        item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        index.querySelectorAll('.faq-idx-item').forEach(x => x.classList.remove('active'));
+        el.classList.add('active');
+      };
+      index.appendChild(el);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildFAQIndex);
+  else buildFAQIndex();
+})();
+
 document.getElementById('locationInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') runForecast();
 });
@@ -4437,7 +4430,7 @@ function updateDarkSite(bortle, sqm, locationName) {
   const bortleColors = {1:'#9b59b6',2:'#2980b9',3:'#27ae60',4:'#8bc34a',5:'#f39c12',6:'#e67e22',7:'#e74c3c',8:'#c0392b',9:'#922b21'};
 
   if (bNum) { bNum.textContent = `Class ${bortle}`; bNum.style.color = bortleColors[bortle] || '#fff'; }
-  if (bName) bName.textContent = (liveState?.cityType ? liveState.cityType + ' — ' : '') + 'Bortle ' + bortle;
+  if (bName) bName.textContent = bortleNames[bortle] || '—';
   if (sqmEl) sqmEl.textContent = sqm ? sqm.toFixed(1) : '—';
   const magLim = sqm ? (sqm - 9.5) * 1.4 + 2 : null;
   if (magEl) magEl.textContent = magLim ? magLim.toFixed(1) : '—';
@@ -4706,32 +4699,6 @@ function closeFooterModal() {
   if (m) m.style.display = 'none';
 }
 
-
-// FAQ sidebar index — auto-built from faq-q elements
-(function() {
-  function buildFAQIndex() {
-    const list = document.getElementById('faqList');
-    const index = document.getElementById('faqIndex');
-    if (!list || !index) return;
-    const items = list.querySelectorAll('.faq-item');
-    items.forEach((item, i) => {
-      const q = item.querySelector('.faq-q')?.textContent || '';
-      const short = q.length > 42 ? q.slice(0, 40) + '…' : q;
-      const idx = document.createElement('div');
-      idx.className = 'faq-index-item';
-      idx.textContent = short;
-      idx.onclick = () => {
-        item.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        index.querySelectorAll('.faq-index-item').forEach(el => el.classList.remove('active'));
-        idx.classList.add('active');
-      };
-      index.appendChild(idx);
-    });
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildFAQIndex);
-  else buildFAQIndex();
-})();
-
 function filterDSO(btn, type) {
   document.querySelectorAll('.dso-filter').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -4744,6 +4711,515 @@ function filterDSO(btn, type) {
 
 <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js@4.1.3/dist/satellite.min.js"></script>
+<script>
+const BORTLE_CITY_DB = [
+  [34.05,-118.24,9,"Los Angeles CA"],
+  [34.02,-118.49,9,"Santa Monica CA"],
+  [33.94,-118.4,9,"Inglewood CA"],
+  [34.19,-118.13,9,"Burbank CA"],
+  [33.89,-118.22,9,"Compton CA"],
+  [34.0,-117.76,8,"Pomona CA"],
+  [34.07,-117.94,8,"Covina CA"],
+  [34.08,-118.05,8,"Pasadena CA"],
+  [40.71,-74.01,9,"New York City NY"],
+  [40.65,-73.95,9,"Brooklyn NY"],
+  [40.73,-73.94,9,"Queens NY"],
+  [40.75,-73.87,9,"Jackson Heights NY"],
+  [40.84,-73.86,9,"Bronx NY"],
+  [41.88,-87.63,9,"Chicago IL"],
+  [41.83,-87.63,9,"Oak Lawn IL"],
+  [41.99,-87.73,9,"Des Plaines IL"],
+  [41.89,-87.77,8,"Oak Park IL"],
+  [29.76,-95.37,9,"Houston TX"],
+  [29.96,-95.34,8,"Spring TX"],
+  [30.07,-95.22,8,"Humble TX"],
+  [33.45,-112.07,9,"Phoenix AZ"],
+  [33.42,-111.94,8,"Chandler AZ"],
+  [33.35,-111.79,8,"Gilbert AZ"],
+  [33.48,-111.93,8,"Scottsdale AZ"],
+  [33.54,-112.19,9,"Glendale AZ"],
+  [33.41,-112.12,8,"Tempe AZ"],
+  [33.3,-111.84,7,"Chandler outskirts AZ"],
+  [39.95,-75.17,9,"Philadelphia PA"],
+  [39.87,-75.23,8,"Darby PA"],
+  [40.01,-75.31,8,"Ardmore PA"],
+  [32.78,-96.8,9,"Dallas TX"],
+  [32.94,-97.07,8,"Fort Worth TX"],
+  [32.92,-96.63,8,"Garland TX"],
+  [33.16,-97.08,7,"Denton TX"],
+  [37.34,-121.89,9,"San Jose CA"],
+  [37.77,-122.42,9,"San Francisco CA"],
+  [37.68,-122.08,8,"Hayward CA"],
+  [37.87,-122.28,8,"Oakland CA"],
+  [37.55,-122.05,8,"Fremont CA"],
+  [29.42,-98.49,8,"San Antonio TX"],
+  [32.72,-117.16,8,"San Diego CA"],
+  [32.84,-117.27,8,"La Jolla CA"],
+  [32.96,-117.06,7,"Poway CA"],
+  [36.17,-115.14,9,"Las Vegas NV"],
+  [36.1,-115.17,9,"Henderson NV"],
+  [36.21,-115.01,8,"North Las Vegas NV"],
+  [39.74,-104.99,8,"Denver CO"],
+  [39.83,-104.97,8,"Aurora CO"],
+  [39.89,-105.07,8,"Westminster CO"],
+  [39.64,-104.99,7,"Lone Tree CO"],
+  [40.01,-105.27,7,"Boulder CO"],
+  [38.83,-104.82,7,"Colorado Springs CO"],
+  [47.61,-122.33,8,"Seattle WA"],
+  [47.75,-122.16,8,"Bellevue WA"],
+  [47.52,-122.2,8,"Renton WA"],
+  [47.93,-122.22,7,"Everett WA"],
+  [45.51,-122.68,7,"Portland OR"],
+  [45.55,-122.84,7,"Beaverton OR"],
+  [45.42,-122.84,7,"Tigard OR"],
+  [42.36,-71.06,8,"Boston MA"],
+  [42.48,-71.1,8,"Cambridge MA"],
+  [42.35,-71.21,8,"Newton MA"],
+  [42.26,-71.0,7,"Quincy MA"],
+  [25.76,-80.19,9,"Miami FL"],
+  [25.86,-80.29,9,"Hialeah FL"],
+  [26.19,-80.25,9,"Fort Lauderdale FL"],
+  [26.68,-80.04,8,"West Palm Beach FL"],
+  [33.75,-84.39,9,"Atlanta GA"],
+  [33.83,-84.46,8,"Sandy Springs GA"],
+  [33.89,-84.22,8,"Marietta GA"],
+  [33.57,-84.51,8,"College Park GA"],
+  [39.96,-82.99,8,"Columbus OH"],
+  [41.5,-81.69,8,"Cleveland OH"],
+  [41.66,-83.56,8,"Toledo OH"],
+  [39.1,-84.51,8,"Cincinnati OH"],
+  [35.23,-80.84,8,"Charlotte NC"],
+  [35.37,-80.71,8,"Concord NC"],
+  [36.17,-86.78,8,"Nashville TN"],
+  [35.15,-90.05,8,"Memphis TN"],
+  [35.46,-97.52,8,"Oklahoma City OK"],
+  [36.15,-95.99,8,"Tulsa OK"],
+  [44.98,-93.27,8,"Minneapolis MN"],
+  [44.95,-93.09,8,"Saint Paul MN"],
+  [45.05,-93.38,8,"Brooklyn Park MN"],
+  [39.1,-76.77,9,"Baltimore MD"],
+  [38.89,-77.04,9,"Washington DC"],
+  [38.87,-77.17,8,"Arlington VA"],
+  [38.8,-77.05,8,"Alexandria VA"],
+  [38.68,-77.17,7,"Dale City VA"],
+  [30.33,-81.66,8,"Jacksonville FL"],
+  [27.95,-82.46,9,"Tampa FL"],
+  [28.54,-81.38,9,"Orlando FL"],
+  [28.22,-80.64,8,"Melbourne FL"],
+  [31.25,-85.46,7,"Dothan AL"],
+  [30.69,-88.04,8,"Mobile AL"],
+  [37.34,-79.18,7,"Roanoke VA"],
+  [38.29,-77.47,7,"Fredericksburg VA"],
+  [35.78,-78.64,8,"Raleigh NC"],
+  [36.1,-79.09,8,"Greensboro NC"],
+  [34.0,-81.04,8,"Columbia SC"],
+  [32.78,-79.94,8,"Charleston SC"],
+  [32.08,-81.1,8,"Savannah GA"],
+  [30.22,-92.02,8,"Lafayette LA"],
+  [29.95,-90.07,9,"New Orleans LA"],
+  [32.3,-90.18,8,"Jackson MS"],
+  [36.15,-94.13,8,"Fayetteville AR"],
+  [35.2,-101.83,8,"Amarillo TX"],
+  [31.55,-97.15,7,"Waco TX"],
+  [30.27,-97.74,9,"Austin TX"],
+  [26.2,-98.23,9,"McAllen TX"],
+  [27.8,-97.4,8,"Corpus Christi TX"],
+  [31.79,-106.42,8,"El Paso TX"],
+  [35.11,-106.61,7,"Albuquerque NM"],
+  [35.67,-105.95,5,"Santa Fe NM"],
+  [32.32,-110.97,7,"Tucson AZ"],
+  [31.54,-110.31,4,"Sierra Vista AZ"],
+  [34.54,-112.47,5,"Prescott AZ"],
+  [36.86,-111.56,3,"Page AZ"],
+  [35.2,-111.65,4,"Flagstaff AZ"],
+  [40.76,-111.89,8,"Salt Lake City UT"],
+  [40.66,-111.95,8,"Murray UT"],
+  [40.59,-111.94,8,"Sandy UT"],
+  [40.23,-111.66,7,"Provo UT"],
+  [41.74,-111.83,6,"Logan UT"],
+  [43.62,-116.2,7,"Boise ID"],
+  [43.55,-116.56,7,"Nampa ID"],
+  [44.06,-103.23,5,"Rapid City SD"],
+  [46.87,-96.79,7,"Fargo ND"],
+  [43.55,-96.73,7,"Sioux Falls SD"],
+  [44.98,-97.11,5,"Watertown SD"],
+  [46.81,-100.79,5,"Bismarck ND"],
+  [47.93,-106.59,3,"Wolf Point MT"],
+  [45.78,-108.5,6,"Billings MT"],
+  [46.6,-112.03,6,"Helena MT"],
+  [47.5,-111.3,5,"Great Falls MT"],
+  [48.2,-114.31,5,"Kalispell MT"],
+  [45.67,-110.56,4,"Livingston MT"],
+  [44.8,-106.96,3,"Sheridan WY"],
+  [41.14,-104.82,6,"Cheyenne WY"],
+  [42.87,-106.32,6,"Casper WY"],
+  [44.53,-110.82,2,"Yellowstone WY"],
+  [43.49,-110.76,3,"Jackson WY"],
+  [40.73,-111.49,5,"Park City UT"],
+  [38.57,-109.55,2,"Moab UT"],
+  [37.68,-113.06,3,"Cedar City UT"],
+  [37.29,-108.7,3,"Cortez CO"],
+  [38.85,-108.54,3,"Grand Junction CO"],
+  [37.27,-107.88,3,"Durango CO"],
+  [39.07,-108.56,4,"Grand Junction suburban CO"],
+  [39.55,-107.32,3,"Glenwood Springs CO"],
+  [40.48,-107.32,3,"Craig CO"],
+  [37.17,-104.5,3,"Trinidad CO"],
+  [38.27,-104.61,5,"Pueblo CO"],
+  [43.61,-116.2,7,"Boise ID"],
+  [46.73,-117.0,6,"Pullman WA"],
+  [47.66,-117.43,7,"Spokane WA"],
+  [46.23,-119.14,7,"Kennewick WA"],
+  [48.75,-122.47,7,"Bellingham WA"],
+  [48.3,-124.0,3,"Olympic NP WA"],
+  [44.05,-121.31,4,"Bend OR"],
+  [42.34,-122.87,6,"Medford OR"],
+  [44.94,-123.03,7,"Salem OR"],
+  [44.36,-121.19,3,"Sisters OR"],
+  [43.23,-123.36,5,"Roseburg OR"],
+  [41.66,-124.14,5,"Crescent City CA"],
+  [40.8,-124.16,5,"Eureka CA"],
+  [38.58,-121.49,8,"Sacramento CA"],
+  [36.78,-119.79,7,"Fresno CA"],
+  [35.37,-119.02,7,"Bakersfield CA"],
+  [34.42,-119.7,7,"Santa Barbara CA"],
+  [34.97,-120.44,6,"San Luis Obispo CA"],
+  [35.27,-120.66,6,"Pismo Beach CA"],
+  [33.99,-117.37,8,"Riverside CA"],
+  [33.84,-117.91,8,"Anaheim CA"],
+  [33.77,-118.19,8,"Long Beach CA"],
+  [34.14,-118.36,8,"Glendale CA"],
+  [33.65,-117.83,8,"Irvine CA"],
+  [37.97,-122.53,7,"San Rafael CA"],
+  [37.46,-122.17,8,"Redwood City CA"],
+  [37.29,-121.95,8,"Santa Clara CA"],
+  [37.97,-121.31,6,"Stockton CA"],
+  [37.36,-120.6,6,"Merced CA"],
+  [36.33,-119.31,5,"Visalia CA"],
+  [43.65,-79.38,9,"Toronto ON"],
+  [45.5,-73.57,9,"Montreal QC"],
+  [49.28,-123.12,8,"Vancouver BC"],
+  [53.55,-113.49,7,"Edmonton AB"],
+  [51.05,-114.07,7,"Calgary AB"],
+  [49.9,-97.14,8,"Winnipeg MB"],
+  [50.45,-104.62,7,"Regina SK"],
+  [52.13,-106.67,7,"Saskatoon SK"],
+  [47.55,-52.71,7,"St. John's NL"],
+  [44.65,-63.58,7,"Halifax NS"],
+  [45.28,-75.74,8,"Ottawa ON"],
+  [46.81,-71.21,7,"Quebec City QC"],
+  [64.3,-134.88,2,"Whitehorse YK"],
+  [60.72,-135.06,2,"Whitehorse YK rural"],
+  [51.51,-0.13,9,"London UK"],
+  [51.45,-0.13,8,"Croydon UK"],
+  [51.65,0.0,8,"Brentwood UK"],
+  [52.37,4.9,8,"Amsterdam NL"],
+  [52.09,5.12,7,"Utrecht NL"],
+  [51.56,5.09,6,"Eindhoven NL"],
+  [52.52,13.41,8,"Berlin DE"],
+  [53.57,10.02,8,"Hamburg DE"],
+  [48.14,11.58,8,"Munich DE"],
+  [50.93,6.96,8,"Cologne DE"],
+  [51.51,7.47,8,"Dortmund DE"],
+  [48.78,9.18,8,"Stuttgart DE"],
+  [50.11,8.68,8,"Frankfurt DE"],
+  [51.34,12.38,7,"Leipzig DE"],
+  [54.08,12.14,6,"Rostock DE"],
+  [47.94,12.86,5,"Rosenheim rural DE"],
+  [48.37,13.84,4,"Passau rural DE"],
+  [47.37,8.54,8,"Zurich CH"],
+  [47.56,7.59,7,"Basel CH"],
+  [46.2,6.15,7,"Geneva CH"],
+  [46.95,7.45,7,"Bern CH"],
+  [46.52,6.63,7,"Lausanne CH"],
+  [46.83,10.32,3,"Engadin rural CH"],
+  [48.86,2.35,9,"Paris FR"],
+  [48.72,2.17,8,"Versailles FR"],
+  [49.11,2.23,8,"Cergy FR"],
+  [43.3,5.37,8,"Marseille FR"],
+  [43.61,3.88,7,"Montpellier FR"],
+  [45.75,4.83,8,"Lyon FR"],
+  [44.84,-0.58,7,"Bordeaux FR"],
+  [47.22,-1.55,7,"Nantes FR"],
+  [48.57,7.75,7,"Strasbourg FR"],
+  [43.61,1.44,7,"Toulouse FR"],
+  [45.18,5.72,7,"Grenoble FR"],
+  [44.1,4.59,5,"Aubenas rural FR"],
+  [40.42,-3.7,9,"Madrid ES"],
+  [41.39,2.15,9,"Barcelona ES"],
+  [37.39,-5.99,8,"Seville ES"],
+  [37.18,-3.6,8,"Granada ES"],
+  [39.47,-0.38,8,"Valencia ES"],
+  [36.72,-4.42,7,"Malaga ES"],
+  [41.65,-0.88,7,"Zaragoza ES"],
+  [43.26,-2.93,7,"Bilbao ES"],
+  [40.96,-5.66,7,"Salamanca ES"],
+  [41.98,2.82,5,"Olot rural ES"],
+  [41.9,12.5,9,"Rome IT"],
+  [45.46,9.19,9,"Milan IT"],
+  [40.85,14.27,9,"Naples IT"],
+  [44.5,11.34,8,"Bologna IT"],
+  [45.44,12.32,7,"Venice IT"],
+  [43.77,11.25,8,"Florence IT"],
+  [37.5,15.09,7,"Catania IT"],
+  [45.07,7.69,8,"Turin IT"],
+  [40.36,18.17,6,"Lecce rural IT"],
+  [44.41,8.93,7,"Genoa IT"],
+  [37.93,23.73,8,"Athens GR"],
+  [40.63,22.94,7,"Thessaloniki GR"],
+  [38.25,21.73,6,"Patras GR"],
+  [36.44,28.22,5,"Rhodes GR"],
+  [35.34,25.13,5,"Heraklion GR"],
+  [38.72,-9.14,8,"Lisbon PT"],
+  [41.16,-8.63,7,"Porto PT"],
+  [37.02,-7.93,6,"Faro PT"],
+  [55.76,37.62,9,"Moscow RU"],
+  [59.93,30.32,8,"Saint Petersburg RU"],
+  [55.0,82.92,7,"Novosibirsk RU"],
+  [57.15,65.53,6,"Tyumen RU"],
+  [66.5,66.6,3,"Salekhard RU"],
+  [69.35,88.22,2,"Norilsk RU remote"],
+  [50.06,14.44,8,"Prague CZ"],
+  [49.2,16.61,7,"Brno CZ"],
+  [50.08,17.39,6,"Ostrava rural CZ"],
+  [47.5,19.04,8,"Budapest HU"],
+  [52.23,21.01,8,"Warsaw PL"],
+  [54.35,18.65,7,"Gdansk PL"],
+  [50.06,19.94,8,"Krakow PL"],
+  [51.11,17.04,8,"Wroclaw PL"],
+  [53.13,23.16,6,"Bialystok PL"],
+  [52.4,16.93,7,"Poznan PL"],
+  [49.21,19.21,4,"Zakopane PL"],
+  [59.33,18.07,8,"Stockholm SE"],
+  [57.71,11.97,7,"Gothenburg SE"],
+  [55.61,13.0,7,"Malmö SE"],
+  [59.91,10.75,7,"Oslo NO"],
+  [60.39,5.33,7,"Bergen NO"],
+  [63.43,10.4,6,"Trondheim NO"],
+  [69.65,18.96,5,"Tromsø NO"],
+  [70.66,23.68,3,"Hammerfest NO"],
+  [55.68,12.57,8,"Copenhagen DK"],
+  [56.16,10.21,7,"Aarhus DK"],
+  [60.17,24.94,8,"Helsinki FI"],
+  [61.5,23.77,6,"Tampere FI"],
+  [62.89,27.68,5,"Kuopio FI"],
+  [66.5,25.73,4,"Rovaniemi FI"],
+  [59.44,24.75,7,"Tallinn EE"],
+  [56.95,24.11,7,"Riga LV"],
+  [54.69,25.28,7,"Vilnius LT"],
+  [44.8,20.46,8,"Belgrade RS"],
+  [43.85,18.39,7,"Sarajevo BA"],
+  [42.0,21.43,7,"Skopje MK"],
+  [41.33,19.82,8,"Tirana AL"],
+  [44.43,26.1,8,"Bucharest RO"],
+  [46.77,23.59,7,"Cluj-Napoca RO"],
+  [44.33,23.8,5,"Craiova rural RO"],
+  [42.7,23.32,8,"Sofia BG"],
+  [42.14,24.75,7,"Plovdiv BG"],
+  [43.21,27.92,7,"Varna BG"],
+  [47.81,13.04,7,"Salzburg AT"],
+  [48.21,16.37,8,"Vienna AT"],
+  [47.07,15.44,7,"Graz AT"],
+  [47.26,11.4,6,"Innsbruck AT"],
+  [31.77,35.22,8,"Jerusalem IL"],
+  [32.08,34.78,9,"Tel Aviv IL"],
+  [32.79,35.0,7,"Haifa IL"],
+  [30.04,31.24,9,"Cairo EG"],
+  [31.2,29.92,8,"Alexandria EG"],
+  [25.2,55.27,9,"Dubai AE"],
+  [24.47,54.37,9,"Abu Dhabi AE"],
+  [25.29,51.53,9,"Doha QA"],
+  [26.22,50.59,9,"Manama BH"],
+  [24.69,46.72,9,"Riyadh SA"],
+  [21.49,39.19,8,"Jeddah SA"],
+  [33.34,44.4,9,"Baghdad IQ"],
+  [35.69,51.39,9,"Tehran IR"],
+  [33.89,35.5,8,"Beirut LB"],
+  [33.51,36.29,8,"Damascus SY"],
+  [23.59,58.39,7,"Muscat OM"],
+  [36.74,3.06,8,"Algiers DZ"],
+  [33.89,9.54,7,"Tunis TN"],
+  [33.59,-7.62,7,"Casablanca MA"],
+  [34.02,-6.83,7,"Rabat MA"],
+  [31.79,-7.09,6,"Marrakech MA"],
+  [15.55,32.53,8,"Khartoum SD"],
+  [9.05,7.49,7,"Abuja NG"],
+  [6.45,3.39,9,"Lagos NG"],
+  [5.56,-0.2,8,"Accra GH"],
+  [14.69,-17.44,7,"Dakar SN"],
+  [4.35,18.55,7,"Bangui CF"],
+  [3.87,11.52,7,"Yaoundé CM"],
+  [0.39,9.45,7,"Libreville GA"],
+  [-1.29,36.82,8,"Nairobi KE"],
+  [-6.17,35.74,5,"Dodoma TZ"],
+  [-6.81,39.28,7,"Dar es Salaam TZ"],
+  [-25.97,32.59,8,"Maputo MZ"],
+  [-17.73,31.05,7,"Harare ZW"],
+  [-15.42,28.28,7,"Lusaka ZM"],
+  [-13.96,33.79,5,"Lilongwe MW"],
+  [-4.33,15.32,7,"Kinshasa CD"],
+  [-26.2,28.05,9,"Johannesburg ZA"],
+  [-25.76,28.19,8,"Pretoria ZA"],
+  [-33.92,18.42,8,"Cape Town ZA"],
+  [-29.86,30.98,8,"Durban ZA"],
+  [-28.68,24.84,3,"Upington ZA"],
+  [-32.37,22.6,2,"Beaufort West ZA"],
+  [-20.16,57.5,7,"Port Louis MU"],
+  [-18.91,47.54,7,"Antananarivo MG"],
+  [35.68,139.69,9,"Tokyo JP"],
+  [34.69,135.5,9,"Osaka JP"],
+  [35.01,135.77,8,"Kyoto JP"],
+  [35.18,136.9,8,"Nagoya JP"],
+  [43.06,141.35,8,"Sapporo JP"],
+  [33.59,130.4,8,"Fukuoka JP"],
+  [34.4,132.46,7,"Hiroshima JP"],
+  [37.9,139.05,6,"Niigata JP"],
+  [36.7,137.21,5,"Toyama JP"],
+  [31.23,121.47,9,"Shanghai CN"],
+  [39.9,116.41,9,"Beijing CN"],
+  [22.54,114.06,9,"Shenzhen CN"],
+  [23.13,113.26,9,"Guangzhou CN"],
+  [30.59,114.31,9,"Wuhan CN"],
+  [32.06,118.8,9,"Nanjing CN"],
+  [28.68,115.86,8,"Nanchang CN"],
+  [41.8,123.43,8,"Shenyang CN"],
+  [36.07,120.38,8,"Qingdao CN"],
+  [30.25,120.16,8,"Hangzhou CN"],
+  [24.48,118.09,7,"Xiamen CN"],
+  [43.82,87.62,7,"Urumqi CN"],
+  [29.65,91.11,5,"Lhasa TBT"],
+  [25.04,102.71,7,"Kunming CN"],
+  [26.07,119.3,8,"Fuzhou CN"],
+  [37.57,126.98,9,"Seoul KR"],
+  [35.17,129.08,8,"Busan KR"],
+  [37.45,126.7,9,"Incheon KR"],
+  [35.87,128.6,8,"Daegu KR"],
+  [36.35,127.38,8,"Daejeon KR"],
+  [37.75,128.88,5,"Gangneung KR"],
+  [38.31,128.63,3,"Sokcho KR rural"],
+  [25.03,121.57,9,"Taipei TW"],
+  [22.62,120.31,8,"Kaohsiung TW"],
+  [24.15,120.67,7,"Taichung TW"],
+  [22.32,114.17,9,"Hong Kong HK"],
+  [22.19,113.55,9,"Macau MO"],
+  [1.35,103.82,9,"Singapore SG"],
+  [3.16,101.71,9,"Kuala Lumpur MY"],
+  [5.41,100.33,8,"Penang MY"],
+  [14.59,120.98,9,"Manila PH"],
+  [10.32,123.9,7,"Cebu PH"],
+  [-6.21,106.85,9,"Jakarta ID"],
+  [-7.25,112.75,9,"Surabaya ID"],
+  [-8.65,115.22,7,"Denpasar ID"],
+  [0.94,114.53,6,"Palangkaraya ID"],
+  [13.76,100.5,9,"Bangkok TH"],
+  [18.79,98.98,7,"Chiang Mai TH"],
+  [12.97,77.59,9,"Bangalore IN"],
+  [19.08,72.88,9,"Mumbai IN"],
+  [28.7,77.1,9,"Delhi IN"],
+  [13.08,80.27,9,"Chennai IN"],
+  [17.38,78.49,9,"Hyderabad IN"],
+  [22.57,88.37,9,"Kolkata IN"],
+  [18.52,73.86,8,"Pune IN"],
+  [23.03,72.58,9,"Ahmedabad IN"],
+  [26.92,75.82,7,"Jaipur IN"],
+  [27.18,78.01,7,"Agra IN"],
+  [32.08,76.99,6,"Dharamsala IN"],
+  [34.08,74.8,6,"Srinagar IN"],
+  [27.47,89.64,5,"Thimphu BT"],
+  [28.21,83.99,4,"Pokhara NP"],
+  [27.7,85.32,7,"Kathmandu NP"],
+  [23.73,90.41,9,"Dhaka BD"],
+  [6.93,79.85,8,"Colombo LK"],
+  [33.69,73.06,8,"Islamabad PK"],
+  [24.86,67.01,9,"Karachi PK"],
+  [31.55,74.34,9,"Lahore PK"],
+  [34.53,69.17,7,"Kabul AF"],
+  [39.91,32.85,9,"Ankara TR"],
+  [41.01,28.98,9,"Istanbul TR"],
+  [37.88,32.49,7,"Konya TR"],
+  [36.88,30.71,7,"Antalya TR"],
+  [38.41,27.14,7,"Izmir TR"],
+  [-33.87,151.21,9,"Sydney AU"],
+  [-37.81,144.96,9,"Melbourne AU"],
+  [-27.47,153.03,8,"Brisbane AU"],
+  [-31.95,115.86,8,"Perth AU"],
+  [-34.93,138.6,8,"Adelaide AU"],
+  [-12.46,130.84,7,"Darwin AU"],
+  [-42.88,147.33,7,"Hobart AU"],
+  [-35.28,149.13,7,"Canberra AU"],
+  [-19.26,146.82,6,"Townsville AU"],
+  [-23.7,133.88,3,"Alice Springs AU"],
+  [-26.6,153.09,4,"Noosa AU"],
+  [-29.66,153.59,5,"Grafton AU"],
+  [-36.87,174.77,8,"Auckland NZ"],
+  [-36.88,174.77,8,"Manukau NZ"],
+  [-41.29,174.78,7,"Wellington NZ"],
+  [-43.53,172.64,7,"Christchurch NZ"],
+  [-45.87,170.5,5,"Dunedin NZ"],
+  [-43.36,170.0,3,"Lake Tekapo NZ"],
+  [21.31,-157.86,8,"Honolulu HI"],
+  [20.89,-156.5,6,"Maui HI"],
+  [19.7,-155.09,5,"Hilo HI"],
+  [-17.74,-149.57,5,"Papeete PF"],
+  [-23.55,-46.63,9,"São Paulo BR"],
+  [-22.91,-43.17,9,"Rio de Janeiro BR"],
+  [-12.97,-38.51,8,"Salvador BR"],
+  [-3.73,-38.52,8,"Fortaleza BR"],
+  [-15.78,-47.93,8,"Brasília BR"],
+  [-30.03,-51.23,8,"Porto Alegre BR"],
+  [-8.05,-34.88,8,"Recife BR"],
+  [-3.1,-60.03,7,"Manaus BR"],
+  [-1.46,-48.5,7,"Belém BR"],
+  [-22.91,-48.44,6,"Botucatu BR"],
+  [-20.32,-40.34,7,"Vitória BR"],
+  [-34.6,-58.38,9,"Buenos Aires AR"],
+  [-31.42,-64.18,7,"Córdoba AR"],
+  [-32.89,-68.85,7,"Mendoza AR"],
+  [-38.7,-62.27,5,"Bahía Blanca AR"],
+  [-51.63,-69.22,4,"Río Gallegos AR"],
+  [-54.8,-68.3,3,"Ushuaia AR"],
+  [-33.45,-70.67,8,"Santiago CL"],
+  [-36.82,-73.05,7,"Concepción CL"],
+  [-53.16,-70.91,4,"Punta Arenas CL"],
+  [-18.48,-70.34,7,"Arica CL"],
+  [-23.65,-70.4,4,"Antofagasta CL"],
+  [-24.14,-65.41,6,"Salta AR"],
+  [-25.29,-57.65,8,"Asunción PY"],
+  [-34.9,-56.19,8,"Montevideo UY"],
+  [-16.5,-68.15,7,"La Paz BO"],
+  [-17.78,-63.18,6,"Santa Cruz BO"],
+  [-12.05,-77.04,9,"Lima PE"],
+  [-16.4,-71.54,6,"Arequipa PE"],
+  [4.71,-74.07,8,"Bogotá CO"],
+  [6.25,-75.56,8,"Medellín CO"],
+  [3.87,-76.52,8,"Cali CO"],
+  [10.97,-74.8,8,"Barranquilla CO"],
+  [-0.22,-78.51,7,"Quito EC"],
+  [-2.17,-79.92,7,"Guayaquil EC"],
+  [10.48,-66.88,9,"Caracas VE"],
+  [19.43,-99.13,9,"Mexico City MX"],
+  [20.97,-89.62,8,"Mérida MX"],
+  [25.67,-100.31,9,"Monterrey MX"],
+  [20.66,-103.35,8,"Guadalajara MX"],
+  [19.7,-101.18,7,"Morelia MX"],
+  [32.52,-117.04,9,"Tijuana MX"],
+  [20.51,-87.32,6,"Playa del Carmen MX"],
+  [21.16,-101.68,7,"León MX"],
+  [18.92,-99.23,7,"Cuernavaca MX"],
+  [17.07,-96.73,7,"Oaxaca MX"],
+  [15.52,-88.03,6,"San Pedro Sula HN"],
+  [13.69,-89.19,7,"San Salvador SV"],
+  [9.93,-84.09,7,"San José CR"],
+  [9.0,-79.52,8,"Panama City PA"],
+  [18.47,-69.95,8,"Santo Domingo DO"],
+  [18.54,-72.34,8,"Port-au-Prince HT"],
+  [23.13,-82.38,8,"Havana CU"],
+  [18.47,-66.11,8,"San Juan PR"],
+  [17.99,-76.79,7,"Kingston JM"]
+];
+
+</script>
+
 <script>
 (function () {
   "use strict";
@@ -5050,20 +5526,15 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
 
   function estimateLightPollutionPct(population, elevationM) {
     let pct;
-    // County population → approximate sky brightness percentage
-    // Calibrated: LA County (10M)=94, Maricopa/Phoenix suburb (4.4M)=83,
-    //   Denver metro (2.9M)=78, mid-size city (500K)=68, small suburb (150K)=56
-    if      (population >= 8000000)  pct = 94;  // Mega-metro core (LA, NYC)   → Bortle 9
-    else if (population >= 4000000)  pct = 83;  // Large metro suburb (Phoenix) → Bortle 8
-    else if (population >= 2000000)  pct = 78;  // Mid-large metro              → Bortle 8
-    else if (population >= 800000)   pct = 70;  // Mid metro (Denver, Portland) → Bortle 7
-    else if (population >= 300000)   pct = 61;  // Small metro                  → Bortle 6
-    else if (population >= 100000)   pct = 50;  // Small city / suburb          → Bortle 5-6
-    else if (population >= 30000)    pct = 38;  // Town fringe                  → Bortle 4-5
-    else if (population >= 8000)     pct = 27;  // Small town                   → Bortle 3-4
-    else if (population >= 1000)     pct = 16;  // Village                      → Bortle 2-3
-    else if (population >= 200)      pct = 8;   // Remote settlement            → Bortle 1-2
-    else                             pct = 3;   // Wilderness                   → Bortle 1
+    if      (population >= 4000000)  pct = 94;
+    else if (population >= 1500000)  pct = 86;
+    else if (population >= 500000)   pct = 78;
+    else if (population >= 150000)   pct = 68;
+    else if (population >= 50000)    pct = 56;
+    else if (population >= 15000)    pct = 44;
+    else if (population >= 3000)     pct = 30;
+    else if (population >= 500)      pct = 18;
+    else                             pct = 8;
 
     if      (elevationM >= 3000) pct = Math.max(0, pct - 12);
     else if (elevationM >= 1500) pct = Math.max(0, pct - 6);
@@ -5072,32 +5543,28 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
   }
 
 
-  // Map BigDataCloud locality type descriptors to light pollution percentage
+  // Haversine distance in km
+  function haversineKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2-lat1)*Math.PI/180;
+    const dLon = (lon2-lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.asin(Math.sqrt(a));
+  }
 
-  // Human-readable city type label for the Dark Sites / Bortle display
-  function deriveCityTypeLabel(infoTypes, countyPop) {
-    const types = infoTypes.join(' ');
-    if (/(uninhabited|wilderness|national park|desert)/.test(types)) return 'Remote / Wilderness';
-    if (/(hamlet|farmstead|remote)/.test(types))                     return 'Remote Rural';
-    if (/(village|small settlement|rural)/.test(types))              return 'Rural';
-    if (/(small town|township)/.test(types))                         return 'Small Town';
-    if (/(town)/.test(types))                                        return 'Town';
-    if (/(suburb|suburban|borough)/.test(types))                     return 'Suburban';
-    if (/(city|municipality)/.test(types)) {
-      if (countyPop >= 2000000) return 'Large City';
-      if (countyPop >= 500000)  return 'City';
-      return 'Small City';
+  // Look up Bortle from embedded city database (nearest neighbour)
+  // Falls back to population model beyond 120 km from any known city
+  function bortleFromDB(lat, lon, pop, elev) {
+    let bestB = null, bestD = Infinity;
+    for (const [clat, clon, bortle] of BORTLE_CITY_DB) {
+      const d = haversineKm(lat, lon, clat, clon);
+      if (d < bestD) { bestD = d; bestB = bortle; }
     }
-    if (/(metropolitan|major city)/.test(types))  return 'Major Metro';
-    // Fallback: derive from county population
-    if (countyPop >= 4000000) return 'Major Metro';
-    if (countyPop >= 1500000) return 'Large City';
-    if (countyPop >= 500000)  return 'City';
-    if (countyPop >= 150000)  return 'Suburban';
-    if (countyPop >= 50000)   return 'Small Town';
-    if (countyPop >= 10000)   return 'Town';
-    if (countyPop >= 1000)    return 'Rural Village';
-    return 'Remote Rural';
+    if (bestD <= 30)  return bestB;
+    if (bestD <= 80)  return bestB;
+    if (bestD <= 120) return Math.max(1, bestB - 1);
+    // Remote — use population model
+    return lightPollutionPctToBortle(estimateLightPollutionPct(pop || 0, elev || 0));
   }
 
   async function fetchWeather(lat, lon) {
@@ -5176,15 +5643,8 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     return {
       score: clamp(Math.round(weighted), 0, 100),
       factors: {
-        cloudScore,
-        seeingScore,
-        humidityScore,
-        transparencyScore,
-        windScore,
-        tempScore,
-        precipScore,
-        jetScore,
-      lpScore
+        cloudScore, seeingScore, humidityScore, transparencyScore,
+        windScore, tempScore, precipScore, jetScore, lpScore
       }
     };
   }
@@ -5202,7 +5662,7 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       wind10: current.wind_speed_10m ?? pickSeriesValue(hourly.wind_speed_10m, idx, 0),
       wind180: pickSeriesValue(hourly.wind_speed_180m, idx, pickSeriesValue(hourly.wind_speed_10m, idx, 0)),
       precip: current.precipitation ?? pickSeriesValue(hourly.precipitation, idx, 0),
-      weatherCode: current.weather_code ?? pickSeriesValue(hourly.weather_code, idx, 0)
+      weatherCode: current.weather_code ?? pickSeriesValue(hourly.weather_code, idx, 0),
     };
 
     const scoreSet = computeScoreFromSnapshot(snapshot);
@@ -5427,12 +5887,29 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     const phaseNameEl = document.querySelector(".moon-phase-name");
     if (phaseNameEl) phaseNameEl.textContent = phase.name;
 
-    const subEls = document.querySelectorAll(".moon-info .moon-sub");
-    if (subEls[0]) subEls[0].textContent = `${Math.round((moonIll?.phase_fraction ?? 0) * 100)}% illuminated`;
-    if (subEls[1]) subEls[1].innerHTML = `Rises ${fmtTime(extractDate(moonRise), timeZone)}`;
-    if (subEls[2]) {
-      const frac = moonIll?.phase_fraction ?? 0;
-      subEls[2].textContent = `Interference: ${frac < 0.25 ? "Low" : frac < 0.65 ? "Moderate" : "High"}`;
+    const illumEl    = document.getElementById('moonIllumSub');
+    const riseEl     = document.getElementById('moonRiseVal');
+    const setEl      = document.getElementById('moonSetVal');
+    const interferEl = document.getElementById('moonInterferSub');
+
+    const frac = moonIll?.phase_fraction ?? 0;
+    const moonRiseDate = extractDate(moonRise);
+    const moonSetDate  = extractDate(moonSet);
+
+    if (illumEl) illumEl.textContent = `${Math.round(frac * 100)}% illuminated`;
+
+    if (riseEl) {
+      const riseTime = moonRiseDate ? fmtTime(moonRiseDate, timeZone) : '—';
+      riseEl.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 8V2"/><path d="M2 5l3-3 3 3"/></svg> ${riseTime}`;
+    }
+    if (setEl) {
+      const setTime = moonSetDate ? fmtTime(moonSetDate, timeZone) : '—';
+      setEl.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M5 2v6"/><path d="M2 5l3 3 3-3"/></svg> ${setTime}`;
+    }
+    if (interferEl) {
+      const level = frac < 0.25 ? 'Low' : frac < 0.65 ? 'Moderate' : 'High';
+      const col   = frac < 0.25 ? 'var(--good)' : frac < 0.65 ? 'var(--fair)' : 'var(--poor)';
+      interferEl.innerHTML = `Interference: <span style="color:${col};font-weight:600">${level}</span>`;
     }
 
     return {
@@ -5997,56 +6474,31 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       // Start atomic clock ticking in the searched timezone
       startAtomicClock(liveState.location.timezone);
 
-      // Fetch weather and VIIRS light pollution in parallel
-      const [weather, viirsLPpct] = await Promise.all([
-        fetchWeather(location.latitude, location.longitude),
-        fetchLightPollutionPctFromCoords(location.latitude, location.longitude, location.elevation || 0)
-      ]);
+      // Fetch weather (Bortle from embedded city DB — no external API dependency)
+      const weather = await fetchWeather(location.latitude, location.longitude);
       liveState.weather = weather;
       if (weather.timezone) liveState.location.timezone = weather.timezone;
 
-      // Bortle resolution order:
-      //   1. NOAA VIIRS satellite (most accurate — real measured radiance)
-      //   2. BigDataCloud county population (good proxy — metro area, not just city)
-      //   3. Open-Meteo geocoding city population (last resort)
-      let resolvedLPpct = viirsLPpct;  // null if VIIRS failed
-      liveState.viirsRadiance = viirsLPpct;
-
-      if (resolvedLPpct == null) {
-        // VIIRS unavailable — use BigDataCloud for city type + county population
-        try {
-          const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${location.latitude}&longitude=${location.longitude}&localityLanguage=en`;
-          const rgRes = await fetch(rgUrl);
-          const rg    = await rgRes.json();
-
-          // Get county-level population (2nd-most-specific after filtering countries)
-          const admin = (rg.localityInfo?.administrative || [])
-            .filter(a => (a.population || 0) < 50_000_000 && (a.population || 0) > 0)
-            .sort((a, b) => (b.population || 0) - (a.population || 0));
-          const countyPop = admin.length >= 2 ? admin[1].population
-                          : admin.length === 1 ? admin[0].population
-                          : (location.population || 0);
-
-          // Also check city type descriptors from localityInfo.informative
-          // Use county population ONLY — geographic terrain descriptors
-          // from informative[] are unreliable (e.g. "Sonoran Desert" for Chandler, AZ)
-          resolvedLPpct = estimateLightPollutionPct(countyPop, location.elevation || 0);
-          liveState.cityType = deriveCityTypeLabel(countyPop);
-        } catch {
-          resolvedLPpct = estimateLightPollutionPct(location.population || 0, location.elevation || 0);
-          liveState.cityType = null;
-        }
-      }
-
-      liveState.lightPollutionPct = resolvedLPpct;
-      liveState.bortle = lightPollutionPctToBortle(resolvedLPpct);
+      // Static city database lookup (503 calibrated cities worldwide)
+      // Nearest neighbour within 120km; population model fallback for remote areas
+      liveState.bortle = bortleFromDB(
+        location.latitude, location.longitude,
+        location.population || 0,
+        location.elevation  || 0
+      );
       liveState.sqm    = bortleToSQM(liveState.bortle);
+      liveState.lightPollutionPct = (liveState.bortle - 1) * 11.1;
+      liveState.viirsRadiance = null;
 
       // Update Bortle/SQM chips with real values
       const bortleChipB = document.getElementById('bortleChip');
       const magLimChipB = document.getElementById('magLimChip');
       const sqmChipElB  = document.getElementById('sqmChip');
-      if (bortleChipB) bortleChipB.textContent = `Class ${liveState.bortle}`;
+      if (bortleChipB) {
+        bortleChipB.textContent = `Class ${liveState.bortle}`;
+        const bCol = liveState.bortle <= 3 ? 'var(--good)' : liveState.bortle <= 5 ? 'var(--cyan)' : liveState.bortle <= 7 ? 'var(--fair)' : 'var(--poor)';
+        bortleChipB.style.color = bCol;
+      }
       const magLimB = ((liveState.sqm - 9.5) * 1.4 + 2).toFixed(1);
       if (magLimChipB) magLimChipB.textContent = magLimB;
       if (sqmChipElB)  sqmChipElB.textContent  = liveState.sqm.toFixed(1);
@@ -6074,6 +6526,23 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
 
       const score = renderFactors(weather);
       updateScoreUI(score);
+
+      // Populate glance cards (ISS pass from existing liveState if available)
+      const issPassText = (() => {
+        const tbody = document.getElementById('satPassesTbody');
+        if (!tbody) return null;
+        const nextRow = tbody.querySelector('tr:not(.pass-past)');
+        if (!nextRow) return null;
+        const cells = nextRow.querySelectorAll('td');
+        return cells[0]?.textContent?.trim() || null;
+      })();
+      setTimeout(() => {
+        const moonInfoForGlance = {
+          phaseName: document.querySelector('.moon-phase-name')?.textContent || '—',
+          illumination: parseFloat(document.getElementById('moonIllumSub')?.textContent || '0') / 100
+        };
+        updateGlanceCards(score, moonInfoForGlance, null, liveState.sqm);
+      }, 200);
 
       const sunSet  = Astronomy.SearchRiseSet("Sun", observer, -1, now, 2, 0);
       const sunRise = Astronomy.SearchRiseSet("Sun", observer, +1, now, 2, 0);
@@ -6135,6 +6604,33 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     }
   }
 
+
+  // ── Populate "Tonight at a Glance" cards ──
+  function updateGlanceCards(score, moonInfo, issNextPass, sqm) {
+    // Best window = score-based label
+    // Moon phase + illumination
+    const mpEl = document.getElementById('tgMoonPhase');
+    if (mpEl && moonInfo) {
+      const pct = Math.round((moonInfo.illumination ?? 0) * 100);
+      mpEl.textContent = `${moonInfo.phaseName || '—'} · ${pct}%`;
+      mpEl.style.color  = pct < 25 ? 'var(--good)' : pct < 65 ? 'var(--fair)' : 'var(--poor)';
+    }
+
+    // Naked-eye limiting magnitude from SQM
+    const magEl = document.getElementById('tgMagLimit');
+    if (magEl && sqm) {
+      const mag = ((sqm - 9.5) * 1.4 + 2).toFixed(1);
+      magEl.textContent = `Mag ${mag}`;
+      magEl.style.color = parseFloat(mag) >= 6.5 ? 'var(--good)' :
+                           parseFloat(mag) >= 5.5 ? 'var(--cyan)' :
+                           parseFloat(mag) >= 4.5 ? 'var(--fair)' : 'var(--poor)';
+    }
+  }
+
+  // ── Conditions summary bullets ──
+
+
+
   window.runForecast = async function () {
     const input = document.getElementById("locationInput");
     const query = input ? input.value.trim() : "";
@@ -6164,9 +6660,7 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
-        if (btnText) btnText.textContent = "Getting location…";
-
-        // Reverse geocode to get city name (BigDataCloud)
+        // Reverse geocode to get city name (BigDataCloud — free, no key needed)
         let displayName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; // fallback
         try {
           const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
@@ -6178,29 +6672,22 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
             rg.countryName
           ].filter(Boolean);
           if (parts.length) displayName = parts.join(', ');
-        } catch (_) { /* use coordinate fallback */ }
+        } catch (_) { /* fallback to coordinates if reverse geocode fails */ }
 
         const input = document.getElementById("locationInput");
         if (input) input.value = displayName;
-        if (btnText) btnText.textContent = "Loading forecast…";
+        reset();
 
+        // Pass the display name as query — geocode() will resolve it,
+        // but override with exact GPS coordinates to avoid re-geocoding drift
         const locObj = {
           name: displayName,
           latitude: lat,
           longitude: lon,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          elevation: (pos.coords.altitude != null ? pos.coords.altitude : 0)
+          elevation: pos.coords.altitude || 0
         };
-
-        try {
-          await refreshEverything(displayName, true, locObj);
-        } catch(e) {
-          console.error("GPS refresh error:", e);
-          if (btnText) btnText.textContent = "Forecast failed — try again";
-          setTimeout(() => reset(), 3000);
-          return;
-        }
-        reset();
+        await refreshEverything(displayName, true, locObj);
       },
       err => {
         reset();
