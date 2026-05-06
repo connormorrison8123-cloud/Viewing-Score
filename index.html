@@ -3990,6 +3990,16 @@ window.addEventListener('resize', () => { if (document.getElementById('viewGraph
 ============================================================ */
 
 
+
+function slugifyLocationName(name) {
+  return String(name || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 // Set moon phase image
 const moonPhaseMap = {
   'waning_gibbous': IMGS.moon_waning_gibbous,
@@ -4037,6 +4047,17 @@ document.querySelectorAll('[data-planet]').forEach(img => {
 document.getElementById('locationInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') runForecast();
 });
+
+
+(function syncInitialCityFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const city = params.get("city");
+  const input = document.getElementById("locationInput");
+  if (city && input && !input.value) {
+    input.value = city.replace(/-/g, " ");
+  }
+})();
+
 
 /* ============================================================
    PAGE SWITCHING
@@ -6368,6 +6389,13 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       if (locationDisplay) locationDisplay.textContent = locText;
       if (dsoLocation) dsoLocation.textContent = locText;
       if (satLocation) satLocation.textContent = locText;
+
+      // Keep the address bar aligned with the active location
+      if (fromUser) {
+        const citySlug = slugifyLocationName(location.name || query || locText);
+        const nextUrl = citySlug ? `?city=${encodeURIComponent(citySlug)}` : window.location.pathname;
+        history.replaceState({}, "", nextUrl);
+      }
 
       // Reveal results and sub-nav once we have real data
       const rw = document.getElementById("resultsWrap");
