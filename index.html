@@ -1,4 +1,4 @@
-]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 </script>
@@ -2316,7 +2316,7 @@
         <button class="search-btn" onclick="runForecast()">Forecast</button>
       </div>
       <div class="search-meta">
-        <button class="gps-btn" id="gpsBtn" onclick="useGPS()">
+        <button type="button" class="gps-btn" id="gpsBtn" onclick="useGPS(event)">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="7" cy="7" r="2.5"/>
             <path d="M7 1v2M7 11v2M1 7h2M11 7h2"/>
@@ -6603,71 +6603,102 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     await refreshEverything(query, true);
   };
 
-  window.useGPS = function () {
+  window.useGPS = function (event) {
+    if (event) event.preventDefault();
+
     const btn = document.getElementById("gpsBtn");
     const btnText = document.getElementById("gpsBtnText");
 
-    if (!navigator.geolocation) {
-      if (btnText) btnText.textContent = "Not supported";
+    const restoreButton = (message = "Use my location") => {
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove("loading");
+      }
+      if (btnText) btnText.textContent = message;
+    };
+
+    if (!window.isSecureContext) {
+      restoreButton("HTTPS required");
       return;
     }
 
-    if (btn) { btn.disabled = true; btn.classList.add("loading"); }
+    if (!navigator.geolocation) {
+      restoreButton("Not supported");
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.classList.add("loading");
+    }
     if (btnText) btnText.textContent = "Locating…";
 
-    const reset = () => {
-      if (btn) { btn.disabled = false; btn.classList.remove("loading"); }
-      if (btnText) btnText.textContent = "Use my location";
+    const handleError = (err) => {
+      restoreButton();
+      let msg = "Location denied";
+      if (err && err.code === 1) msg = "Permission denied";
+      else if (err && err.code === 2) msg = "Position unavailable";
+      else if (err && err.code === 3) msg = "Request timed out";
+      else if (err && err.message) msg = err.message;
+      if (btnText) {
+        btnText.textContent = msg;
+        setTimeout(() => {
+          if (btnText) btnText.textContent = "Use my location";
+        }, 3000);
+      }
     };
 
     navigator.geolocation.getCurrentPosition(
-      async pos => {
+      async (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
 
-        // Reverse geocode to get city name (BigDataCloud — free, no key needed)
-        let displayName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; // fallback
+        // Use the exact coordinates immediately; reverse geocoding is best-effort.
+        let displayName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
         try {
           const rgUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
-          const rgRes = await fetch(rgUrl);
-          const rg = await rgRes.json();
-          const parts = [
-            rg.city || rg.locality || rg.principalSubdivision,
-            rg.principalSubdivision !== (rg.city || rg.locality) ? rg.principalSubdivision : null,
-            rg.countryName
-          ].filter(Boolean);
-          if (parts.length) displayName = parts.join(', ');
-        } catch (_) { /* fallback to coordinates if reverse geocode fails */ }
+          const rgRes = await fetch(rgUrl, { cache: "no-store" });
+          if (rgRes.ok) {
+            const rg = await rgRes.json();
+            const parts = [
+              rg.city || rg.locality || rg.principalSubdivision,
+              rg.principalSubdivision !== (rg.city || rg.locality) ? rg.principalSubdivision : null,
+              rg.countryName
+            ].filter(Boolean);
+            if (parts.length) displayName = parts.join(', ');
+          }
+        } catch (_) {
+          // Keep coordinate fallback.
+        }
 
         const input = document.getElementById("locationInput");
         if (input) input.value = displayName;
-        reset();
+        restoreButton();
 
-        // Pass the display name as query — geocode() will resolve it,
-        // but override with exact GPS coordinates to avoid re-geocoding drift
         const locObj = {
           name: displayName,
           latitude: lat,
           longitude: lon,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          elevation: pos.coords.altitude || 0
+          elevation: Number.isFinite(pos.coords.altitude) ? pos.coords.altitude : 0
         };
-        await refreshEverything(displayName, true, locObj);
-      },
-      err => {
-        reset();
-        let msg = "Location denied";
-        if (err.code === 1) msg = "Permission denied";
-        else if (err.code === 2) msg = "Position unavailable";
-        else if (err.code === 3) msg = "Request timed out";
-        if (btnText) {
-          btnText.textContent = msg;
-          setTimeout(() => { if (btnText) btnText.textContent = "Use my location"; }, 3000);
+
+        try {
+          await refreshEverything(displayName, true, locObj);
+        } catch (err) {
+          console.error(err);
+          handleError(err);
         }
       },
-      { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 }
+      handleError,
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 300000
+      }
     );
   };
+
   async function init() {
     setupSearchSuggestions();
     // No auto-search on load — wait for user input
