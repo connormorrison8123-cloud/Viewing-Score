@@ -1223,7 +1223,9 @@
 
 
   /* ── WEEKLY OUTLOOK ── */
-  .weekly-section {
+  .weekly-section { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .weekly-section::-webkit-scrollbar { display: none; }
+  .weekly-section-UNUSED {
     margin-top: 24px;
     opacity: 0;
     animation: fadeUp 1s 1.6s forwards;
@@ -1331,8 +1333,10 @@
   .weekly-icons svg { color: var(--muted); }
 
   @media (max-width: 780px) {
-    .weekly-grid { grid-template-columns: repeat(7, 1fr); gap: 0; padding: 0 4px; }
-    .weekly-day { padding: 12px 4px 10px; }
+    .weekly-panel { overflow-x: visible; }
+    .weekly-grid { display: flex; min-width: max-content; gap: 0; }
+    .weekly-day { min-width: 78px; flex: 1; }
+    .weekly-day { padding: 12px 4px 10px; min-height: 112px; }
     .weekly-score-num { font-size: 0.82rem; }
     .weekly-score-bar-track { height: 32px; }
     .weekly-dow { font-size: 0.52rem; }
@@ -1342,6 +1346,7 @@
   }
 
   @media (max-width: 420px) {
+    .weekly-day { min-width: 68px; }
     .weekly-score-num { font-size: 0.7rem; }
     .weekly-score-bar-track { height: 26px; }
   }
@@ -1452,6 +1457,7 @@
   .notif-clear-btn { background: rgba(255,255,255,0.07); color: var(--muted); border: 1px solid var(--border); }
   .notif-clear-btn:hover { color: var(--text); }
   .notif-status { font-size: 0.74rem; color: var(--muted); margin-top: 6px; min-height: 18px; }
+  .notif-hint { font-size: 0.7rem; color: var(--fair); margin-top: 4px; line-height: 1.4; }
 
   /* ════════════════════════════════════
      RED NIGHT-VISION MODE
@@ -2078,6 +2084,19 @@
     #lpmIframe { height: 340px; }
   }
 
+
+  .location-bar-refresh {
+    display: flex; align-items: center; gap: 5px;
+    background: none; border: 1px solid var(--border); border-radius: 7px;
+    color: var(--muted); font-family: 'Outfit', sans-serif; font-size: 0.75rem;
+    font-weight: 600; padding: 5px 10px; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .location-bar-refresh:hover { color: var(--cyan); border-color: var(--cyan); }
+  .location-bar-refresh.spinning svg { animation: spinRefresh 0.8s linear infinite; }
+  @keyframes spinRefresh { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
 </style>
 </head>
 <body>
@@ -2120,10 +2139,11 @@
           <input type="number" id="notifThreshold" class="notif-input" min="1" max="100" value="75" />
         </div>
         <div class="notif-row" style="gap:8px">
-          <button class="notif-save-btn" onclick="saveNotifSettings()">Enable Alerts</button>
+          <button class="notif-save-btn" onclick="saveNotifSettings()">Enable</button>
           <button class="notif-clear-btn" onclick="clearNotif()">Disable</button>
         </div>
         <div id="notifStatus" class="notif-status"></div>
+        <div id="notifHint" class="notif-hint" style="display:none"></div>
       </div>
       <!-- Red Mode Toggle -->
       <button class="tool-btn" id="redModeBtn" onclick="toggleRedMode()" title="Red night-vision mode">
@@ -2209,6 +2229,15 @@
         <circle cx="6" cy="5.5" r="1.6" fill="var(--cyan)" stroke="none"/>
       </svg>
       <span id="locationBarText"></span>
+      <button class="location-bar-refresh" id="refreshNowBtn" onclick="manualRefresh()" title="Refresh forecast now">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11.5 2.5A5.5 5.5 0 0 0 1 6.5"/>
+          <path d="M1.5 10.5A5.5 5.5 0 0 0 12 6.5"/>
+          <polyline points="11.5 0 11.5 3 8.5 3"/>
+          <polyline points="1.5 13 1.5 10 4.5 10"/>
+        </svg>
+        Refresh
+      </button>
       <button class="location-bar-change" onclick="goHome(event)">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
           <circle cx="5" cy="5" r="3.8"/>
@@ -2265,15 +2294,15 @@
       <div class="detail-chips">
         <div class="chip">
           <span class="chip-label">Sunset</span>
-          <span class="chip-value highlight">7:42 PM</span>
+          <span class="chip-value highlight" id="sunsetChip">—</span>
         </div>
         <div class="chip">
           <span class="chip-label">Sunrise</span>
-          <span class="chip-value highlight">5:58 AM</span>
+          <span class="chip-value highlight" id="sunriseChip">—</span>
         </div>
         <div class="chip">
           <span class="chip-label">Dark Until</span>
-          <span class="chip-value">9:14 PM</span>
+          <span class="chip-value" id="darkUntilChip">—</span>
         </div>
         <div class="chip">
           <span class="chip-label">Bortle</span>
@@ -3338,32 +3367,14 @@
         </div>
         <h3 class="about-card-title">Data Sources</h3>
         <div class="source-list">
-          <div class="source-row">
-            <div class="source-name">Open-Meteo</div>
-            <div class="source-desc">Primary weather data provider — cloud cover, wind speed, humidity, temperature, visibility, and precipitation. Updated hourly from ECMWF, GFS, and ICON numerical weather models. Free and open-source; no API key required.</div>
-          </div>
-          <div class="source-row">
-            <div class="source-name">Open-Meteo Geocoding API</div>
-            <div class="source-desc">Location search and reverse geocoding. Resolves city names, zip codes, and coordinates to a canonical place name with timezone — used to localize all forecast and astronomical data.</div>
-          </div>
-          <div class="source-row">
-            <div class="source-name">Celestrak (NORAD TLE)</div>
-            <div class="source-desc">Two-Line Element sets for the International Space Station (catalog #25544). Used with the satellite.js propagation library to compute real-time ISS position and predict visible passes for any location.</div>
-          </div>
-          <div class="source-row">
-            <div class="source-name">Astronomy Engine</div>
-            <div class="source-desc">Open-source celestial mechanics library (v2.1.19) used for all on-device astronomical calculations — moon phase and illumination, planet rise/set/transit times, altitude and azimuth, and solar twilight windows.</div>
-          </div>
-          <div class="source-row">
-            <div class="source-name">NOAA VIIRS / LightPollutionMap</div>
-            <div class="source-desc">Location-based sky brightness reference used to derive a local light-pollution percentage, then converted to Bortle class and SQM for display.</div>
-          </div>
-          <div class="source-row">
-            <div class="source-name">NASA Image and Video Library</div>
-            <div class="source-desc">Source for planetary and deep-sky object photography displayed across the site, including the ISS image, moon phase photographs, and planet imagery.</div>
-          </div>
+          <div class="source-row"><div class="source-name">Open-Meteo Weather API</div><div class="source-desc">Hourly cloud cover, wind (10 m &amp; 180 m), humidity, temperature (°F), visibility, and precipitation. 48-hour forecasts using Unix timestamps. Models: ECMWF, GFS, ICON. Free, no API key.</div></div>
+          <div class="source-row"><div class="source-name">Open-Meteo Geocoding API</div><div class="source-desc">Forward geocoding — resolves city names and zip codes to lat/lon, elevation, timezone, and population. Powers the search autocomplete (6 candidates per keystroke).</div></div>
+          <div class="source-row"><div class="source-name">BigDataCloud Reverse Geocoding</div><div class="source-desc">Converts GPS coordinates to city/state/country text for "Use my location," and provides county-level population as a Bortle fallback when VIIRS is unavailable. Free, no key.</div></div>
+          <div class="source-row"><div class="source-name">NOAA VIIRS — ArcGIS ImageServer</div><div class="source-desc">Annual nighttime radiance composites (VIIRS/NighttimeLightsMDNB) via the ArcGIS ic.img.arcgis.com REST identify endpoint. Primary source for Bortle class, SQM, and the Light Pollution factor in the viewing score.</div></div>
+          <div class="source-row"><div class="source-name">Celestrak — NORAD TLE Data</div><div class="source-desc">Fresh Two-Line Element sets for the ISS (NORAD #25544). Propagated with satellite.js v4.1.3 SGP4 to predict passes ≥ 10° elevation for the next 24 hours.</div></div>
+          <div class="source-row"><div class="source-name">Astronomy Engine v2.1.19</div><div class="source-desc">All celestial mechanics: moon phase, rise/set/transit for Sun, Moon, and planets, astronomical twilight (SearchAltitude at −18°), and deep-sky altitude. Times localised to searched location's IANA timezone.</div></div>
+          <div class="source-row"><div class="source-name">NASA Image and Video Library</div><div class="source-desc">Planetary photography (Mercury–Neptune), eight moon phase images, ISS photo, and deep-sky images in the Astro Planner. Moon anatomy diagram from public-domain astrophotography.</div></div>
         </div>
-      </div>
 
       <!-- FAQ -->
       <div class="panel about-card about-card-wide">
@@ -3389,7 +3400,31 @@
           </div>
           <div class="faq-item">
             <div class="faq-q">Can I use AstronoSight for astrophotography planning?</div>
-            <div class="faq-a">Yes — the graph shows score hour-by-hour from sunset to sunrise. Look for the highest scoring window and cross-reference with object altitude using the Deep Sky page. The peak label marks the best single hour of the night.</div>
+            <div class="faq-a">Yes — the Astro Planner tab lists 10 deep-sky targets with recommended focal lengths, exposures, and ISO settings. The atmospheric factors panel shows transparency and seeing independently so you can judge whether conditions suit wide-field imaging or high-resolution planetary work.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">What is the Bortle scale and how does it affect my score?</div>
+            <div class="faq-a">The Bortle scale runs from 1 (truly dark, remote desert) to 9 (inner city). AstronoSight fetches your sky brightness from the NOAA VIIRS nighttime satellite dataset via ArcGIS, then converts to Bortle class. This contributes 8% of your viewing score — enough to distinguish a dark rural site from a suburban one, but balanced so a perfectly clear city night isn't unfairly penalised.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">What does "Dark Until" mean on the forecast card?</div>
+            <div class="faq-a">"Dark Until" shows the end of astronomical twilight — when the Sun drops 18° below the horizon and the sky reaches true nighttime darkness. Before this time, scattered sunlight still washes out faint nebulae. This is the earliest you should start serious deep-sky work. It's calculated in real time by Astronomy Engine for your exact coordinates and date.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Why does my location show "BigDataCloud" instead of VIIRS data?</div>
+            <div class="faq-a">The ArcGIS VIIRS endpoint covers global data but can occasionally return no result for remote ocean coordinates or rate-limited requests. When that happens, AstronoSight falls back to a county-level population model from BigDataCloud. The source label on the Dark Sites and Forecast pages always shows which method was used.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">How accurate are the ISS pass predictions?</div>
+            <div class="faq-a">ISS passes use fresh TLE data from Celestrak, propagated with satellite.js SGP4 directly in your browser. Accuracy is typically within 30 seconds for passes in the next 24 hours. Passes below 10° elevation are filtered out since horizon obstructions usually block these. TLE accuracy decreases slightly for passes further in the future due to atmospheric drag variability.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Is AstronoSight free? Do I need an account?</div>
+            <div class="faq-a">Completely free. AstronoSight runs entirely in your browser with no account, no subscription, and no ads. All APIs used (Open-Meteo, Celestrak, BigDataCloud, ArcGIS VIIRS) are free or open-source. Your location is only used to fetch current data and is never stored on any server.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Can I see the planets with just binoculars?</div>
+            <div class="faq-a">Absolutely. Venus, Mars, Jupiter, and Saturn show significant detail even in 10×50 binoculars — Jupiter's moons are visible, Saturn's rings are resolved at 20×+, and Mars shows polar cap hints near opposition. Uranus is a naked-eye object in dark skies (magnitude ~5.7). The planet panel shows current altitude, magnitude, and rise/set times so you know exactly what's accessible tonight.</div>
           </div>
         </div>
       </div>
@@ -3404,18 +3439,18 @@
         <span class="footer-version">v1.0.0</span>
       </div>
       <div class="footer-links">
-        <span>About</span>
-        <span>Privacy</span>
-        <span>API Access</span>
-        <span>Feedback</span>
+        <span onclick="switchPage(null,'about')" style="cursor:pointer">About</span>
+        <span onclick="showFooterModal('privacy')" style="cursor:pointer">Privacy</span>
+        <span onclick="window.open('https://open-meteo.com/en/docs','_blank')" style="cursor:pointer">API Access</span>
+        <span onclick="showFooterModal('feedback')" style="cursor:pointer">Feedback</span>
       </div>
       <div class="footer-sections">
-        <span>Forecast</span>
-        <span>Deep Sky</span>
-        <span>Satellites</span>
-        <span>Constellations</span>
-        <span>Astro Planner</span>
-        <span>Dark Sites</span>
+        <span onclick="footerNav('forecast')" style="cursor:pointer">Forecast</span>
+        <span onclick="footerNav('deepsky')" style="cursor:pointer">Deep Sky</span>
+        <span onclick="footerNav('satellites')" style="cursor:pointer">Satellites</span>
+        <span onclick="footerNav('constellations')" style="cursor:pointer">Constellations</span>
+        <span onclick="footerNav('astroplanner')" style="cursor:pointer">Astro Planner</span>
+        <span onclick="footerNav('darksites')" style="cursor:pointer">Dark Sites</span>
       </div>
       <div class="footer-data">
         Weather: <span>Open-Meteo</span> &nbsp;·&nbsp;
@@ -4006,34 +4041,39 @@ function toggleNotifPanel() {
 async function saveNotifSettings() {
   const threshold = parseInt(document.getElementById('notifThreshold').value) || 75;
   const status = document.getElementById('notifStatus');
-
-  if (!('Notification' in window)) {
-    status.textContent = 'Notifications not supported in this browser.';
-    return;
-  }
-
-  let perm = Notification.permission;
-  if (perm === 'default') perm = await Notification.requestPermission();
-
-  if (perm === 'denied') {
-    status.textContent = 'Permission denied. Enable in browser settings.';
-    return;
-  }
-
+  const hint   = document.getElementById('notifHint');
   _notifThreshold = threshold;
   _notifEnabled   = true;
   _notifChecked   = false;
   localStorage.setItem('notifThreshold', threshold);
   document.getElementById('notifDot').style.display = 'block';
   document.getElementById('notifBtn').classList.add('active');
-  status.style.color = 'var(--good)';
-  status.textContent = `✓ Alert set for score > ${threshold}`;
 
-  // Test notification
-  new Notification('AstroSight Alerts Active', {
-    body: `You will be notified when the viewing score exceeds ${threshold}.`,
-    icon: ''
-  });
+  // Try native push (needs HTTPS)
+  if ('Notification' in window && location.protocol === 'https:') {
+    let perm = Notification.permission;
+    if (perm === 'default') {
+      try { perm = await Notification.requestPermission(); } catch(e) { perm = 'denied'; }
+    }
+    if (perm === 'granted') {
+      status.style.color = 'var(--good)';
+      status.textContent = `✓ Push + in-app alerts when score > ${threshold}`;
+      if (hint) hint.style.display = 'none';
+      try { new Notification('AstronoSight Alerts Active', { body: `Push alerts enabled for score > ${threshold}.` }); } catch(e) {}
+      return;
+    }
+    if (perm === 'denied' && hint) {
+      hint.textContent = 'Push blocked — allow notifications in browser settings for background alerts.';
+      hint.style.display = 'block';
+    }
+  }
+  // HTTP / file:// fallback — in-app banner works everywhere
+  status.style.color = 'var(--good)';
+  status.textContent = `✓ In-app alerts set for score > ${threshold}`;
+  if (hint && location.protocol !== 'https:') {
+    hint.textContent = 'Serve over HTTPS to also enable push notifications.';
+    hint.style.display = 'block';
+  }
 }
 
 function clearNotif() {
@@ -4048,12 +4088,21 @@ function clearNotif() {
 }
 
 function checkNotification(score) {
-  if (!_notifEnabled || _notifChecked || Notification.permission !== 'granted') return;
+  if (!_notifEnabled || _notifChecked) return;
   if (score >= _notifThreshold) {
     _notifChecked = true;
-    new Notification('AstroSight — Great Viewing Tonight!', {
-      body: `Current viewing score is ${score} — conditions exceed your threshold of ${_notifThreshold}. Clear skies!`,
-    });
+    // In-app banner — works on all browsers and protocols
+    const banner = document.getElementById('skyAlertBanner');
+    const msg    = document.getElementById('skyAlertMsg');
+    if (banner && msg) {
+      msg.textContent = `Score is ${score}/100 — exceeds your threshold of ${_notifThreshold}. Clear skies!`;
+      banner.style.display = 'block';
+      setTimeout(() => { if (banner) banner.style.display = 'none'; }, 12000);
+    }
+    // Push if granted (HTTPS)
+    if (Notification?.permission === 'granted') {
+      try { new Notification('AstronoSight — Great Viewing Tonight!', { body: `Score ${score}/100 exceeds threshold of ${_notifThreshold}.` }); } catch(e) {}
+    }
   }
 }
 
@@ -4333,6 +4382,57 @@ function updateLPMPage(bortle, sqm, locText) {
   if (el('lpmBortlePtr'))  { el('lpmBortlePtr').style.left = ((bortle-1)/8*100) + '%'; el('lpmBortlePtr').style.background = col; }
 }
 
+
+function manualRefresh() {
+  const btn = document.getElementById('refreshNowBtn');
+  const q   = liveState?.query;
+  const loc = liveState?.preResolved;
+  if (!q) return;
+  if (btn) btn.classList.add('spinning');
+  refreshEverything(q, false, loc)
+    .catch(() => {})
+    .finally(() => { if (btn) btn.classList.remove('spinning'); });
+}
+
+function footerNav(page) {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const rw = document.getElementById('resultsWrap');
+  if (rw && rw.style.display === 'none' && page !== 'about') {
+    const input = document.getElementById('locationInput');
+    if (input) input.focus();
+    return;
+  }
+  switchPage(null, page);
+}
+
+const FOOTER_CONTENT = {
+  privacy: `<h3 style="font-family:'Orbitron',monospace;font-size:0.9rem;color:#fff;margin-bottom:16px">PRIVACY POLICY</h3>
+    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:10px">AstronoSight runs entirely in your browser. No personal data, search history, or location is stored on any server.</p>
+    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:10px"><strong style="color:var(--text)">Location data</strong> — used only to fetch weather and astronomical data. Not logged or retained beyond the current session.</p>
+    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:10px"><strong style="color:var(--text)">Third-party APIs</strong> — Open-Meteo, BigDataCloud, Celestrak, and ArcGIS VIIRS are called with your coordinates. Each service has its own privacy policy.</p>
+    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7"><strong style="color:var(--text)">Local storage</strong> — only notification threshold is stored. No cookies, no tracking, no ads.</p>`,
+  feedback: `<h3 style="font-family:'Orbitron',monospace;font-size:0.9rem;color:#fff;margin-bottom:16px">SEND FEEDBACK</h3>
+    <p style="font-size:0.84rem;color:var(--muted);line-height:1.7;margin-bottom:20px">Found a bug or have a feature idea?</p>
+    <a href="mailto:feedback@astronosight.com?subject=AstronoSight Feedback" style="display:flex;align-items:center;gap:10px;background:rgba(56,217,245,0.08);border:1px solid rgba(56,217,245,0.25);border-radius:10px;padding:14px 18px;text-decoration:none;color:var(--cyan);font-size:0.84rem;font-weight:600">
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="1" width="14" height="10" rx="2"/><path d="M1 3l7 4 7-4"/></svg>
+      Email Feedback
+    </a>`
+};
+
+function showFooterModal(type) {
+  const modal = document.getElementById('footerModal');
+  const content = document.getElementById('footerModalContent');
+  if (!modal || !content) return;
+  content.innerHTML = FOOTER_CONTENT[type] || '';
+  modal.style.display = 'flex';
+  modal.onclick = (e) => { if (e.target === modal) closeFooterModal(); };
+}
+
+function closeFooterModal() {
+  const m = document.getElementById('footerModal');
+  if (m) m.style.display = 'none';
+}
+
 function filterDSO(btn, type) {
   document.querySelectorAll('.dso-filter').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -4545,29 +4645,46 @@ function filterDSO(btn, type) {
   // Sources: Cinzano & Falchi model — population density correlates strongly with sky glow
   // Fetch Bortle class using BigDataCloud's county-level population
   // County/metro population is far more accurate than city population for sky brightness
-  async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
+  
+async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     try {
-      const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
-      const res = await fetch(url);
+      const endpoint = new URL('https://ic.img.arcgis.com/arcgis/rest/services/VIIRS/NighttimeLightsMDNB/ImageServer/identify');
+      endpoint.searchParams.set('f', 'json');
+      endpoint.searchParams.set('geometryType', 'esriGeometryPoint');
+      endpoint.searchParams.set('geometry', JSON.stringify({
+        x: lon,
+        y: lat,
+        spatialReference: { wkid: 4326 }
+      }));
+      endpoint.searchParams.set('returnGeometry', 'false');
+      endpoint.searchParams.set('returnCatalogItems', 'false');
+      endpoint.searchParams.set('returnPixelValues', 'true');
+      endpoint.searchParams.set('mosaicRule', JSON.stringify({ mosaicMethod: 'esriMosaicNone' }));
+
+      const res = await fetch(endpoint.toString());
       const data = await res.json();
 
-      const admin = data.localityInfo?.administrative || [];
-      const filtered = admin
-        .filter(a => (a.population || 0) < 50000000 && (a.population || 0) > 0)
-        .sort((a, b) => (b.population || 0) - (a.population || 0));
+      const candidates = [
+        data?.value,
+        data?.results?.[0]?.value,
+        data?.results?.[0]?.attributes?.Raster_ServicePixelValue,
+        data?.samples?.[0]?.value,
+        data?.sampleResults?.[0]?.value,
+        data?.catalogItems?.features?.[0]?.attributes?.Raster_ServicePixelValue,
+        data?.pixel?.value,
+        data?.properties?.value
+      ].map(v => Number(v)).filter(v => Number.isFinite(v));
 
-      const countyPop = filtered.length >= 2
-        ? filtered[1].population
-        : (filtered[0]?.population || 0);
+      const radiance = candidates.length ? candidates[0] : null;
+      if (radiance == null) return null;
 
-      const smallestPop = filtered.length
-        ? filtered[filtered.length - 1].population || 0
-        : 0;
-
-      const pop = smallestPop > 0 && smallestPop < 20000 ? smallestPop : countyPop;
-      return estimateLightPollutionPct(pop, elevationM || 0);
+      // Convert VIIRS radiance to a 0-100 brightness percentage for the UI.
+      // Lower radiance = darker sky; higher radiance = more light pollution.
+      const pct = Math.round((Math.log10(radiance + 1) / Math.log10(9)) * 100);
+      return Math.min(100, Math.max(0, pct));
     } catch {
-      return null;
+      // Fallback only if the API is unavailable.
+      return estimateLightPollutionPct(0, elevationM || 0);
     }
   }
 
@@ -4711,16 +4828,19 @@ function filterDSO(btn, type) {
     const tempScore = clamp(100 - Math.abs(temp - 54) * 2.33, 15, 100);
     const precipScore = clamp(100 - precip * 20 - (weatherCode >= 51 ? 18 : 0), 0, 100);
     const jetScore = clamp(100 - wind180 * 2.9, 0, 100);
+    const bortle   = clamp(snapshot.bortle ?? liveState?.bortle ?? 5, 1, 9);
+    const lpScore  = clamp(Math.round(100 - (bortle - 1) * 10.6), 15, 100);
 
     const weighted =
-      cloudScore * 0.24 +
-      seeingScore * 0.18 +
-      humidityScore * 0.10 +
-      transparencyScore * 0.14 +
-      windScore * 0.10 +
-      tempScore * 0.08 +
-      precipScore * 0.12 +
-      jetScore * 0.04;
+      cloudScore        * 0.22 +
+      seeingScore       * 0.17 +
+      humidityScore     * 0.09 +
+      transparencyScore * 0.13 +
+      windScore         * 0.09 +
+      tempScore         * 0.07 +
+      precipScore       * 0.11 +
+      jetScore          * 0.04 +
+      lpScore           * 0.08;
 
     return {
       score: clamp(Math.round(weighted), 0, 100),
@@ -4732,7 +4852,8 @@ function filterDSO(btn, type) {
         windScore,
         tempScore,
         precipScore,
-        jetScore
+        jetScore,
+      lpScore
       }
     };
   }
@@ -4773,7 +4894,8 @@ function filterDSO(btn, type) {
       { icon: factorIcons[4], name: "Wind", value: `${round1(snapshot.wind10)} mph`, pct: Math.round(scoreSet.factors.windScore), quality: qualityClass(scoreSet.factors.windScore) },
       { icon: factorIcons[5], name: "Temperature", value: `${round1(snapshot.temp)}°F`, pct: Math.round(scoreSet.factors.tempScore), quality: qualityClass(scoreSet.factors.tempScore) },
       { icon: factorIcons[6], name: "Precipitation", value: `${round1(snapshot.precip)} mm`, pct: Math.round(scoreSet.factors.precipScore), quality: qualityClass(scoreSet.factors.precipScore) },
-      { icon: factorIcons[7], name: "Jet Stream", value: `${round1(snapshot.wind180)} mph`, pct: Math.round(scoreSet.factors.jetScore), quality: qualityClass(scoreSet.factors.jetScore) }
+      { icon: factorIcons[7], name: "Jet Stream", value: `${round1(snapshot.wind180)} mph`, pct: Math.round(scoreSet.factors.jetScore), quality: qualityClass(scoreSet.factors.jetScore) },
+      { icon: factorIcons[0], name: "Light Pollution", value: `Bortle ${liveState.bortle || '—'}`, pct: Math.round(scoreSet.factors.lpScore ?? 100), quality: qualityClass(scoreSet.factors.lpScore ?? 100) }
     ];
 
     const list = document.getElementById("factorsList");
@@ -5591,8 +5713,27 @@ function filterDSO(btn, type) {
       const score = renderFactors(weather);
       updateScoreUI(score);
 
-      const sunSet = Astronomy.SearchRiseSet("Sun", observer, -1, now, 2, 0);
+      const sunSet  = Astronomy.SearchRiseSet("Sun", observer, -1, now, 2, 0);
       const sunRise = Astronomy.SearchRiseSet("Sun", observer, +1, now, 2, 0);
+
+      // Astronomical twilight end: Sun reaches -18° altitude after sunset
+      const astroTwiEnd = (function() {
+        try {
+          const afterSunset = extractDate(sunSet) || now;
+          return Astronomy.SearchAltitude("Sun", observer, -1, afterSunset, 0.15, -18);
+        } catch(e) { return null; }
+      })();
+
+      // Update forecast chips with real times
+      const tz = liveState.location.timezone;
+      const sunsetEl    = document.getElementById('sunsetChip');
+      const sunriseEl   = document.getElementById('sunriseChip');
+      const darkUntilEl = document.getElementById('darkUntilChip');
+      if (sunsetEl)    sunsetEl.textContent    = sunSet   ? fmtTime(extractDate(sunSet),  tz) : '—';
+      if (sunriseEl)   sunriseEl.textContent   = sunRise  ? fmtTime(extractDate(sunRise), tz) : '—';
+      if (darkUntilEl) darkUntilEl.textContent = astroTwiEnd
+        ? fmtTime(extractDate(astroTwiEnd), tz)
+        : sunSet ? fmtTime(new Date(extractDate(sunSet).getTime() + 90 * 60000), tz) : '—';
       const jupTransit = Astronomy.SearchHourAngle("Jupiter", observer, 0, now, 2);
       const andromeda = DSO_CATALOG.M31;
       const andromedaTimes = riseSetFromRADec(now, location.latitude, location.longitude, andromeda.ra, andromeda.dec);
@@ -5743,6 +5884,24 @@ function startAtomicClock(timeZone) {
 }
 
 </script>
+
+  <div id="skyAlertBanner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:998;max-width:420px;width:calc(100% - 40px)">
+    <div style="background:#0d1829;border:1px solid var(--good);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,0.6)">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round"><path d="M10 2a8 8 0 1 1 0 16A8 8 0 0 1 10 2z"/><path d="M10 6v5"/><circle cx="10" cy="14" r="0.8" fill="var(--good)"/></svg>
+      <div style="flex:1">
+        <div style="font-family:'Orbitron',monospace;font-size:0.68rem;letter-spacing:0.1em;color:var(--good);margin-bottom:3px">CLEAR SKY ALERT</div>
+        <div id="skyAlertMsg" style="font-size:0.82rem;color:var(--text)">Viewing conditions are excellent!</div>
+      </div>
+      <button onclick="document.getElementById('skyAlertBanner').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;padding:4px;line-height:1">✕</button>
+    </div>
+  </div>
+
+  <div id="footerModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#0d1829;border:1px solid rgba(80,160,255,0.25);border-radius:18px;max-width:480px;width:100%;padding:32px;position:relative;max-height:80vh;overflow-y:auto">
+      <button onclick="closeFooterModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+      <div id="footerModalContent"></div>
+    </div>
+  </div>
 
 </body>
 </html>
