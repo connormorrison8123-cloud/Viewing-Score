@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3855383829699724"
@@ -4063,6 +4063,19 @@ document.getElementById('locationInput').addEventListener('keydown', e => {
 })();
 
 
+
+function setRoute(path) {
+  try { history.replaceState({}, '', path); } catch (err) {}
+}
+
+function locationToPath(locationString) {
+  if (!locationString) return '/home';
+  const parts = String(locationString).split(',').map(p => p.trim()).filter(Boolean);
+  const clean = (s) => s.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-');
+  const path = parts.map(clean).filter(Boolean).join('/');
+  return '/' + (path || 'home');
+}
+
 /* ============================================================
    PAGE SWITCHING
 ============================================================ */
@@ -4085,8 +4098,10 @@ function goHome(e) {
   // Clear the input so it's fresh
   const input = document.getElementById('locationInput');
   if (input) { input.value = ''; input.focus(); }
+  const display = document.getElementById('locationDisplay');
+  if (display) display.textContent = '—';
 
-  try { history.replaceState({}, '', '/home'); } catch (err) {}
+  setRoute('/home');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -4104,6 +4119,12 @@ function switchPage(e, page) {
   document.querySelectorAll('.sub-nav-link').forEach(a => {
     a.classList.toggle('active', a.dataset.page === page);
   });
+
+  if (page === 'about' || page === 'moon') {
+    setRoute('/' + page);
+  } else {
+    setRoute('/home');
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -6406,11 +6427,9 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       if (dsoLocation) dsoLocation.textContent = locText;
       if (satLocation) satLocation.textContent = locText;
 
-      // Keep the address bar clean. Do not append query parameters for searched locations.
+      // Keep the address bar synced to the selected location.
       if (fromUser) {
-        try {
-          history.replaceState({}, "", window.location.pathname);
-        } catch (err) {}
+        setRoute(locationToPath(location.name || query));
       }
 
       // Reveal results and sub-nav once we have real data
@@ -6823,14 +6842,8 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     if (display) display.textContent = "—";
 
-    // Use /home on hosted sites; keep local file URLs clean when opened from disk.
-    try {
-      if (window.location.protocol === 'file:') {
-        history.replaceState({}, "", window.location.pathname);
-      } else {
-        history.replaceState({}, "", "/home");
-      }
-    } catch (err) {}
+    // Always return to the home route without reloading the page.
+    setRoute('/home');
   }
 
   // Override existing home behavior safely
@@ -6844,7 +6857,7 @@ window.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("load", function () {
     setHomeDefault();
     if (window.location.search) {
-      try { history.replaceState({}, "", window.location.pathname); } catch (err) {}
+      try { history.replaceState({}, "", '/home'); } catch (err) {}
     }
   });
 })();
@@ -6860,7 +6873,7 @@ function formatLocationForURL(city, state, country) {
       .trim()
       .replace(/\s+/g, "-");
   }
-  return "/" + [clean(city), clean(state), clean(country)].filter(Boolean).join(",");
+  return "/" + [clean(city), clean(state), clean(country)].filter(Boolean).join("/");
 }
 
 // Hook into your existing search behavior
@@ -6879,97 +6892,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const country = parts[2] || "";
 
       const newURL = formatLocationForURL(city, state, country);
-      history.pushState({}, "", newURL);
+      setRoute(newURL);
     });
   }
 });
-</script>
 
-
-
-<script>
-(function () {
-  function cleanPart(part) {
-    return String(part || '')
-      .trim()
-      .toLowerCase()
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '');
+window.addEventListener('popstate', () => {
+  const path = window.location.pathname || '/home';
+  if (path === '/about' || path === '/moon') {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    const section = document.getElementById('page-' + path.slice(1));
+    if (section) section.classList.add('active');
+  } else if (path === '/home' || path === '/' || path.split('/').length >= 4) {
+    goHome();
   }
-
-  function parseLocationText(text) {
-    const raw = String(text || '').trim();
-    if (!raw || raw === '—' || /search a location/i.test(raw) || /your location/i.test(raw)) {
-      return null;
-    }
-
-    const parts = raw.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
-    if (!parts.length) return null;
-
-    return '/' + parts.map(cleanPart).filter(Boolean).join('/');
-  }
-
-  function getDisplayedLocation() {
-    const candidates = [
-      document.getElementById('locationDisplay')?.textContent,
-      document.getElementById('locationBarText')?.textContent,
-      document.getElementById('sat-location')?.textContent,
-      document.getElementById('astro-location')?.textContent,
-      document.getElementById('const-location')?.textContent,
-      document.getElementById('dark-location')?.textContent
-    ];
-
-    for (const candidate of candidates) {
-      const path = parseLocationText(candidate);
-      if (path) return path;
-    }
-    return '/home';
-  }
-
-  function syncUrlFromLocation() {
-    const nextPath = getDisplayedLocation();
-    if (!nextPath) return;
-
-    if (window.location.pathname === nextPath) return;
-
-    try {
-      history.replaceState({}, '', nextPath);
-    } catch (err) {
-      // Ignore URL updates that the host does not allow.
-    }
-  }
-
-  function watchText(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    const observer = new MutationObserver(syncUrlFromLocation);
-    observer.observe(el, { childList: true, characterData: true, subtree: true });
-  }
-
-  window.addEventListener('DOMContentLoaded', () => {
-    syncUrlFromLocation();
-
-    const input = document.getElementById('locationInput');
-    if (input) {
-      input.addEventListener('change', syncUrlFromLocation);
-      input.addEventListener('blur', syncUrlFromLocation);
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          setTimeout(syncUrlFromLocation, 0);
-        }
-      });
-    }
-
-    ['locationDisplay', 'locationBarText', 'sat-location', 'astro-location', 'const-location', 'dark-location']
-      .forEach(watchText);
-
-  });
-})();
+});
 </script>
 
 </body>
