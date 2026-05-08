@@ -2231,6 +2231,7 @@
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="display:inline-block;vertical-align:-1px;margin-right:5px"><path d="M10.5 7.5A5 5 0 0 1 5.5 2.5a5 5 0 1 0 5 5z"/></svg>
         Moon
       </a>
+      <a href="#" class="nav-link" data-page="lightpollution" onclick="switchPage(event,'lightpollution')">Map of Light Pollution</a>
       <a href="#" class="nav-link" data-page="about" onclick="switchPage(event,'about')">About</a>
     </nav>
     <div class="header-tools">
@@ -3487,6 +3488,27 @@
   </div><!-- /page-moon -->
 
   <!-- ══════════════════════════════════════════════════════════
+       PAGE: LIGHT POLLUTION MAP
+  ══════════════════════════════════════════════════════════ -->
+  <div class="page-section" id="page-lightpollution">
+    <div class="page-hero">
+      <h2 class="page-h1">Map of <em>Light Pollution</em></h2>
+      <p class="page-sub">Regional light-pollution view centered on your location</p>
+    </div>
+
+    <div class="panel" style="padding:16px; overflow:hidden;">
+      <iframe
+        title="Map of Light Pollution"
+        srcdoc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Map of Light Pollution</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>html,body{margin:0;height:100%;background:#0b1020;font-family:Arial,Helvetica,sans-serif}#map{width:100%;height:100%}.panel{position:absolute;top:16px;left:16px;z-index:1000;width:min(360px,calc(100vw - 32px));background:rgba(255,255,255,.92);color:#0f172a;border-radius:16px;padding:14px 14px 12px;box-shadow:0 18px 50px rgba(0,0,0,.28)}.title{font-size:18px;font-weight:700;margin-bottom:8px}.row{display:flex;align-items:center;gap:10px;margin-top:10px}label{font-size:13px;min-width:66px;color:#1f2937}input[type="range"]{flex:1}.legend-title{font-size:12px;margin-top:12px;margin-bottom:6px;color:#1f2937}.gradient{height:14px;border-radius:999px;border:1px solid rgba(15,23,42,.12);background:linear-gradient(90deg,#000 0%,#050505 14%,#1d083a 28%,#6f2cff 44%,#3a4cff 58%,#2b6bff 72%,#a8bdfd 86%,#fff 100%)}.ticks{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#64748b;gap:6px;flex-wrap:wrap}.status{margin-top:10px;font-size:12px;color:#475569;min-height:16px;line-height:1.35}.leaflet-control-attribution{background:rgba(255,255,255,.82)!important}</style></head><body><div id="map"></div><div class="panel"><div class="title">Map of Light Pollution</div><div class="row"><label for="opacity">Opacity</label><input id="opacity" type="range" min="0" max="100" value="50"></div><div class="legend-title">Legend</div><div class="gradient"></div><div class="ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div><div class="status" id="status">Locating your region...</div></div><script>const map=L.map("map",{zoomControl:false,worldCopyJump:true,maxZoom:19});L.control.zoom({position:"topright"}).addTo(map);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);const statusEl=document.getElementById("status");const opacityEl=document.getElementById("opacity");let overlayOpacity=Number(opacityEl.value)/100;function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}function lerp(a,b,t){return a+(b-a)*t}function rgba(r,g,b,a){return[Math.round(r),Math.round(g),Math.round(b),Math.round(a)]}function intensityToBortle(lum){const x=clamp(Math.pow(lum,.85),0,1);return 1+x*8}function mapBortleToColor(b){if(b<=3)return rgba(0,0,0,0);if(b<4.5){const t=clamp((b-3)/1.5,0,1);return rgba(lerp(10,115,t),lerp(0,35,t),lerp(25,235,t),lerp(0,255,t*overlayOpacity))}if(b<5.5){const t=clamp(b-4.5,0,1);return rgba(lerp(115,70,t),lerp(35,80,t),lerp(235,255,t),lerp(180,255,overlayOpacity))}if(b<6.5){const t=clamp(b-5.5,0,1);return rgba(lerp(70,35,t),lerp(80,140,t),255,lerp(180,255,overlayOpacity))}const t=clamp((b-6.5)/2.5,0,1);return rgba(lerp(35,255,t),lerp(140,255,t),255,lerp(190,255,overlayOpacity))}const NightOverlay=L.GridLayer.extend({createTile:function(coords){const tile=document.createElement("canvas");const size=this.getTileSize();tile.width=size.x;tile.height=size.y;const ctx=tile.getContext("2d",{willReadFrequently:true});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";const img=new Image();img.crossOrigin="anonymous";img.referrerPolicy="no-referrer";const bounds=this._tileCoordsToBounds(coords);const nw=map.options.crs.project(bounds.getNorthWest());const se=map.options.crs.project(bounds.getSouthEast());const width=1024,height=1024;const url="https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=VIIRS_SNPP_GapFilled_BRDF_Corrected_DayNightBand_Radiance&STYLES=&FORMAT=image/png&TRANSPARENT=TRUE&CRS=EPSG:3857&WIDTH="+width+"&HEIGHT="+height+"&BBOX="+[nw.x,se.y,se.x,nw.y].join(",");img.onload=()=>{try{const work=document.createElement("canvas");work.width=width;work.height=height;const wctx=work.getContext("2d",{willReadFrequently:true});wctx.imageSmoothingEnabled=true;wctx.drawImage(img,0,0,width,height);const imageData=wctx.getImageData(0,0,width,height);const data=imageData.data;for(let i=0;i<data.length;i+=4){if(data[i+3]===0)continue;const lum=(.2126*data[i]+.7152*data[i+1]+.0722*data[i+2])/255;const bortle=intensityToBortle(lum);const c=mapBortleToColor(bortle);data[i]=c[0];data[i+1]=c[1];data[i+2]=c[2];data[i+3]=c[3]}wctx.putImageData(imageData,0,0);ctx.clearRect(0,0,size.x,size.y);ctx.drawImage(work,0,0,size.x,size.y)}catch(err){console.error(err);statusEl.textContent="The browser blocked reading the remote tile pixels."}};img.onerror=()=>{statusEl.textContent="Overlay tiles failed to load."};img.src=url;return tile;}});let overlay=new NightOverlay({opacity:1,tileSize:256});overlay.addTo(map);opacityEl.addEventListener("input",()=>{overlayOpacity=Number(opacityEl.value)/100;overlay.setOpacity(overlayOpacity)});function milesToLatDegrees(miles){return miles/69}function milesToLngDegrees(miles,lat){return miles/(69*Math.cos(lat*Math.PI/180))}function setRegionalView(lat,lng){const radiusMiles=500;const latDelta=milesToLatDegrees(radiusMiles);const lngDelta=milesToLngDegrees(radiusMiles,lat);const bounds=L.latLngBounds([lat-latDelta,lng-lngDelta],[lat+latDelta,lng+lngDelta]);map.fitBounds(bounds,{padding:[30,30]});statusEl.textContent=""}function fallbackView(){
+map.setView([39.8283, -98.5795], 4);
+}
+map.setView([39.8283, -98.5795], 4);
+</script></body></html>' style="width:100%;height:80vh;border:0;border-radius:12px;background:#0b1020;"></iframe>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
        PAGE: ABOUT
   ══════════════════════════════════════════════════════════ -->
   <div class="page-section" id="page-about">
@@ -4068,6 +4090,14 @@ function setRoute(path) {
   try { history.replaceState({}, '', path); } catch (err) {}
 }
 
+(function normalizeHomeRoute() {
+  try {
+    if (window.location.pathname === '/home') {
+      history.replaceState({}, '', '/');
+    }
+  } catch (err) {}
+})();
+
 function locationToPath(locationString) {
   if (!locationString) return '/home';
   const parts = String(locationString).split(',').map(p => p.trim()).filter(Boolean);
@@ -4101,7 +4131,7 @@ function goHome(e) {
   const display = document.getElementById('locationDisplay');
   if (display) display.textContent = '—';
 
-  setRoute('/home');
+  setRoute('/');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -4120,10 +4150,10 @@ function switchPage(e, page) {
     a.classList.toggle('active', a.dataset.page === page);
   });
 
-  if (page === 'about' || page === 'moon') {
+  if (page === 'about' || page === 'moon' || page === 'lightpollution') {
     setRoute('/' + page);
   } else {
-    setRoute('/home');
+    setRoute('/');
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -4590,34 +4620,7 @@ renderObjectOfNight(pickObjectOfNight());
 
 
 /* ── LIGHT POLLUTION PAGE ── */
-(function(){
-  function initLPM() {
-    const iframe = document.getElementById('lpmIframe');
-    const fallback = document.getElementById('lpmFallback');
-    if (!iframe) return;
-    let ok = false;
-    iframe.addEventListener('load', function() {
-      ok = true;
-      try {
-        // If browser blocked the frame, contentDocument will be accessible but empty
-        const d = iframe.contentDocument || iframe.contentWindow.document;
-        if (d && d.body && d.body.innerHTML.trim() === '') {
-          iframe.style.display = 'none';
-          if (fallback) fallback.style.display = 'flex';
-        }
-      } catch(e) { /* cross-origin success — content loaded fine */ }
-    });
-    // 10s timeout fallback
-    setTimeout(function() {
-      if (!ok && fallback) {
-        iframe.style.display = 'none';
-        fallback.style.display = 'flex';
-      }
-    }, 10000);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLPM);
-  else initLPM();
-})();
+map.setView([39.8283, -98.5795], 4);
 
 function updateLPMPage(bortle, sqm, locText) {
   const bColors = {1:'#9b59b6',2:'#2980b9',3:'#27ae60',4:'#8bc34a',5:'#f39c12',6:'#e67e22',7:'#e74c3c',8:'#c0392b',9:'#922b21'};
@@ -6818,49 +6821,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 <script>
-(function(){
-  function setHomeDefault() {
-    try {
-      if (window.location.protocol === 'file:') {
-        if (window.location.search) {
-          history.replaceState({}, "", window.location.pathname);
-        }
-      } else if (!window.location.pathname || window.location.pathname === "/") {
-        history.replaceState({}, "", "/home");
-      }
-    } catch (err) {}
-  }
-
-  function clearAndResetHome() {
-    const input = document.getElementById('locationInput');
-    const display = document.getElementById('locationDisplay');
-
-    if (input) {
-      input.value = "";
-      input.setAttribute('value', '');
-      input.blur();
-    }
-    if (display) display.textContent = "—";
-
-    // Always return to the home route without reloading the page.
-    setRoute('/home');
-  }
-
-  // Override existing home behavior safely
-  const originalGoHome = window.goHome;
-  window.goHome = function(e){
-    if (e) e.preventDefault();
-    if (originalGoHome) originalGoHome(e);
-    clearAndResetHome();
-  };
-
-  window.addEventListener("load", function () {
-    setHomeDefault();
-    if (window.location.search) {
-      try { history.replaceState({}, "", '/home'); } catch (err) {}
-    }
-  });
-})();
+map.setView([39.8283, -98.5795], 4);
 </script>
 
 
