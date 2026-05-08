@@ -6885,5 +6885,92 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+
+
+<script>
+(function () {
+  function cleanPart(part) {
+    return String(part || '')
+      .trim()
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  }
+
+  function parseLocationText(text) {
+    const raw = String(text || '').trim();
+    if (!raw || raw === '—' || /search a location/i.test(raw) || /your location/i.test(raw)) {
+      return null;
+    }
+
+    const parts = raw.split(',').map(s => s.trim()).filter(Boolean).slice(0, 3);
+    if (!parts.length) return null;
+
+    return '/' + parts.map(cleanPart).filter(Boolean).join('/');
+  }
+
+  function getDisplayedLocation() {
+    const candidates = [
+      document.getElementById('locationDisplay')?.textContent,
+      document.getElementById('locationBarText')?.textContent,
+      document.getElementById('sat-location')?.textContent,
+      document.getElementById('astro-location')?.textContent,
+      document.getElementById('const-location')?.textContent,
+      document.getElementById('dark-location')?.textContent
+    ];
+
+    for (const candidate of candidates) {
+      const path = parseLocationText(candidate);
+      if (path) return path;
+    }
+    return '/home';
+  }
+
+  function syncUrlFromLocation() {
+    const nextPath = getDisplayedLocation();
+    if (!nextPath) return;
+
+    if (window.location.pathname === nextPath) return;
+
+    try {
+      history.replaceState({}, '', nextPath);
+    } catch (err) {
+      // Ignore URL updates that the host does not allow.
+    }
+  }
+
+  function watchText(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const observer = new MutationObserver(syncUrlFromLocation);
+    observer.observe(el, { childList: true, characterData: true, subtree: true });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    syncUrlFromLocation();
+
+    const input = document.getElementById('locationInput');
+    if (input) {
+      input.addEventListener('change', syncUrlFromLocation);
+      input.addEventListener('blur', syncUrlFromLocation);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          setTimeout(syncUrlFromLocation, 0);
+        }
+      });
+    }
+
+    ['locationDisplay', 'locationBarText', 'sat-location', 'astro-location', 'const-location', 'dark-location']
+      .forEach(watchText);
+
+  });
+})();
+</script>
+
 </body>
 </html>
