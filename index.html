@@ -4086,6 +4086,8 @@ function goHome(e) {
   const input = document.getElementById('locationInput');
   if (input) { input.value = ''; input.focus(); }
 
+  try { history.replaceState({}, '', '/home'); } catch (err) {}
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -6404,11 +6406,11 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       if (dsoLocation) dsoLocation.textContent = locText;
       if (satLocation) satLocation.textContent = locText;
 
-      // Keep the address bar aligned with the active location
+      // Keep the address bar clean. Do not append query parameters for searched locations.
       if (fromUser) {
-        const citySlug = slugifyLocationName(location.name || query || locText);
-        const nextUrl = citySlug ? `?city=${encodeURIComponent(citySlug)}` : window.location.pathname;
-        history.replaceState({}, "", nextUrl);
+        try {
+          history.replaceState({}, "", window.location.pathname);
+        } catch (err) {}
       }
 
       // Reveal results and sub-nav once we have real data
@@ -6789,10 +6791,96 @@ function startAtomicClock(timeZone) {
 <script>
 window.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("locationInput");
-  if (input) input.value = "";
+  if (input && window.location.search.includes("city=")) {
+    input.value = "";
+  }
+});
+</script>
 
-  if (window.location.search.includes("city=")) {
-    history.replaceState({}, "", window.location.pathname);
+
+<script>
+(function(){
+  function setHomeDefault() {
+    try {
+      if (window.location.protocol === 'file:') {
+        if (window.location.search) {
+          history.replaceState({}, "", window.location.pathname);
+        }
+      } else if (!window.location.pathname || window.location.pathname === "/") {
+        history.replaceState({}, "", "/home");
+      }
+    } catch (err) {}
+  }
+
+  function clearAndResetHome() {
+    const input = document.getElementById('locationInput');
+    const display = document.getElementById('locationDisplay');
+
+    if (input) {
+      input.value = "";
+      input.setAttribute('value', '');
+      input.blur();
+    }
+    if (display) display.textContent = "—";
+
+    // Use /home on hosted sites; keep local file URLs clean when opened from disk.
+    try {
+      if (window.location.protocol === 'file:') {
+        history.replaceState({}, "", window.location.pathname);
+      } else {
+        history.replaceState({}, "", "/home");
+      }
+    } catch (err) {}
+  }
+
+  // Override existing home behavior safely
+  const originalGoHome = window.goHome;
+  window.goHome = function(e){
+    if (e) e.preventDefault();
+    if (originalGoHome) originalGoHome(e);
+    clearAndResetHome();
+  };
+
+  window.addEventListener("load", function () {
+    setHomeDefault();
+    if (window.location.search) {
+      try { history.replaceState({}, "", window.location.pathname); } catch (err) {}
+    }
+  });
+})();
+</script>
+
+
+<script>
+function formatLocationForURL(city, state, country) {
+  function clean(str) {
+    return (str || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-");
+  }
+  return "/" + [clean(city), clean(state), clean(country)].filter(Boolean).join(",");
+}
+
+// Hook into your existing search behavior
+document.addEventListener("DOMContentLoaded", () => {
+  const searchBtn = document.querySelector(".search-btn");
+
+  if (searchBtn) {
+    searchBtn.addEventListener("click", () => {
+      const input = document.getElementById("locationInput");
+      if (!input || !input.value) return;
+
+      // naive split (you may already have structured data elsewhere)
+      const parts = input.value.split(",");
+      const city = parts[0] || "";
+      const state = parts[1] || "";
+      const country = parts[2] || "";
+
+      const newURL = formatLocationForURL(city, state, country);
+      history.pushState({}, "", newURL);
+    });
   }
 });
 </script>
