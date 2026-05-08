@@ -3574,15 +3574,16 @@
           <h3 class="about-card-title">How the Score Works</h3>
           <p class="about-card-body">The Viewing Score (0–100) is a weighted composite of 9 atmospheric and environmental factors, with light pollution now carrying the largest weight. A score above 80 indicates excellent conditions for visual astronomy or astrophotography.</p>
           <div class="score-weights">
+            <div class="weight-row"><span class="weight-highlight">Light Pollution (Bortle)</span><div class="weight-bar-track"><div class="weight-bar" style="width:50%;background:var(--fair)"></div></div><span class="weight-pct weight-highlight">50%</span></div>
             <div class="weight-row"><span>Cloud Cover</span><div class="weight-bar-track"><div class="weight-bar" style="width:20%"></div></div><span class="weight-pct">20%</span></div>
-            <div class="weight-row"><span>Atmospheric Seeing</span><div class="weight-bar-track"><div class="weight-bar" style="width:16%"></div></div><span class="weight-pct">16%</span></div>
-            <div class="weight-row"><span>Transparency</span><div class="weight-bar-track"><div class="weight-bar" style="width:12%"></div></div><span class="weight-pct">12%</span></div>
             <div class="weight-row"><span>Precipitation</span><div class="weight-bar-track"><div class="weight-bar" style="width:8%"></div></div><span class="weight-pct">8%</span></div>
-            <div class="weight-row"><span>Wind Speed</span><div class="weight-bar-track"><div class="weight-bar" style="width:6%"></div></div><span class="weight-pct">6%</span></div>
-            <div class="weight-row"><span>Humidity</span><div class="weight-bar-track"><div class="weight-bar" style="width:7%"></div></div><span class="weight-pct">7%</span></div>
-            <div class="weight-row"><span class="weight-highlight">Light Pollution (Bortle)</span><div class="weight-bar-track"><div class="weight-bar" style="width:24%;background:var(--fair)"></div></div><span class="weight-pct weight-highlight">24%</span></div>
-            <div class="weight-row"><span>Temperature</span><div class="weight-bar-track"><div class="weight-bar" style="width:3%;background:rgba(56,217,245,0.5)"></div></div><span class="weight-pct">3%</span></div>
-            <div class="weight-row"><span>Jet Stream</span><div class="weight-bar-track"><div class="weight-bar" style="width:4%;background:var(--muted)"></div></div><span class="weight-pct">4%</span></div>
+            <div class="weight-row"><span class="weight-highlight" style="color:var(--cyan)">Moon Illumination</span><div class="weight-bar-track"><div class="weight-bar" style="width:5%;background:var(--cyan)"></div></div><span class="weight-pct weight-highlight" style="color:var(--cyan)">5%</span></div>
+            <div class="weight-row"><span>Atmospheric Seeing</span><div class="weight-bar-track"><div class="weight-bar" style="width:5%"></div></div><span class="weight-pct">5%</span></div>
+            <div class="weight-row"><span>Transparency</span><div class="weight-bar-track"><div class="weight-bar" style="width:5%"></div></div><span class="weight-pct">5%</span></div>
+            <div class="weight-row"><span>Wind Speed</span><div class="weight-bar-track"><div class="weight-bar" style="width:3%"></div></div><span class="weight-pct">3%</span></div>
+            <div class="weight-row"><span>Humidity</span><div class="weight-bar-track"><div class="weight-bar" style="width:2%"></div></div><span class="weight-pct">2%</span></div>
+            <div class="weight-row"><span>Jet Stream</span><div class="weight-bar-track"><div class="weight-bar" style="width:1%;background:var(--muted)"></div></div><span class="weight-pct">1%</span></div>
+            <div class="weight-row"><span>Temperature</span><div class="weight-bar-track"><div class="weight-bar" style="width:1%;background:var(--muted)"></div></div><span class="weight-pct">1%</span></div></div><span class="weight-pct">4%</span></div>
           </div>
           <p class="about-score-note">Bortle class is looked up from a 503-city VIIRS-calibrated database and now carries the largest share of the final score.</p>
         </div>
@@ -5579,33 +5580,40 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     const precip = clamp(snapshot.precip ?? 0, 0, 30);
     const weatherCode = snapshot.weatherCode ?? 0;
 
-    const cloudScore = 100 - cloud;
-    const seeingScore = clamp(100 - cloud * 0.7 - wind10 * 2.9, 0, 100);
-    const humidityScore = clamp(100 - Math.max(0, humidity - 35) * 1.25, 0, 100);
+    const cloudScore        = 100 - cloud;
+    const seeingScore       = clamp(100 - cloud * 0.7 - wind10 * 2.9, 0, 100);
+    const humidityScore     = clamp(100 - Math.max(0, humidity - 35) * 1.25, 0, 100);
     const transparencyScore = clamp((vis / 20000) * 100, 0, 100);
-    const windScore = clamp(100 - wind10 * 3.2, 0, 100);
-    const tempScore = clamp(100 - Math.abs(temp - 54) * 2.33, 15, 100);
-    const precipScore = clamp(100 - precip * 20 - (weatherCode >= 51 ? 18 : 0), 0, 100);
-    const jetScore = clamp(100 - wind180 * 2.9, 0, 100);
-    const bortle   = clamp(snapshot.bortle ?? liveState?.bortle ?? 5, 1, 9);
-    const lpScore  = clamp(Math.round(100 - (bortle - 1) * 10.6), 15, 100);
+    const windScore         = clamp(100 - wind10 * 3.2, 0, 100);
+    const tempScore         = clamp(100 - Math.abs(temp - 54) * 2.33, 15, 100);
+    const precipScore       = clamp(100 - precip * 20 - (weatherCode >= 51 ? 18 : 0), 0, 100);
+    const jetScore          = clamp(100 - wind180 * 2.9, 0, 100);
+    const bortle            = clamp(snapshot.bortle ?? liveState?.bortle ?? 5, 1, 9);
+    const lpScore           = clamp(Math.round(100 - (bortle - 1) * 10.6), 15, 100);
+
+    // Moon illumination penalty — full moon (100%) reduces score, new moon has no effect
+    // moonFrac: 0 (new) → moonIllumScore: 100 | moonFrac: 1 (full) → moonIllumScore: 15
+    const moonFrac       = clamp(snapshot.moonFrac ?? liveState?.moonFrac ?? 0, 0, 1);
+    const moonIllumScore = clamp(Math.round(100 - moonFrac * 85), 15, 100);
 
     const weighted =
-      lpScore           * 0.24 +
+      lpScore           * 0.50 +
       cloudScore        * 0.20 +
-      seeingScore       * 0.16 +
-      transparencyScore * 0.12 +
+      moonIllumScore    * 0.05 +
+      seeingScore       * 0.05 +
+      transparencyScore * 0.05 +
       precipScore       * 0.08 +
-      humidityScore     * 0.07 +
-      windScore         * 0.06 +
-      jetScore          * 0.04 +
-      tempScore         * 0.03;
+      humidityScore     * 0.02 +
+      windScore         * 0.03 +
+      jetScore          * 0.01 +
+      tempScore         * 0.01;
+    // Weights: 0.50+0.20+0.05+0.05+0.05+0.08+0.02+0.03+0.01+0.01 = 1.00 ✓
 
     return {
       score: clamp(Math.round(weighted), 0, 100),
       factors: {
         cloudScore, seeingScore, humidityScore, transparencyScore,
-        windScore, tempScore, precipScore, jetScore, lpScore
+        windScore, tempScore, precipScore, jetScore, lpScore, moonIllumScore
       }
     };
   }
@@ -5624,6 +5632,7 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       wind180: pickSeriesValue(hourly.wind_speed_180m, idx, pickSeriesValue(hourly.wind_speed_10m, idx, 0)),
       precip: current.precipitation ?? pickSeriesValue(hourly.precipitation, idx, 0),
       weatherCode: current.weather_code ?? pickSeriesValue(hourly.weather_code, idx, 0),
+      moonFrac: liveState?.moonFrac ?? 0,
     };
 
     const scoreSet = computeScoreFromSnapshot(snapshot);
@@ -5647,7 +5656,8 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
       { icon: factorIcons[5], name: "Temperature", value: `${round1(snapshot.temp)}°F`, pct: Math.round(scoreSet.factors.tempScore), quality: qualityClass(scoreSet.factors.tempScore) },
       { icon: factorIcons[6], name: "Precipitation", value: `${round1(snapshot.precip)} mm`, pct: Math.round(scoreSet.factors.precipScore), quality: qualityClass(scoreSet.factors.precipScore) },
       { icon: factorIcons[7], name: "Jet Stream", value: `${round1(snapshot.wind180)} mph`, pct: Math.round(scoreSet.factors.jetScore), quality: qualityClass(scoreSet.factors.jetScore) },
-      { icon: factorIcons[0], name: "Light Pollution", value: `Bortle ${liveState.bortle || '—'}`, pct: Math.round(scoreSet.factors.lpScore ?? 100), quality: qualityClass(scoreSet.factors.lpScore ?? 100) }
+      { icon: factorIcons[0], name: "Light Pollution", value: `Bortle ${liveState.bortle || '—'}`, pct: Math.round(scoreSet.factors.lpScore ?? 100), quality: qualityClass(scoreSet.factors.lpScore ?? 100) },
+      { icon: `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 8A5 5 0 0 1 5 3a6 6 0 1 0 6 5z"/></svg>`, name: "Moon Illumination", value: `${Math.round((snapshot.moonFrac ?? liveState?.moonFrac ?? 0) * 100)}% lit`, pct: Math.round(scoreSet.factors.moonIllumScore ?? 100), quality: qualityClass(scoreSet.factors.moonIllumScore ?? 100) }
     ];
 
     const list = document.getElementById("factorsList");
@@ -5854,6 +5864,7 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
     const interferEl = document.getElementById('moonInterferSub');
 
     const frac = moonIll?.phase_fraction ?? 0;
+    liveState.moonFrac = frac; // used by score computation
     const moonRiseDate = extractDate(moonRise);
     const moonSetDate  = extractDate(moonSet);
 
