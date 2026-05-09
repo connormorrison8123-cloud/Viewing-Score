@@ -4110,13 +4110,32 @@ document.getElementById('locationInput').addEventListener('keydown', e => {
 
 
 function setRoute(path) {
-  try { history.replaceState({}, '', path); } catch (err) {}
+  try {
+    const clean = String(path || '/home')
+      .replace(/^\/+/, '')
+      .replace(/^#\/?/, '')
+      .replace(/^\/+/, '');
+    const next = clean ? '/#' + clean : '/';
+    if ((window.location.pathname + window.location.hash) !== next) {
+      history.replaceState({}, '', next);
+    }
+  } catch (err) {}
 }
 
 (function normalizeHomeRoute() {
   try {
-    if (window.location.pathname === '/home') {
-      history.replaceState({}, '', '/');
+    const pathname = window.location.pathname || '/';
+    const hash = (window.location.hash || '').replace(/^#\/?/, '');
+
+    // If a hash route already exists, keep it.
+    if (hash) return;
+
+    // Any path deeper than the root is treated as a route fragment and
+    // converted back into hash routing so the site does not depend on
+    // server-side route rewriting on mobile browsers.
+    if (pathname && pathname !== '/' && pathname !== '/index.html') {
+      const route = pathname.replace(/^\/+/, '');
+      if (route) history.replaceState({}, '', '/#' + route);
     }
   } catch (err) {}
 })();
@@ -4159,6 +4178,22 @@ function goHome(e) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function syncPageFromHash() {
+  const hash = (window.location.hash || '').replace(/^#\/?/, '');
+  if (!hash || hash === 'home') {
+    goHome();
+    return;
+  }
+  if (['about','moon','lightpollution'].includes(hash)) {
+    if (document.getElementById('page-' + hash)?.classList.contains('active')) return;
+    switchPage(null, hash);
+  }
+}
+
+window.addEventListener('hashchange', syncPageFromHash);
+window.addEventListener('DOMContentLoaded', syncPageFromHash);
+window.addEventListener('pageshow', syncPageFromHash);
+
 function switchPage(e, page) {
   if (e) e.preventDefault();
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -4176,7 +4211,7 @@ function switchPage(e, page) {
   if (page === 'about' || page === 'moon' || page === 'lightpollution') {
     setRoute('/' + page);
   } else {
-    setRoute('/');
+    setRoute('/home');
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -6862,6 +6897,15 @@ function formatLocationForURL(city, state, country) {
 
 // Hook into your existing search behavior
 document.addEventListener("DOMContentLoaded", () => {
+  // Defensive normalization for mobile browsers that restore stale paths.
+  try {
+    const pathname = window.location.pathname || '/';
+    if (pathname !== '/' && pathname !== '/index.html' && !window.location.hash) {
+      const route = pathname.replace(/^\/+/, '');
+      if (route) history.replaceState({}, '', '/#' + route);
+    }
+  } catch (err) {}
+
   const searchBtn = document.querySelector(".search-btn");
 
   if (searchBtn) {
@@ -6882,14 +6926,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener('popstate', () => {
-  const path = window.location.pathname || '/home';
-  if (path === '/about' || path === '/moon') {
-    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-    const section = document.getElementById('page-' + path.slice(1));
-    if (section) section.classList.add('active');
-  } else if (path === '/home' || path === '/' || path.split('/').length >= 4) {
-    goHome();
-  }
+  syncPageFromHash();
 });
 </script>
 
