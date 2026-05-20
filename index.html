@@ -11,20 +11,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
-  --bg: #050000;
-  --panel: rgba(18, 4, 4, 0.88);
-  --border: rgba(255, 70, 70, 0.14);
-  --cyan: #ff5a5a;
-  --cyan-dim: rgba(255, 90, 90, 0.14);
-  --amber: #ff8a5b;
-  --amber-dim: rgba(255, 138, 91, 0.10);
-  --text: #ffd6d6;
-  --muted: #9a6b6b;
-  --good: #ff7070;
-  --fair: #ff9a62;
-  --poor: #ff3d3d;
-  --glow-cyan: 0 0 18px rgba(255, 90, 90, 0.28);
-  --glow-amber: 0 0 14px rgba(255, 138, 91, 0.20);
+  --bg: #02070f;
+  --panel: rgba(6, 16, 34, 0.88);
+  --border: rgba(56, 217, 245, 0.12);
+  --cyan: #38d9f5;
+  --cyan-dim: rgba(56, 217, 245, 0.14);
+  --amber: #ffb347;
+  --amber-dim: rgba(255, 179, 71, 0.10);
+  --text: #c8e2ff;
+  --muted: #5a7a9a;
+  --good: #4dffb4;
+  --fair: #ffcf47;
+  --poor: #ff6b6b;
+  --glow-cyan: 0 0 18px rgba(56, 217, 245, 0.28);
+  --glow-amber: 0 0 14px rgba(255, 179, 71, 0.20);
 }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1385,26 +1385,88 @@
   /* ════════════════════════════════════
      RED NIGHT-VISION MODE
   ════════════════════════════════════ */
-  /* ── RED NIGHT-VISION: filter entire <html> so every element turns red ── */
+  /* Override CSS variables so every color becomes a shade of deep red */
   html.red-mode {
-  filter: grayscale(1) sepia(1) hue-rotate(305deg) saturate(7) brightness(0.42) contrast(1.08);
-  background: #050000;
+  --bg: #0a0000;
+  --panel: rgba(20, 2, 2, 0.97);
+  --border: rgba(180, 20, 20, 0.25);
+  --cyan: #cc2200;
+  --cyan-dim: rgba(180, 30, 0, 0.18);
+  --amber: #aa1800;
+  --amber-dim: rgba(150, 20, 0, 0.14);
+  --text: #cc3300;
+  --muted: #661100;
+  --good: #bb2200;
+  --fair: #992200;
+  --poor: #880000;
+  --glow-cyan: 0 0 18px rgba(180, 20, 0, 0.35);
+  --glow-amber: 0 0 14px rgba(150, 20, 0, 0.25);
 }
 
 html.red-mode body {
-  background: #050000;
+  background: #0a0000;
 }
 
 html.red-mode #starfield {
-  opacity: 0.18;
+  opacity: 0.06;
+  filter: hue-rotate(180deg) saturate(0.3) brightness(0.4);
+}
+
+/* Kill all white/bright colours — tint everything dark red */
+html.red-mode h1,
+html.red-mode h2,
+html.red-mode h3,
+html.red-mode .logo-text,
+html.red-mode .hero h1,
+html.red-mode .score-num,
+html.red-mode .score-grade,
+html.red-mode .page-h1,
+html.red-mode .iss-time,
+html.red-mode .dso-feat-name,
+html.red-mode .weekly-score-num {
+  color: #cc2200 !important;
+  text-shadow: none !important;
 }
 
 html.red-mode .panel,
-html.red-mode .mini-panel,
+html.red-mode .mini-panel {
+  background: rgba(14, 1, 1, 0.98) !important;
+  border-color: rgba(140, 15, 15, 0.22) !important;
+  box-shadow: none !important;
+}
+
 html.red-mode .search-box,
 html.red-mode .location-bar-inner,
 html.red-mode .sub-nav-inner {
+  background: rgba(14, 1, 1, 0.97) !important;
   box-shadow: none !important;
+  border-color: rgba(140, 15, 15, 0.22) !important;
+}
+
+/* Mute images/canvas so they don't blow night vision */
+html.red-mode img,
+html.red-mode canvas {
+  filter: brightness(0.25) saturate(0) sepia(1) hue-rotate(330deg) saturate(3);
+  opacity: 0.55;
+}
+
+html.red-mode .fill-good,
+html.red-mode .fill-fair,
+html.red-mode .fill-poor {
+  background: linear-gradient(90deg, #991100, #660900) !important;
+  box-shadow: none !important;
+}
+
+html.red-mode .weekly-score-bar-fill {
+  filter: brightness(0.5) saturate(0.4);
+}
+
+html.red-mode .badge-good,
+html.red-mode .badge-fair,
+html.red-mode .badge-poor {
+  background: rgba(100, 10, 10, 0.25) !important;
+  color: #bb2200 !important;
+  border-color: rgba(150, 15, 15, 0.35) !important;
 }
 
   /* ════════════════════════════════════
@@ -4263,30 +4325,47 @@ function weeklyScoreColor(v) {
 }
 
 function calculateForecastScore(day) {
-  const cloud = Number(day.cloud ?? 50);
-  const humidity = Number(day.humidity ?? 50);
-  const seeing = Number(day.seeing ?? 5);
-  const transparency = Number(day.transparency ?? 5);
-  const moon = Number(day.moon ?? 50);
-  const wind = Number(day.wind ?? 10);
+  // Use same formula as computeScoreFromSnapshot for consistency
+  const cloud   = Math.min(100, Math.max(0, Number(day.cloud   ?? 50)));
+  const wind10  = Math.min(100, Math.max(0, Number(day.wind    ?? 10)));
+  const precip  = Math.min(100, Math.max(0, Number(day.precip  ?? 0)));
+  // Daily API gives max/min temp — use midpoint
+  const tempMax = Number(day.tempMax ?? 60);
+  const tempMin = Number(day.tempMin ?? 45);
+  const temp    = (tempMax + tempMin) / 2;
+  // precipitation_probability_max doubles as humidity proxy for daily data
+  const humidity = Math.min(100, Math.max(0, Number(day.humidity ?? precip)));
+  // Visibility not in daily API — estimate from cloud + precip
+  const visEstimate = Math.max(0, 30000 - cloud * 200 - precip * 300);
 
-  const cloudScore = Math.max(0, 100 - cloud) * 0.40;
-  const humidityScore = Math.max(0, 100 - humidity) * 0.15;
-  const windScore = Math.max(0, 100 - (wind * 4)) * 0.10;
-  const moonScore = Math.max(0, 100 - moon) * 0.10;
-  const seeingScore = Math.min(100, seeing * 20) * 0.125;
-  const transparencyScore = Math.min(100, transparency * 20) * 0.125;
+  const bortle   = Math.min(9, Math.max(1, liveState?.bortle ?? 5));
+  // Moon illumination: use liveState if available, else assume quarter moon
+  const moonFrac = Math.min(1, Math.max(0, liveState?.moonFrac ?? 0.25));
 
-  const total = Math.round(
-    cloudScore +
-    humidityScore +
-    windScore +
-    moonScore +
-    seeingScore +
-    transparencyScore
-  );
+  const cloudScore        = 100 - cloud;
+  const seeingScore       = Math.min(100, Math.max(0, 100 - cloud * 0.7 - wind10 * 2.9));
+  const humidityScore     = Math.min(100, Math.max(0, 100 - Math.max(0, humidity - 35) * 1.25));
+  const transparencyScore = Math.min(100, (visEstimate / 20000) * 100);
+  const windScore         = Math.min(100, Math.max(0, 100 - wind10 * 3.2));
+  const tempScore         = Math.min(100, Math.max(15, 100 - Math.abs(temp - 54) * 2.33));
+  const precipScore       = Math.min(100, Math.max(0, 100 - precip * 0.8));
+  const jetScore          = Math.min(100, Math.max(0, 100 - wind10 * 2.9));
+  const lpScore           = Math.min(100, Math.max(15, Math.round(100 - (bortle - 1) * 10.6)));
+  const moonIllumScore    = Math.min(100, Math.max(15, Math.round(100 - moonFrac * 85)));
 
-  return Math.max(0, Math.min(100, total));
+  const weighted =
+    lpScore           * 0.50 +
+    cloudScore        * 0.20 +
+    moonIllumScore    * 0.05 +
+    seeingScore       * 0.05 +
+    transparencyScore * 0.05 +
+    precipScore       * 0.08 +
+    humidityScore     * 0.02 +
+    windScore         * 0.03 +
+    jetScore          * 0.01 +
+    tempScore         * 0.01;
+
+  return Math.max(0, Math.min(100, Math.round(weighted)));
 }
 
 async function renderWeeklyOutlook(lat, lon, timezone) {
@@ -4332,17 +4411,21 @@ async function renderWeeklyOutlook(lat, lon, timezone) {
 
     const days = d.time.map((dateStr, i) => {
 
-      const cloud = d.cloud_cover_mean[i] ?? 50;
-      const wind = d.wind_speed_10m_max[i] ?? 10;
-      const precip = d.precipitation_probability_max[i] ?? 0;
+      const cloud   = d.cloud_cover_mean[i] ?? 50;
+      const wind    = d.wind_speed_10m_max[i] ?? 10;
+      const precip  = d.precipitation_probability_max[i] ?? 0;
+      // Estimate humidity from cloud cover + precip probability (both correlate with moisture)
+      const humidity = Math.min(100, cloud * 0.5 + precip * 0.5);
+      const tempMax = d.temperature_2m_max?.[i] ?? 60;
+      const tempMin = d.temperature_2m_min?.[i] ?? 45;
 
       const score = calculateForecastScore({
         cloud,
         wind,
-        humidity: precip,
-        seeing: 4,
-        transparency: 4,
-        moon: 35
+        precip,
+        humidity,
+        tempMax,
+        tempMin
       });
 
       const date = new Date(dateStr + 'T12:00:00');
@@ -4362,7 +4445,10 @@ async function renderWeeklyOutlook(lat, lon, timezone) {
         dateLabel,
         cloud,
         wind,
-        precip
+        precip,
+        humidity,
+        tempMax,
+        tempMin
       };
     });
 
