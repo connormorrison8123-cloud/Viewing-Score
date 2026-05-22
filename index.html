@@ -1146,13 +1146,15 @@
 
 
   /* ── WEEKLY OUTLOOK ── */
-  .weekly-section { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-  .weekly-section::-webkit-scrollbar { display: none; }
-  .weekly-section-UNUSED {
+  .weekly-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     margin-top: 24px;
     opacity: 0;
     animation: fadeUp 1s 1.6s forwards;
   }
+  .weekly-section::-webkit-scrollbar { display: none; }
 
   .weekly-panel { padding: 0 0 24px; }
 
@@ -1189,6 +1191,28 @@
     font-size: 0.5rem;
     letter-spacing: 0.14em;
     color: var(--cyan);
+  }
+
+  .weekly-day.best {
+    background: rgba(77, 255, 180, 0.06);
+    border-top: 2px solid var(--good);
+  }
+  .weekly-day.best::before {
+    content: 'BEST';
+    position: absolute;
+    top: 6px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.14em;
+    color: var(--good);
+    text-shadow: 0 0 8px rgba(77, 255, 180, 0.5);
+  }
+  /* When today IS the best day, merge labels to avoid overlap */
+  .weekly-day.today.best::before { display: none; }
+  .weekly-day.today.best::after {
+    content: 'TONIGHT \2605';
+    color: var(--good);
+    text-shadow: 0 0 8px rgba(77, 255, 180, 0.5);
   }
 
   .weekly-dow {
@@ -1387,32 +1411,32 @@
   ════════════════════════════════════ */
   /* Override CSS variables so every color becomes a shade of deep red */
   html.red-mode {
-  --bg: #0a0000;
-  --panel: rgba(20, 2, 2, 0.97);
-  --border: rgba(180, 20, 20, 0.25);
-  --cyan: #cc2200;
-  --cyan-dim: rgba(180, 30, 0, 0.18);
-  --amber: #aa1800;
-  --amber-dim: rgba(150, 20, 0, 0.14);
-  --text: #cc3300;
-  --muted: #661100;
-  --good: #bb2200;
-  --fair: #992200;
-  --poor: #880000;
-  --glow-cyan: 0 0 18px rgba(180, 20, 0, 0.35);
-  --glow-amber: 0 0 14px rgba(150, 20, 0, 0.25);
+  --bg: #0c0000;
+  --panel: rgba(18, 2, 0, 0.95);
+  --border: rgba(255, 60, 30, 0.2);
+  --cyan: #ff4422;
+  --cyan-dim: rgba(255, 60, 30, 0.18);
+  --amber: #ff6633;
+  --amber-dim: rgba(255, 80, 30, 0.14);
+  --text: #ff6644;
+  --muted: #cc4422;
+  --good: #ff4433;
+  --fair: #ff7733;
+  --poor: #dd2200;
+  --glow-cyan: 0 0 18px rgba(255, 50, 20, 0.45);
+  --glow-amber: 0 0 14px rgba(255, 70, 20, 0.35);
 }
 
 html.red-mode body {
-  background: #0a0000;
+  background: #0c0000;
 }
 
 html.red-mode #starfield {
-  opacity: 0.06;
-  filter: hue-rotate(180deg) saturate(0.3) brightness(0.4);
+  opacity: 0.15;
+  filter: hue-rotate(330deg) saturate(2) brightness(0.6);
 }
 
-/* Kill all white/bright colours — tint everything dark red */
+/* Shift all key text to bright red — no dimming */
 html.red-mode h1,
 html.red-mode h2,
 html.red-mode h3,
@@ -1424,49 +1448,46 @@ html.red-mode .page-h1,
 html.red-mode .iss-time,
 html.red-mode .dso-feat-name,
 html.red-mode .weekly-score-num {
-  color: #cc2200 !important;
-  text-shadow: none !important;
+  color: #ff4422 !important;
+  text-shadow: 0 0 12px rgba(255, 50, 20, 0.4) !important;
 }
 
 html.red-mode .panel,
 html.red-mode .mini-panel {
-  background: rgba(14, 1, 1, 0.98) !important;
-  border-color: rgba(140, 15, 15, 0.22) !important;
-  box-shadow: none !important;
+  background: rgba(16, 2, 0, 0.96) !important;
+  border-color: rgba(255, 50, 20, 0.18) !important;
 }
 
 html.red-mode .search-box,
 html.red-mode .location-bar-inner,
 html.red-mode .sub-nav-inner {
-  background: rgba(14, 1, 1, 0.97) !important;
-  box-shadow: none !important;
-  border-color: rgba(140, 15, 15, 0.22) !important;
+  background: rgba(16, 2, 0, 0.96) !important;
+  border-color: rgba(255, 50, 20, 0.18) !important;
 }
 
-/* Mute images/canvas so they don't blow night vision */
+/* Red-shift images/canvas without dimming — preserve brightness */
 html.red-mode img,
 html.red-mode canvas {
-  filter: brightness(0.25) saturate(0) sepia(1) hue-rotate(330deg) saturate(3);
-  opacity: 0.55;
+  filter: saturate(0) sepia(1) hue-rotate(330deg) saturate(3.5) brightness(0.9);
 }
 
 html.red-mode .fill-good,
 html.red-mode .fill-fair,
 html.red-mode .fill-poor {
-  background: linear-gradient(90deg, #991100, #660900) !important;
-  box-shadow: none !important;
+  background: linear-gradient(90deg, #ff3311, #cc2200) !important;
+  box-shadow: 0 0 8px rgba(255, 40, 10, 0.5) !important;
 }
 
 html.red-mode .weekly-score-bar-fill {
-  filter: brightness(0.5) saturate(0.4);
+  filter: saturate(0) sepia(1) hue-rotate(330deg) saturate(3) brightness(0.85);
 }
 
 html.red-mode .badge-good,
 html.red-mode .badge-fair,
 html.red-mode .badge-poor {
-  background: rgba(100, 10, 10, 0.25) !important;
-  color: #bb2200 !important;
-  border-color: rgba(150, 15, 15, 0.35) !important;
+  background: rgba(255, 40, 20, 0.15) !important;
+  color: #ff4422 !important;
+  border-color: rgba(255, 50, 20, 0.35) !important;
 }
 
   /* ════════════════════════════════════
@@ -2511,28 +2532,13 @@ html.red-mode .badge-poor {
         </div>
       </div>
 
-      <!-- ── TONIGHT AT A GLANCE ── -->
-      <div class="tonight-glance">
+      <!-- ── NIGHTLY SCORE GRAPH (Dusk → Dawn) ── -->
+      <div class="tonight-glance" style="padding-bottom:8px">
         <div class="tg-title">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="6" r="5"/><path d="M6 3v3l2 1"/></svg>
-          Tonight at a Glance
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><path d="M1 9 L4 4 L7 6 L11 2"/><polyline points="8,2 11,2 11,5"/></svg>
+          Viewing Score &middot; Dusk to Dawn
         </div>
-        <div class="tg-grid tg-grid-2col">
-          <div class="tg-card">
-            <div class="tg-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--cyan)" stroke-width="1.4" stroke-linecap="round"><path d="M13 8.5A5.5 5.5 0 0 1 7.5 14 5.5 5.5 0 1 0 13 8.5z"/></svg>
-            </div>
-            <div class="tg-label">Moon Phase</div>
-            <div class="tg-value" id="tgMoonPhase">—</div>
-          </div>
-          <div class="tg-card">
-            <div class="tg-icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="2.5" fill="none"/><circle cx="8" cy="8" r="0.8" fill="var(--muted)"/></svg>
-            </div>
-            <div class="tg-label">Naked Eye Limit</div>
-            <div class="tg-value" id="tgMagLimit">—</div>
-          </div>
-        </div>
+        <canvas id="viewGraph" style="width:100%;height:200px;border-radius:8px"></canvas>
       </div>
 
     </div>
@@ -3576,11 +3582,8 @@ html.red-mode .badge-poor {
     <div class="panel" style="padding:16px; overflow:hidden;">
       <iframe
         title="Map of Light Pollution"
-        srcdoc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Map of Light Pollution</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>html,body{margin:0;height:100%;background:#0b1020;font-family:Arial,Helvetica,sans-serif}#map{width:100%;height:100%}.panel{position:absolute;top:16px;left:16px;z-index:1000;width:min(360px,calc(100vw - 32px));background:rgba(255,255,255,.92);color:#0f172a;border-radius:16px;padding:14px 14px 12px;box-shadow:0 18px 50px rgba(0,0,0,.28)}.title{font-size:18px;font-weight:700;margin-bottom:8px}.row{display:flex;align-items:center;gap:10px;margin-top:10px}label{font-size:13px;min-width:66px;color:#1f2937}input[type="range"]{flex:1}.legend-title{font-size:12px;margin-top:12px;margin-bottom:6px;color:#1f2937}.gradient{height:14px;border-radius:999px;border:1px solid rgba(15,23,42,.12);background:linear-gradient(90deg,#000 0%,#050505 14%,#1d083a 28%,#6f2cff 44%,#3a4cff 58%,#2b6bff 72%,#a8bdfd 86%,#fff 100%)}.ticks{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#64748b;gap:6px;flex-wrap:wrap}.status{margin-top:10px;font-size:12px;color:#475569;min-height:16px;line-height:1.35}.leaflet-control-attribution{background:rgba(255,255,255,.82)!important}</style></head><body><div id="map"></div><div class="panel"><div class="title">Map of Light Pollution</div><div class="row"><label for="opacity">Opacity</label><input id="opacity" type="range" min="0" max="100" value="50"></div><div class="legend-title">Legend</div><div class="gradient"></div><div class="ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div><div class="status" id="status">Locating your region...</div></div><script>const map=L.map("map",{zoomControl:false,worldCopyJump:true,maxZoom:19});L.control.zoom({position:"topright"}).addTo(map);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);const statusEl=document.getElementById("status");const opacityEl=document.getElementById("opacity");let overlayOpacity=Number(opacityEl.value)/100;function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}function lerp(a,b,t){return a+(b-a)*t}function rgba(r,g,b,a){return[Math.round(r),Math.round(g),Math.round(b),Math.round(a)]}function intensityToBortle(lum){const x=clamp(Math.pow(lum,.85),0,1);return 1+x*8}function mapBortleToColor(b){if(b<=3)return rgba(0,0,0,0);if(b<4.5){const t=clamp((b-3)/1.5,0,1);return rgba(lerp(10,115,t),lerp(0,35,t),lerp(25,235,t),lerp(0,255,t*overlayOpacity))}if(b<5.5){const t=clamp(b-4.5,0,1);return rgba(lerp(115,70,t),lerp(35,80,t),lerp(235,255,t),lerp(180,255,overlayOpacity))}if(b<6.5){const t=clamp(b-5.5,0,1);return rgba(lerp(70,35,t),lerp(80,140,t),255,lerp(180,255,overlayOpacity))}const t=clamp((b-6.5)/2.5,0,1);return rgba(lerp(35,255,t),lerp(140,255,t),255,lerp(190,255,overlayOpacity))}const NightOverlay=L.GridLayer.extend({createTile:function(coords){const tile=document.createElement("canvas");const size=this.getTileSize();tile.width=size.x;tile.height=size.y;const ctx=tile.getContext("2d",{willReadFrequently:true});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";const img=new Image();img.crossOrigin="anonymous";img.referrerPolicy="no-referrer";const bounds=this._tileCoordsToBounds(coords);const nw=map.options.crs.project(bounds.getNorthWest());const se=map.options.crs.project(bounds.getSouthEast());const width=1024,height=1024;const url="https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=VIIRS_SNPP_GapFilled_BRDF_Corrected_DayNightBand_Radiance&STYLES=&FORMAT=image/png&TRANSPARENT=TRUE&CRS=EPSG:3857&WIDTH="+width+"&HEIGHT="+height+"&BBOX="+[nw.x,se.y,se.x,nw.y].join(",");img.onload=()=>{try{const work=document.createElement("canvas");work.width=width;work.height=height;const wctx=work.getContext("2d",{willReadFrequently:true});wctx.imageSmoothingEnabled=true;wctx.drawImage(img,0,0,width,height);const imageData=wctx.getImageData(0,0,width,height);const data=imageData.data;for(let i=0;i<data.length;i+=4){if(data[i+3]===0)continue;const lum=(.2126*data[i]+.7152*data[i+1]+.0722*data[i+2])/255;const bortle=intensityToBortle(lum);const c=mapBortleToColor(bortle);data[i]=c[0];data[i+1]=c[1];data[i+2]=c[2];data[i+3]=c[3]}wctx.putImageData(imageData,0,0);ctx.clearRect(0,0,size.x,size.y);ctx.drawImage(work,0,0,size.x,size.y)}catch(err){console.error(err);statusEl.textContent="The browser blocked reading the remote tile pixels."}};img.onerror=()=>{statusEl.textContent="Overlay tiles failed to load."};img.src=url;return tile;}});let overlay=new NightOverlay({opacity:1,tileSize:256});overlay.addTo(map);opacityEl.addEventListener("input",()=>{overlayOpacity=Number(opacityEl.value)/100;overlay.setOpacity(overlayOpacity)});function milesToLatDegrees(miles){return miles/69}function milesToLngDegrees(miles,lat){return miles/(69*Math.cos(lat*Math.PI/180))}function setRegionalView(lat,lng){const radiusMiles=500;const latDelta=milesToLatDegrees(radiusMiles);const lngDelta=milesToLngDegrees(radiusMiles,lat);const bounds=L.latLngBounds([lat-latDelta,lng-lngDelta],[lat+latDelta,lng+lngDelta]);map.fitBounds(bounds,{padding:[30,30]});statusEl.textContent=""}function fallbackView(){
-map.setView([39.8283, -98.5795], 4);
-}
-map.setView([39.8283, -98.5795], 4);
-</script></body></html>' style="width:100%;height:80vh;border:0;border-radius:12px;background:#0b1020;"></iframe>
+        srcdoc='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Map of Light Pollution</title><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><style>html,body{margin:0;height:100%;background:#0b1020;font-family:Arial,Helvetica,sans-serif}#map{width:100%;height:100%}.panel{position:absolute;top:16px;left:16px;z-index:1000;width:min(360px,calc(100vw - 32px));background:rgba(255,255,255,.92);color:#0f172a;border-radius:16px;padding:14px 14px 12px;box-shadow:0 18px 50px rgba(0,0,0,.28)}.title{font-size:18px;font-weight:700;margin-bottom:8px}.row{display:flex;align-items:center;gap:10px;margin-top:10px}label{font-size:13px;min-width:66px;color:#1f2937}input[type="range"]{flex:1}.legend-title{font-size:12px;margin-top:12px;margin-bottom:6px;color:#1f2937}.gradient{height:14px;border-radius:999px;border:1px solid rgba(15,23,42,.12);background:linear-gradient(90deg,#000 0%,#050505 14%,#1d083a 28%,#6f2cff 44%,#3a4cff 58%,#2b6bff 72%,#a8bdfd 86%,#fff 100%)}.ticks{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;color:#64748b;gap:6px;flex-wrap:wrap}.status{margin-top:10px;font-size:12px;color:#475569;min-height:16px;line-height:1.35}.leaflet-control-attribution{background:rgba(255,255,255,.82)!important}</style></head><body><div id="map"></div><div class="panel"><div class="title">Map of Light Pollution</div><div class="row"><label for="opacity">Opacity</label><input id="opacity" type="range" min="0" max="100" value="50"></div><div class="legend-title">Legend</div><div class="gradient"></div><div class="ticks"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div><div class="status" id="status">Locating your region...</div></div><script>const map=L.map("map",{zoomControl:false,worldCopyJump:true,maxZoom:19});L.control.zoom({position:"topright"}).addTo(map);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);const statusEl=document.getElementById("status");const opacityEl=document.getElementById("opacity");let overlayOpacity=Number(opacityEl.value)/100;function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}function lerp(a,b,t){return a+(b-a)*t}function rgba(r,g,b,a){return[Math.round(r),Math.round(g),Math.round(b),Math.round(a)]}function intensityToBortle(lum){const x=clamp(Math.pow(lum,.85),0,1);return 1+x*8}function mapBortleToColor(b){if(b<=3)return rgba(0,0,0,0);if(b<4.5){const t=clamp((b-3)/1.5,0,1);return rgba(lerp(10,115,t),lerp(0,35,t),lerp(25,235,t),lerp(0,255,t*overlayOpacity))}if(b<5.5){const t=clamp(b-4.5,0,1);return rgba(lerp(115,70,t),lerp(35,80,t),lerp(235,255,t),lerp(180,255,overlayOpacity))}if(b<6.5){const t=clamp(b-5.5,0,1);return rgba(lerp(70,35,t),lerp(80,140,t),255,lerp(180,255,overlayOpacity))}const t=clamp((b-6.5)/2.5,0,1);return rgba(lerp(35,255,t),lerp(140,255,t),255,lerp(190,255,overlayOpacity))}const NightOverlay=L.GridLayer.extend({createTile:function(coords){const tile=document.createElement("canvas");const size=this.getTileSize();tile.width=size.x;tile.height=size.y;const ctx=tile.getContext("2d",{willReadFrequently:true});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";const img=new Image();img.crossOrigin="anonymous";img.referrerPolicy="no-referrer";const bounds=this._tileCoordsToBounds(coords);const nw=map.options.crs.project(bounds.getNorthWest());const se=map.options.crs.project(bounds.getSouthEast());const width=1024,height=1024;const url="https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=VIIRS_SNPP_GapFilled_BRDF_Corrected_DayNightBand_Radiance&STYLES=&FORMAT=image/png&TRANSPARENT=TRUE&CRS=EPSG:3857&WIDTH="+width+"&HEIGHT="+height+"&BBOX="+[nw.x,se.y,se.x,nw.y].join(",");img.onload=()=>{try{const work=document.createElement("canvas");work.width=width;work.height=height;const wctx=work.getContext("2d",{willReadFrequently:true});wctx.imageSmoothingEnabled=true;wctx.drawImage(img,0,0,width,height);const imageData=wctx.getImageData(0,0,width,height);const data=imageData.data;for(let i=0;i<data.length;i+=4){if(data[i+3]===0)continue;const lum=(.2126*data[i]+.7152*data[i+1]+.0722*data[i+2])/255;const bortle=intensityToBortle(lum);const c=mapBortleToColor(bortle);data[i]=c[0];data[i+1]=c[1];data[i+2]=c[2];data[i+3]=c[3]}wctx.putImageData(imageData,0,0);ctx.clearRect(0,0,size.x,size.y);ctx.drawImage(work,0,0,size.x,size.y)}catch(err){console.error(err);statusEl.textContent="The browser blocked reading the remote tile pixels."}};img.onerror=()=>{statusEl.textContent="Overlay tiles failed to load."};img.src=url;return tile;}});let overlay=new NightOverlay({opacity:1,tileSize:256});overlay.addTo(map);opacityEl.addEventListener("input",()=>{overlayOpacity=Number(opacityEl.value)/100;overlay.setOpacity(overlayOpacity)});function milesToLatDegrees(miles){return miles/69}function milesToLngDegrees(miles,lat){return miles/(69*Math.cos(lat*Math.PI/180))}function setRegionalView(lat,lng){map.setView([lat,lng],6);statusEl.textContent=""}function fallbackView(){map.setView([30,-40],2);statusEl.textContent="Search a location to see regional light pollution";}window.addEventListener("message",function(e){if(e.data&&typeof e.data.lat==="number"&&typeof e.data.lng==="number"){setRegionalView(e.data.lat,e.data.lng);}});fallbackView();
+</script></body></html>' id="lpMapFrame" style="width:100%;height:80vh;border:0;border-radius:12px;background:#0b1020;"></iframe>
     </div>
   </div>
 
@@ -4096,12 +4099,19 @@ function drawGraph() {
   gc.fillText(label, labelX, py + ph - 3);
   gc.shadowBlur = 0;
 
-  // ── x-axis labels ──
+  // ── x-axis labels (skip intermediate ones to prevent overlap) ──
   gc.fillStyle = 'rgba(90,122,154,0.9)';
   gc.font = '11px Outfit, sans-serif'; gc.textAlign = 'center';
+  const totalLabels = graphHours.length;
+  // Show first, last, and roughly every 3rd label in between
+  const step = totalLabels <= 6 ? 1 : totalLabels <= 9 ? 2 : 3;
   graphHours.forEach((label, i) => {
-    const x = padL + (gW / (graphHours.length - 1)) * i;
-    gc.fillText(label, x, padT + gH + 18);
+    if (i !== 0 && i !== totalLabels - 1 && i % step !== 0) return;
+    const x = padL + (gW / (totalLabels - 1)) * i;
+    let displayLabel = label;
+    if (i === 0) displayLabel = 'DUSK';
+    else if (i === totalLabels - 1) displayLabel = 'DAWN';
+    gc.fillText(displayLabel, x, padT + gH + 18);
   });
 
   // ── axis line ──
@@ -4303,15 +4313,14 @@ function switchPage(e, page) {
 
 
 /* ============================================================
-   WEEKLY OUTLOOK
+   WEEKLY OUTLOOK  (uses hourly API — same fields as main score)
 ============================================================ */
 
 function weeklyScoreColor(v) {
   let r, g, b;
-
   if (v <= 60) {
     const t = Math.max(0, v) / 60;
-    r = Math.round(255);
+    r = 255;
     g = Math.round(107 + (207 - 107) * t);
     b = Math.round(107 + (71 - 107) * t);
   } else {
@@ -4320,40 +4329,34 @@ function weeklyScoreColor(v) {
     g = Math.round(207 + (255 - 207) * t);
     b = Math.round(71 + (180 - 71) * t);
   }
-
   return `rgb(${r},${g},${b})`;
 }
 
-function calculateForecastScore(day) {
-  // Use same formula as computeScoreFromSnapshot for consistency
-  const cloud   = Math.min(100, Math.max(0, Number(day.cloud   ?? 50)));
-  const wind10  = Math.min(100, Math.max(0, Number(day.wind    ?? 10)));
-  const precip  = Math.min(100, Math.max(0, Number(day.precip  ?? 0)));
-  // Daily API gives max/min temp — use midpoint
-  const tempMax = Number(day.tempMax ?? 60);
-  const tempMin = Number(day.tempMin ?? 45);
-  const temp    = (tempMax + tempMin) / 2;
-  // precipitation_probability_max doubles as humidity proxy for daily data
-  const humidity = Math.min(100, Math.max(0, Number(day.humidity ?? precip)));
-  // Visibility not in daily API — estimate from cloud + precip
-  const visEstimate = Math.max(0, 30000 - cloud * 200 - precip * 300);
+function _wClamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-  const bortle   = Math.min(9, Math.max(1, liveState?.bortle ?? 5));
-  // Moon illumination: use liveState if available, else assume quarter moon
-  const moonFrac = Math.min(1, Math.max(0, liveState?.moonFrac ?? 0.25));
+function weeklyNightScore(snap) {
+  var cloud    = _wClamp(snap.cloud   ?? 100, 0, 100);
+  var humidity = _wClamp(snap.humidity ?? 100, 0, 100);
+  var temp     = snap.temp ?? 54;
+  var vis      = _wClamp(snap.vis ?? 0, 0, 50000);
+  var wind10   = _wClamp(snap.wind10 ?? 0, 0, 100);
+  var wind180  = _wClamp(snap.wind180 ?? wind10, 0, 100);
+  var precip   = _wClamp(snap.precip ?? 0, 0, 30);
+  var bortle   = _wClamp(snap.bortle ?? 5, 1, 9);
+  var moonFrac = _wClamp(snap.moonFrac ?? 0.25, 0, 1);
 
-  const cloudScore        = 100 - cloud;
-  const seeingScore       = Math.min(100, Math.max(0, 100 - cloud * 0.7 - wind10 * 2.9));
-  const humidityScore     = Math.min(100, Math.max(0, 100 - Math.max(0, humidity - 35) * 1.25));
-  const transparencyScore = Math.min(100, (visEstimate / 20000) * 100);
-  const windScore         = Math.min(100, Math.max(0, 100 - wind10 * 3.2));
-  const tempScore         = Math.min(100, Math.max(15, 100 - Math.abs(temp - 54) * 2.33));
-  const precipScore       = Math.min(100, Math.max(0, 100 - precip * 0.8));
-  const jetScore          = Math.min(100, Math.max(0, 100 - wind10 * 2.9));
-  const lpScore           = Math.min(100, Math.max(15, Math.round(100 - (bortle - 1) * 10.6)));
-  const moonIllumScore    = Math.min(100, Math.max(15, Math.round(100 - moonFrac * 85)));
+  var cloudScore        = 100 - cloud;
+  var seeingScore       = _wClamp(100 - cloud * 0.7 - wind10 * 2.9, 0, 100);
+  var humidityScore     = _wClamp(100 - Math.max(0, humidity - 35) * 1.25, 0, 100);
+  var transparencyScore = _wClamp((vis / 20000) * 100, 0, 100);
+  var windScore         = _wClamp(100 - wind10 * 3.2, 0, 100);
+  var tempScore         = _wClamp(100 - Math.abs(temp - 54) * 2.33, 15, 100);
+  var precipScore       = _wClamp(100 - precip * 20, 0, 100);
+  var jetScore          = _wClamp(100 - wind180 * 2.9, 0, 100);
+  var lpScore           = _wClamp(Math.round(100 - (bortle - 1) * 10.6), 15, 100);
+  var moonIllumScore    = _wClamp(Math.round(100 - moonFrac * 85), 15, 100);
 
-  const weighted =
+  var weighted =
     lpScore           * 0.50 +
     cloudScore        * 0.20 +
     moonIllumScore    * 0.05 +
@@ -4365,193 +4368,180 @@ function calculateForecastScore(day) {
     jetScore          * 0.01 +
     tempScore         * 0.01;
 
-  return Math.max(0, Math.min(100, Math.round(weighted)));
+  return _wClamp(Math.round(weighted), 0, 100);
 }
 
 async function renderWeeklyOutlook(lat, lon, timezone) {
-  const grid = document.getElementById('weeklyGrid');
-  const badge = document.getElementById('weeklyBestBadge');
-
+  var grid  = document.getElementById('weeklyGrid');
+  var badge = document.getElementById('weeklyBestBadge');
   if (!grid) return;
 
-  grid.innerHTML = Array.from({ length: 7 }, (_, i) => `
-    <div class="weekly-day${i === 0 ? ' today' : ''}">
-      <div class="weekly-dow" style="background:rgba(255,255,255,0.06);width:28px;height:8px;border-radius:4px;margin-top:10px"></div>
-      <div class="weekly-score-box" style="opacity:0.25">
-        <div class="weekly-score-num">—</div>
-      </div>
-    </div>
-  `).join('');
+  /* skeleton placeholder while loading */
+  grid.innerHTML = Array.from({ length: 7 }, function (_, i) {
+    return '<div class="weekly-day' + (i === 0 ? ' today' : '') + '">'
+      + '<div class="weekly-dow" style="background:rgba(255,255,255,0.06);width:28px;height:8px;border-radius:4px;margin-top:10px"></div>'
+      + '<div class="weekly-score-box" style="opacity:0.25"><div class="weekly-score-num">\u2014</div></div>'
+      + '</div>';
+  }).join('');
 
   try {
-    const url = new URL('https://api.open-meteo.com/v1/forecast');
-
-    url.searchParams.set('latitude', lat);
+    /* ── Fetch 7 days of HOURLY data (same fields as the working main score) ── */
+    var url = new URL('https://api.open-meteo.com/v1/forecast');
+    url.searchParams.set('latitude',  lat);
     url.searchParams.set('longitude', lon);
-
-    url.searchParams.set(
-      'daily',
-      [
-        'cloud_cover_mean',
-        'wind_speed_10m_max',
-        'precipitation_probability_max',
-        'temperature_2m_max',
-        'temperature_2m_min'
-      ].join(',')
-    );
-
+    url.searchParams.set('timezone',  timezone || 'auto');
     url.searchParams.set('forecast_days', '7');
     url.searchParams.set('wind_speed_unit', 'mph');
     url.searchParams.set('temperature_unit', 'fahrenheit');
-    url.searchParams.set('timezone', timezone || 'auto');
+    url.searchParams.set('hourly', [
+      'temperature_2m',
+      'relative_humidity_2m',
+      'cloud_cover',
+      'visibility',
+      'precipitation',
+      'wind_speed_10m',
+      'wind_speed_180m'
+    ].join(','));
 
-    const res = await fetch(url.toString());
-    const data = await res.json();
-    const d = data.daily;
+    var res = await fetch(url.toString());
+    if (!res.ok) throw new Error('Weather API returned HTTP ' + res.status);
+    var data = await res.json();
+    if (data.error) throw new Error(data.reason || 'API error');
+    var h = data.hourly;
+    if (!h || !h.time || !h.time.length) throw new Error('No hourly data returned');
 
-    const days = d.time.map((dateStr, i) => {
+    /* ── Group hours into calendar nights ── */
+    // A "night" for date D = hours 20:00–23:00 on day D  +  00:00–05:00 on day D+1
+    var nightBuckets = {};   // dateKey -> array of hourly indices
+    var dateKeys     = [];   // ordered unique date keys
 
-      const cloud   = d.cloud_cover_mean[i] ?? 50;
-      const wind    = d.wind_speed_10m_max[i] ?? 10;
-      const precip  = d.precipitation_probability_max[i] ?? 0;
-      // Estimate humidity from cloud cover + precip probability (both correlate with moisture)
-      const humidity = Math.min(100, cloud * 0.5 + precip * 0.5);
-      const tempMax = d.temperature_2m_max?.[i] ?? 60;
-      const tempMin = d.temperature_2m_min?.[i] ?? 45;
+    for (var i = 0; i < h.time.length; i++) {
+      var tStr = h.time[i]; // e.g. "2025-05-22T14:00"
+      var hour = parseInt(tStr.substring(11, 13), 10);
+      var dateStr;
 
-      const score = calculateForecastScore({
-        cloud,
-        wind,
-        precip,
-        humidity,
-        tempMax,
-        tempMin
-      });
-
-      const date = new Date(dateStr + 'T12:00:00');
-
-      const dow = date
-        .toLocaleDateString('en-US', { weekday: 'short' })
-        .toUpperCase();
-
-      const dateLabel = date.toLocaleDateString('en-US', {
-        month: 'numeric',
-        day: 'numeric'
-      });
-
-      return {
-        score,
-        dow,
-        dateLabel,
-        cloud,
-        wind,
-        precip,
-        humidity,
-        tempMax,
-        tempMin
-      };
-    });
-
-    const bestScore = Math.max(...days.map(d => d.score));
-    const bestIdx = days.findIndex(d => d.score === bestScore);
-    const bestDay = days[bestIdx];
-
-    if (badge) {
-      badge.textContent = `Best: ${bestDay.dow}`;
-
-      badge.className =
-        `panel-badge ${
-          bestScore >= 75
-            ? 'badge-good'
-            : bestScore >= 50
-              ? 'badge-fair'
-              : 'badge-poor'
-        }`;
-    }
-
-    grid.innerHTML = days.map((day, i) => {
-
-      const col = weeklyScoreColor(day.score);
-
-      let label = 'Poor';
-      let labelCol = 'var(--poor)';
-
-      if (day.score >= 80) {
-        label = 'Excellent';
-        labelCol = 'var(--good)';
-      } else if (day.score >= 65) {
-        label = 'Good';
-        labelCol = 'var(--cyan)';
-      } else if (day.score >= 45) {
-        label = 'Fair';
-        labelCol = 'var(--fair)';
+      if (hour >= 20) {
+        dateStr = tStr.substring(0, 10);
+      } else if (hour <= 5) {
+        // belongs to PREVIOUS calendar date's night
+        var d = new Date(tStr);
+        d.setDate(d.getDate() - 1);
+        var y = d.getFullYear();
+        var m = String(d.getMonth() + 1).padStart(2, '0');
+        var dd = String(d.getDate()).padStart(2, '0');
+        dateStr = y + '-' + m + '-' + dd;
+      } else {
+        continue; // daytime 6 AM – 7 PM: skip
       }
 
-      const cloudIcon = day.cloud > 60
-        ? `<svg width="13" height="10" viewBox="0 0 13 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M9.5 9.5H3a2 2 0 0 1-.3-4A3.5 3.5 0 0 1 10 4a2.5 2.5 0 0 1-.5 5.5z"/></svg>`
-        : '';
+      if (!nightBuckets[dateStr]) {
+        nightBuckets[dateStr] = [];
+        dateKeys.push(dateStr);
+      }
+      nightBuckets[dateStr].push(i);
+    }
 
-      const windIcon = day.wind > 20
-        ? `<svg width="13" height="10" viewBox="0 0 13 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M1 4h7a1.8 1.8 0 1 0-1.8-1.8"/><path d="M1 7h9a1.8 1.8 0 1 1-1.8 1.8"/></svg>`
-        : '';
+    // Keep first 7 nights
+    dateKeys = dateKeys.slice(0, 7);
+    if (!dateKeys.length) throw new Error('No nighttime data found');
 
-      const rainIcon = day.precip > 40
-        ? `<svg width="9" height="13" viewBox="0 0 9 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4.5 1C4.5 1 1 5.5 1 7.5a3.5 3.5 0 0 0 7 0C8 5.5 4.5 1 4.5 1z"/></svg>`
-        : '';
+    /* ── Read bortle + moonFrac from the DOM if available ── */
+    var bortle   = 5;
+    var moonFrac = 0.25;
+    try {
+      var bortleEl = document.querySelector('[data-bortle]');
+      if (bortleEl) bortle = parseFloat(bortleEl.dataset.bortle) || 5;
+    } catch (_) {}
+    try {
+      var moonSub = document.getElementById('moonIllumSub');
+      if (moonSub) {
+        var match = moonSub.textContent.match(/(\d+)/);
+        if (match) moonFrac = parseInt(match[1], 10) / 100;
+      }
+    } catch (_) {}
 
-      return `
-        <div class="weekly-day${i === 0 ? ' today' : ''}${i === bestIdx ? ' best' : ''}">
+    /* ── Average nighttime hours -> score per night ── */
+    function avg(arr) {
+      if (!arr.length) return 0;
+      var s = 0; for (var k = 0; k < arr.length; k++) s += (arr[k] ?? 0);
+      return s / arr.length;
+    }
 
-          <div class="weekly-dow">${day.dow}</div>
+    var days = dateKeys.map(function (key) {
+      var idxs = nightBuckets[key];
 
-          <div class="weekly-date">${day.dateLabel}</div>
+      var cloud    = avg(idxs.map(function (j) { return h.cloud_cover[j]; }));
+      var humidity = avg(idxs.map(function (j) { return h.relative_humidity_2m[j]; }));
+      var temp     = avg(idxs.map(function (j) { return h.temperature_2m[j]; }));
+      var vis      = avg(idxs.map(function (j) { return h.visibility[j]; }));
+      var wind10   = avg(idxs.map(function (j) { return h.wind_speed_10m[j]; }));
+      var wind180  = avg(idxs.map(function (j) {
+        return (h.wind_speed_180m && h.wind_speed_180m[j] != null) ? h.wind_speed_180m[j] : (h.wind_speed_10m[j] ?? 0);
+      }));
+      var precip   = avg(idxs.map(function (j) { return h.precipitation[j]; }));
 
-          <div class="weekly-score-box">
+      var score = weeklyNightScore({
+        cloud: cloud, humidity: humidity, temp: temp, vis: vis,
+        wind10: wind10, wind180: wind180, precip: precip,
+        bortle: bortle, moonFrac: moonFrac
+      });
 
-            <div class="weekly-score-num" style="color:${col}">
-              ${day.score}
-            </div>
+      var dateObj   = new Date(key + 'T12:00:00');
+      var dow       = dateObj.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+      var dateLabel = dateObj.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
 
-            <div class="weekly-score-bar-track">
-              <div
-                class="weekly-score-bar-fill"
-                style="
-                  height:${day.score}%;
-                  background:${col};
-                  box-shadow:0 0 6px ${col}88
-                ">
-              </div>
-            </div>
+      return { score: score, dow: dow, dateLabel: dateLabel,
+               cloud: Math.round(cloud), wind: Math.round(wind10), precip: Math.round(precip * 10) };
+    });
 
-          </div>
+    /* ── Best night ── */
+    var bestScore = 0, bestIdx = 0;
+    for (var b = 0; b < days.length; b++) {
+      if (days[b].score > bestScore) { bestScore = days[b].score; bestIdx = b; }
+    }
 
-          <div class="weekly-label" style="color:${labelCol}">
-            ${label}
-          </div>
+    if (badge) {
+      badge.textContent = 'Best: ' + days[bestIdx].dow;
+      badge.className = 'panel-badge ' + (bestScore >= 75 ? 'badge-good' : bestScore >= 50 ? 'badge-fair' : 'badge-poor');
+    }
 
-          <div class="weekly-icons">
-            ${cloudIcon}${windIcon}${rainIcon}
-          </div>
+    /* ── Render columns ── */
+    grid.innerHTML = days.map(function (day, i) {
+      var col = weeklyScoreColor(day.score);
+      var label, labelCol;
+      if      (day.score >= 80) { label = 'Excellent'; labelCol = 'var(--good)'; }
+      else if (day.score >= 65) { label = 'Good';      labelCol = 'var(--cyan)'; }
+      else if (day.score >= 45) { label = 'Fair';      labelCol = 'var(--fair)'; }
+      else                      { label = 'Poor';      labelCol = 'var(--poor)'; }
 
-        </div>
-      `;
+      var cloudIcon = day.cloud > 60
+        ? '<svg width="13" height="10" viewBox="0 0 13 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M9.5 9.5H3a2 2 0 0 1-.3-4A3.5 3.5 0 0 1 10 4a2.5 2.5 0 0 1-.5 5.5z"/></svg>' : '';
+      var windIcon = day.wind > 20
+        ? '<svg width="13" height="10" viewBox="0 0 13 10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M1 4h7a1.8 1.8 0 1 0-1.8-1.8"/><path d="M1 7h9a1.8 1.8 0 1 1-1.8 1.8"/></svg>' : '';
+      var rainIcon = day.precip > 2
+        ? '<svg width="9" height="13" viewBox="0 0 9 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4.5 1C4.5 1 1 5.5 1 7.5a3.5 3.5 0 0 0 7 0C8 5.5 4.5 1 4.5 1z"/></svg>' : '';
+
+      return '<div class="weekly-day' + (i === 0 ? ' today' : '') + (i === bestIdx ? ' best' : '') + '">'
+        + '<div class="weekly-dow">' + day.dow + '</div>'
+        + '<div class="weekly-date">' + day.dateLabel + '</div>'
+        + '<div class="weekly-score-box">'
+        +   '<div class="weekly-score-num" style="color:' + col + '">' + day.score + '</div>'
+        +   '<div class="weekly-score-bar-track">'
+        +     '<div class="weekly-score-bar-fill" style="height:' + day.score + '%;background:' + col + ';box-shadow:0 0 6px ' + col + '88"></div>'
+        +   '</div>'
+        + '</div>'
+        + '<div class="weekly-label" style="color:' + labelCol + '">' + label + '</div>'
+        + '<div class="weekly-icons">' + cloudIcon + windIcon + rainIcon + '</div>'
+        + '</div>';
     }).join('');
 
   } catch (e) {
-
-    grid.innerHTML = `
-      <div style="
-        padding:20px;
-        color:var(--muted);
-        font-size:0.82rem;
-        grid-column:1/-1;
-        text-align:center
-      ">
-        Unable to load outlook data
-      </div>
-    `;
+    console.error('[WeeklyOutlook] Failed:', e);
+    grid.innerHTML = '<div style="padding:20px;color:var(--muted);font-size:0.82rem;grid-column:1/-1;text-align:center">'
+      + 'Unable to load outlook — ' + (e.message || 'unknown error') + '</div>';
   }
 }
+
 
 
 /* ════════════════════════════════════
@@ -4898,7 +4888,7 @@ renderObjectOfNight(pickObjectOfNight());
 
 
 /* ── LIGHT POLLUTION PAGE ── */
-map.setView([39.8283, -98.5795], 4);
+// map init handled inside iframe via postMessage
 
 function updateLPMPage(bortle, sqm, locText) {
   const bColors = {1:'#9b59b6',2:'#2980b9',3:'#27ae60',4:'#8bc34a',5:'#f39c12',6:'#e67e22',7:'#e74c3c',8:'#c0392b',9:'#922b21'};
@@ -6739,6 +6729,14 @@ async function fetchLightPollutionPctFromCoords(lat, lon, elevationM) {
         renderWeeklyOutlook(liveState.location.latitude, liveState.location.longitude, liveState.location.timezone);
       }
 
+      // Update light pollution map iframe with new coordinates
+      try {
+        var lpFrame = document.getElementById('lpMapFrame');
+        if (lpFrame && lpFrame.contentWindow) {
+          lpFrame.contentWindow.postMessage({ lat: location.latitude, lng: location.longitude }, '*');
+        }
+      } catch (_) {}
+
       // Update rotating Object of the Night
       updateObjectOfNight(liveState.location.latitude, liveState.location.longitude, liveState.location.timezone);
 
@@ -7097,10 +7095,6 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-
-<script>
-map.setView([39.8283, -98.5795], 4);
-</script>
 
 
 <script>
